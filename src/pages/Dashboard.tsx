@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, CircleAlert, Book } from 'lucide-react';
+import { BookOpen, CircleAlert, Book, Headphones } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
 
@@ -37,20 +37,22 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Start New Practice */}
+      {/* Daily Expression Card */}
       <div className="mx-4 mb-6">
-        <h2 className="text-lg font-medium mb-4">새로운 연습 시작하기</h2>
-        <Link to="/practice" className="block bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-lg bg-opic-light-purple flex items-center justify-center text-opic-purple">
-              <BookOpen size={24} />
+        <h2 className="text-lg font-medium mb-4">오늘의 표현</h2>
+        <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-medium text-opic-purple">"I'm swamped"</h3>
+              <p className="text-gray-700 mb-2">바빠서 정신이 없어요</p>
+              <p className="text-sm text-gray-600 italic">"I can't meet today, I'm totally swamped with work."</p>
             </div>
-            <div className="ml-4">
-              <h3 className="font-medium">OPIc 연습 시작</h3>
-              <p className="text-sm text-gray-500">레벨을 선택하고 연습을 시작하세요</p>
-            </div>
+            <button className="flex flex-col items-center justify-center text-opic-purple">
+              <Headphones size={24} />
+              <span className="text-xs mt-1">듣기</span>
+            </button>
           </div>
-        </Link>
+        </div>
       </div>
       
       {/* Subscription Plan */}

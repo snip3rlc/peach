@@ -8,7 +8,7 @@ interface HeaderProps {
   showBack?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, showBack = false }) => {
+const Header: React.FC<HeaderProps> = ({ title, showBack = true }) => {
   const navigate = useNavigate();
 
   return (

@@ -17,6 +17,7 @@ import Practice from "./pages/Practice";
 import History from "./pages/History";
 import Plans from "./pages/Plans";
 import Profile from "./pages/Profile";
+import Referral from "./pages/Referral";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/history" element={<History />} />
             <Route path="/plans" element={<Plans />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/referral" element={<Referral />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const Plans = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>("starter");
@@ -34,7 +35,7 @@ const Plans = () => {
             >
               <div>
                 <div className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium mb-1">현재 구독 중</div>
-                <h3 className="font-medium text-opic-purple">스타터</h3>
+                <h3 className="font-medium text-black">스타터</h3>
                 <p className="text-opic-purple font-medium">무료</p>
               </div>
               <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "starter" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -117,9 +118,9 @@ const Plans = () => {
         <p className="text-xs text-center text-gray-500 mb-4">
           모든 구독은 언제든지 취소할 수 있으며, 구독 기간이 끝날 때까지 서비스를 이용할 수 있습니다.
         </p>
-        <p className="text-xs text-center text-gray-500">
+        <Link to="/referral" className="text-xs text-center text-opic-purple block">
           친구를 초대하면 10% 할인 혜택을 받을 수 있습니다.
-        </p>
+        </Link>
       </div>
     </div>
   );
