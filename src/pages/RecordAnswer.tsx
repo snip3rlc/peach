@@ -1,24 +1,55 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import { Button } from '@/components/ui/button';
 import { Mic, Square, RefreshCw, Volume2 } from 'lucide-react';
 
 const RecordAnswer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordingComplete, setRecordingComplete] = useState(false);
-
+  const [answer, setAnswer] = useState("");
+  const [isDirectNavigation, setIsDirectNavigation] = useState(false);
+  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
+  
+  useEffect(() => {
+    // Check if coming directly from template selection (without practice answer)
+    const pathParts = location.pathname.split('/');
+    const prevPath = document.referrer;
+    if (prevPath.includes('/template') && !prevPath.includes('/practice-answer')) {
+      setIsDirectNavigation(true);
+      setAnswer(""); // No prepared answer
+    } else {
+      // This is the example answer from PracticeAnswer page
+      setAnswer("In my daily life, I usually wake up at 7. The first thing I do is play soccer. After that, I play soccer. In the afternoon, I typically play soccer. My favorite part of the day is when I play soccer because it's fun.");
+    }
+  }, [location]);
+  
   const toggleRecording = () => {
     if (isRecording) {
       setIsRecording(false);
       setRecordingComplete(true);
+      
+      // Stop the text-to-speech if it's playing
+      if (speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
     } else {
       setIsRecording(true);
       setRecordingTime(0);
       setRecordingComplete(false);
+      
+      // If we have an answer and it's a direct navigation, use text-to-speech
+      if (isDirectNavigation && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(answer);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        setSpeechSynthesis(utterance);
+        window.speechSynthesis.speak(utterance);
+      }
       
       // Start timer
       const timer = setInterval(() => {
@@ -46,18 +77,19 @@ const RecordAnswer = () => {
           <p className="mt-1">Tell me about your daily life.</p>
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-          <h3 className="font-medium mb-3">작성한 답변</h3>
-          <p className="text-sm text-gray-700">
-            In my daily life, I usually wake up at 7. The first thing 
-            I do is play soccer. After that, I play soccer. In the 
-            afternoon, I typically play soccer. My favorite part 
-            of the day is when I play soccer because it's fun.
-          </p>
-        </div>
+        {answer && (
+          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
+            <h3 className="font-medium mb-3">작성한 답변</h3>
+            <p className="text-sm text-gray-700">{answer}</p>
+          </div>
+        )}
         
         <div className="text-center mb-8">
-          <p className="text-gray-700 mb-6">준비된 답변을 소리내어 읽고 녹음하세요</p>
+          {isDirectNavigation ? (
+            <p className="text-gray-700 mb-6">자유롭게 답변을 녹음하세요</p>
+          ) : (
+            <p className="text-gray-700 mb-6">준비된 답변을 소리내어 읽고 녹음하세요</p>
+          )}
           
           <div className="flex flex-col items-center">
             {isRecording ? (

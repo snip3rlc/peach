@@ -1,9 +1,23 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 
 const TemplateSelect = () => {
+  const location = useLocation();
+  const [level, setLevel] = useState('');
+  
+  useEffect(() => {
+    // Extract level from URL search params if available
+    const searchParams = new URLSearchParams(location.search);
+    const levelParam = searchParams.get('level');
+    if (levelParam) {
+      setLevel(levelParam);
+    }
+  }, [location]);
+
+  const isIntermediateOrAdvanced = level === 'intermediate' || level === 'advanced';
+  
   return (
     <div className="pb-20">
       <Header title="템플릿 선택" showBack />
@@ -31,6 +45,20 @@ const TemplateSelect = () => {
           </p>
           <span className="text-xs px-2 py-1 bg-opic-purple text-white rounded-full inline-block mt-2">프리미엄</span>
         </div>
+        
+        {isIntermediateOrAdvanced && (
+          <Link 
+            to="/record-answer" 
+            className="block bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6 hover:bg-gray-50"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium">Don't Need Template</h3>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+        )}
         
         <Link 
           to="/practice-answer" 
