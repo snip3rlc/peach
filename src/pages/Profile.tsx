@@ -10,7 +10,7 @@ const Profile = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="pb-20">
+    <div>
       <Header title="프로필" />
       
       <div className="p-4">

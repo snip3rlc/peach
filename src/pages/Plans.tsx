@@ -9,7 +9,7 @@ const Plans = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>("starter");
   
   return (
-    <div className="pb-20">
+    <div>
       <Header title="구독 플랜" />
       
       <div className="p-4">

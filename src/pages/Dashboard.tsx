@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 
 const Dashboard = () => {
   return (
-    <div className="pb-20">
+    <div>
       <div className="p-4">
         <h1 className="text-xl font-medium mb-4 text-center">대시보드</h1>
       </div>
@@ -57,7 +57,6 @@ const Dashboard = () => {
       
       {/* Subscription Plan */}
       <div className="mx-4 mb-6">
-        <h2 className="text-lg font-medium mb-4">구독 플랜</h2>
         <div className="bg-opic-light-purple border border-dashed border-opic-purple rounded-lg p-4">
           <div className="mb-2">현재 무료 플랜 이용 중</div>
           <p className="text-sm text-gray-600 mb-4">

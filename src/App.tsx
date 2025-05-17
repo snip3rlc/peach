@@ -19,37 +19,113 @@ import Plans from "./pages/Plans";
 import Profile from "./pages/Profile";
 import Referral from "./pages/Referral";
 import NotFound from "./pages/NotFound";
+import Onboarding from "./pages/Onboarding";
+import SignIn from "./pages/SignIn";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen pb-16">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/practice" element={<Practice />} />
-            <Route path="/level-select" element={<LevelSelect />} />
-            <Route path="/topics" element={<TopicSelect />} />
-            <Route path="/questions" element={<QuestionSelect />} />
-            <Route path="/template" element={<TemplateSelect />} />
-            <Route path="/practice-answer" element={<PracticeAnswer />} />
-            <Route path="/record-answer" element={<RecordAnswer />} />
-            <Route path="/feedback" element={<Feedback />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/plans" element={<Plans />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/referral" element={<Referral />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <BottomNav />
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen">
+            <Routes>
+              {/* Authentication and onboarding routes */}
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/signin" element={<SignIn />} />
+              
+              {/* Main app routes */}
+              <Route path="/" element={
+                <>
+                  <Dashboard />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/practice" element={
+                <>
+                  <Practice />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/level-select" element={
+                <>
+                  <LevelSelect />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/topics" element={
+                <>
+                  <TopicSelect />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/questions" element={
+                <>
+                  <QuestionSelect />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/template" element={
+                <>
+                  <TemplateSelect />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/practice-answer" element={
+                <>
+                  <PracticeAnswer />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/record-answer" element={
+                <>
+                  <RecordAnswer />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/feedback" element={
+                <>
+                  <Feedback />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/history" element={
+                <>
+                  <History />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/plans" element={
+                <>
+                  <Plans />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/profile" element={
+                <>
+                  <Profile />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/referral" element={
+                <>
+                  <Referral />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

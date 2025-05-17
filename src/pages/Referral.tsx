@@ -30,7 +30,7 @@ const Referral = () => {
   };
   
   return (
-    <div className="pb-20">
+    <div>
       <Header title="친구 초대하기" showBack />
       
       <div className="p-4">
