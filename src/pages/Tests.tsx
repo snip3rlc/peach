@@ -37,7 +37,7 @@ const Tests = () => {
       
       <div className="p-4">
         <p className="text-gray-600 mb-6">
-          각 15문항으로 구성된 완전한 OPIc 모의 테스트를 완료하세요. 테스트 완료 후 상세한 피드백과 점수를 받을 수 있습니다.
+          각 테스트는 15개 문항으로 구성된 완전한 OPIc 모의 테스트입니다. 테스트 완료 후 상세한 피드백과 점수를 받을 수 있습니다.
         </p>
         
         <div className="space-y-4">

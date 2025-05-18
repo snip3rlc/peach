@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { Button } from '@/components/ui/button';
 import GrammarChecker from '../components/GrammarChecker';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface FeedbackItem {
   category: 'grammar' | 'fluency' | 'vocabulary';
-  score: number;
   feedback: string;
   issues?: {
     text: string;
@@ -19,7 +20,8 @@ interface FeedbackItem {
 interface FeedbackResult {
   opicLevel: string;
   items: FeedbackItem[];
-  suggestions: string;
+  sampleAnswer: string;
+  question: string;
 }
 
 const Feedback = () => {
@@ -59,14 +61,13 @@ const Feedback = () => {
       
       // Add current result to history
       const newHistoryItem = {
+        id: `history-${Date.now()}`,
         date: new Date().toISOString(),
         transcript: transcript,
         opicLevel: feedback.opicLevel,
-        scores: feedback.items.reduce((acc, item) => {
-          acc[item.category] = item.score;
-          return acc;
-        }, {} as Record<string, number>),
-        question: 'Tell me about your daily life.'
+        question: feedback.question,
+        feedbackItems: feedback.items,
+        sampleAnswer: feedback.sampleAnswer
       };
       
       // Add to history and save back to localStorage
@@ -98,14 +99,14 @@ const Feedback = () => {
     }
     
     return {
+      question: 'Tell me about your daily life.',
       opicLevel,
       items: [
         {
           category: 'grammar',
-          score: hasGrammarIssues ? 60 : 95,
           feedback: hasGrammarIssues 
-            ? "There are several grammar errors in your response that affect clarity."
-            : "Your grammar is mostly correct with only minor errors.",
+            ? "There are several grammar errors in your response that affect clarity. Focus on subject-verb agreement in your sentences. Make sure to use 'am' with 'I', 'is' with singular subjects, and 'are' with plural subjects."
+            : "Your grammar is mostly correct with only minor errors. Continue practicing with more complex sentence structures to improve your grammar accuracy.",
           issues: hasGrammarIssues ? [
             {
               text: "I is",
@@ -116,25 +117,37 @@ const Feedback = () => {
         },
         {
           category: 'fluency',
-          score: isShort ? 70 : 85,
           feedback: isShort 
-            ? "Your answer is quite brief. Consider expanding with more details for better fluency."
-            : "You speak with good fluency, though there's room for more natural transitions."
+            ? "Your answer is quite brief. Consider expanding with more details for better fluency. Try to connect your ideas with transition words like 'furthermore', 'moreover', 'in addition', etc. Aim for longer, more complex sentences to demonstrate higher fluency."
+            : "You speak with good fluency, though there's room for more natural transitions. Try to vary your sentence structures more and use a wider range of connecting words to make your speech flow more naturally."
         },
         {
           category: 'vocabulary',
-          score: hasRepetition ? 65 : 88,
           feedback: hasRepetition 
-            ? "You repeat the same phrases frequently. Try to use a wider range of vocabulary."
-            : "You use a good range of vocabulary appropriate for the topic."
+            ? "You repeat the same phrases frequently. Try to use a wider range of vocabulary. Instead of repeating the same words, use synonyms and more specific terms to demonstrate a broader vocabulary range."
+            : "You use a good range of vocabulary appropriate for the topic. To further improve, try incorporating more advanced vocabulary and idiomatic expressions in your responses."
         }
       ],
-      suggestions: hasGrammarIssues 
-        ? "Focus on subject-verb agreement in your sentences."
-        : (isShort 
-            ? "Try to elaborate more on your daily activities and include more details." 
-            : "Great job! Continue practicing with more complex sentence structures.")
+      sampleAnswer: "My daily routine starts at around 6:30 AM when I wake up. After brushing my teeth and washing my face, I usually have a light breakfast consisting of toast and a cup of coffee. I try to read the news or check my emails while eating. By 8:00 AM, I leave for work and typically arrive at the office by 8:30 AM. At work, I attend meetings, respond to emails, and work on various projects until lunchtime. I often bring my own lunch from home, but occasionally I go out to eat with my colleagues. After work, I like to exercise for about an hour, either by jogging in a nearby park or going to the gym. In the evening, I prepare dinner, watch some TV or read a book, and sometimes video call my family or friends. I try to go to bed by 11:00 PM to ensure I get enough rest for the next day."
     };
+  };
+
+  const getCorrectedAnswer = () => {
+    if (!feedbackResult || !userAnswer) return userAnswer;
+    
+    let corrected = userAnswer;
+    
+    // Apply corrections from grammar issues
+    feedbackResult.items.forEach(item => {
+      if (item.issues && item.issues.length > 0) {
+        item.issues.forEach(issue => {
+          corrected = corrected.replace(new RegExp(issue.text, 'g'), 
+            `<span class="line-through text-red-500">${issue.text}</span> <span class="text-green-600">${issue.correction}</span>`);
+        });
+      }
+    });
+    
+    return corrected;
   };
 
   return (
@@ -152,56 +165,53 @@ const Feedback = () => {
           </div>
         ) : (
           <>
-            <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-              <h3 className="font-medium mb-3">당신의 답변</h3>
-              <p className="text-sm text-gray-700">{userAnswer}</p>
-            </div>
-            
             {feedbackResult && (
               <>
+                <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4">
+                  <h3 className="font-medium mb-3 text-gray-700">{feedbackResult.question}</h3>
+                </div>
+                
                 <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-medium">전체 평가</h3>
-                    <span className="text-2xl font-bold text-opic-purple">{feedbackResult.opicLevel}</span>
-                  </div>
-                  
-                  <h4 className="font-medium text-sm mb-2">카테고리별 평가</h4>
-                  {feedbackResult.items.map((item, index) => (
-                    <div key={index} className="mb-4">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm capitalize">{item.category}</span>
-                        <span className="text-sm font-medium">{item.score}/100</span>
+                  <h3 className="font-medium mb-3">당신의 답변</h3>
+                  <p className="text-sm text-gray-700">{userAnswer}</p>
+                </div>
+                
+                <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
+                  <Tabs defaultValue="feedback">
+                    <TabsList className="w-full grid grid-cols-3">
+                      <TabsTrigger value="feedback">피드백</TabsTrigger>
+                      <TabsTrigger value="corrected">교정된 답변</TabsTrigger>
+                      <TabsTrigger value="sample">샘플 답변</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="feedback" className="p-4">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-medium">전체 평가</h3>
+                        <span className="text-2xl font-bold text-opic-purple">{feedbackResult.opicLevel}</span>
                       </div>
-                      <div className="w-full bg-gray-200 h-2 rounded-full">
-                        <div 
-                          className="bg-opic-purple h-2 rounded-full" 
-                          style={{ width: `${item.score}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs mt-1 text-gray-600">{item.feedback}</p>
                       
-                      {item.issues && item.issues.length > 0 && (
-                        <div className="mt-2 bg-red-50 p-2 rounded">
-                          {item.issues.map((issue, i) => (
-                            <div key={i} className="text-xs">
-                              <span className="text-red-500 line-through">{issue.text}</span>
-                              {" → "}
-                              <span className="text-green-600 font-medium">{issue.correction}</span>
-                              <p className="text-gray-700 mt-1">{issue.explanation}</p>
-                            </div>
-                          ))}
+                      <h4 className="font-medium text-sm mb-2">카테고리별 평가</h4>
+                      {feedbackResult.items.map((item, index) => (
+                        <div key={index} className="mb-4">
+                          <div className="mb-1">
+                            <span className="text-sm font-medium capitalize">{item.category}</span>
+                          </div>
+                          <p className="text-sm mt-1 text-gray-600">{item.feedback}</p>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      ))}
+                    </TabsContent>
+                    <TabsContent value="corrected" className="p-4">
+                      <h3 className="font-medium mb-3">교정된 답변</h3>
+                      <div 
+                        className="text-sm" 
+                        dangerouslySetInnerHTML={{ __html: getCorrectedAnswer() }} 
+                      />
+                    </TabsContent>
+                    <TabsContent value="sample" className="p-4">
+                      <h3 className="font-medium mb-3">AI 샘플 답변</h3>
+                      <p className="text-sm">{feedbackResult.sampleAnswer}</p>
+                    </TabsContent>
+                  </Tabs>
                 </div>
-                
-                <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-                  <h3 className="font-medium mb-2">개선 제안</h3>
-                  <p className="text-sm">{feedbackResult.suggestions}</p>
-                </div>
-                
-                <GrammarChecker answer={userAnswer} />
                 
                 <Button
                   onClick={() => navigate('/')}
