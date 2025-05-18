@@ -1,9 +1,20 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import { Button } from '@/components/ui/button';
 import { Mic, Square, RefreshCw, Volume2 } from 'lucide-react';
+
+// Define SpeechRecognition type for TypeScript
+interface SpeechRecognitionInstance extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: any) => void;
+  onend: () => void;
+  onerror: (event: any) => void;
+  start: () => void;
+  stop: () => void;
+}
 
 const RecordAnswer = () => {
   const navigate = useNavigate();
@@ -17,7 +28,7 @@ const RecordAnswer = () => {
   const [transcription, setTranscription] = useState("");
   
   // For handling speech recognition (Web Speech API)
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognitionInstance | null>(null);
   
   useEffect(() => {
     // Check if coming directly from template selection (without practice answer)
@@ -33,14 +44,17 @@ const RecordAnswer = () => {
     }
     
     // Initialize speech recognition
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    // Using both browser prefixes
+    const SpeechRecognitionAPI = (window as any).SpeechRecognition || 
+                                (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognitionAPI) {
       const recognitionInstance = new SpeechRecognitionAPI();
       recognitionInstance.continuous = true;
       recognitionInstance.interimResults = true;
       recognitionInstance.lang = 'en-US';
       
-      recognitionInstance.onresult = (event) => {
+      recognitionInstance.onresult = (event: any) => {
         let transcript = '';
         for (let i = 0; i < event.results.length; i++) {
           transcript += event.results[i][0].transcript;
