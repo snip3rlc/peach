@@ -150,6 +150,20 @@ const Feedback = () => {
     return corrected;
   };
 
+  // Helper function to get background color for each category
+  const getCategoryBackgroundColor = (category: string) => {
+    switch (category) {
+      case 'grammar':
+        return 'bg-[#FEF7CD]'; // Light yellow
+      case 'fluency':
+        return 'bg-[#F2FCE2]'; // Light green
+      case 'vocabulary':
+        return 'bg-[#E5DEFF]'; // Light purple
+      default:
+        return 'bg-white';
+    }
+  };
+
   return (
     <div className="pb-20">
       <Header title="피드백 결과" showBack />
@@ -191,7 +205,7 @@ const Feedback = () => {
                       
                       <h4 className="font-medium text-sm mb-2">카테고리별 평가</h4>
                       {feedbackResult.items.map((item, index) => (
-                        <div key={index} className="mb-4">
+                        <div key={index} className={`mb-4 p-3 rounded-md ${getCategoryBackgroundColor(item.category)}`}>
                           <div className="mb-1">
                             <span className="text-sm font-medium capitalize">{item.category}</span>
                           </div>

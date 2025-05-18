@@ -5,10 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 
 interface FeedbackItem {
   category: 'grammar' | 'fluency' | 'vocabulary';
@@ -32,6 +33,7 @@ interface HistoryItem {
 
 const History = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
   const [isPremium, setIsPremium] = useState(true); // For demonstration, set to true to show history
 
@@ -169,6 +171,36 @@ const History = () => {
     
     return corrected;
   };
+  
+  // Function to get background color for each category
+  const getCategoryBackgroundColor = (category: string) => {
+    switch (category) {
+      case 'grammar':
+        return 'bg-[#FEF7CD]'; // Light yellow
+      case 'fluency':
+        return 'bg-[#F2FCE2]'; // Light green
+      case 'vocabulary':
+        return 'bg-[#E5DEFF]'; // Light purple
+      default:
+        return 'bg-white';
+    }
+  };
+  
+  // Delete history item function
+  const deleteHistoryItem = (id: string) => {
+    // Remove item from state
+    const updatedHistory = historyItems.filter(item => item.id !== id);
+    setHistoryItems(updatedHistory);
+    
+    // Update localStorage
+    localStorage.setItem('practiceHistory', JSON.stringify(updatedHistory));
+    
+    // Show toast notification
+    toast({
+      title: "기록이 삭제되었습니다",
+      description: "연습 기록이 성공적으로 삭제되었습니다.",
+    });
+  };
 
   if (!isPremium) {
     return (
@@ -201,8 +233,6 @@ const History = () => {
       <Header title="기록" />
       
       <div className="p-4">
-        <h2 className="font-medium mb-4">연습 기록</h2>
-        
         {historyItems.length === 0 ? (
           <div className="text-center p-8">
             <p className="text-gray-500">아직 연습 기록이 없습니다.</p>
@@ -212,17 +242,30 @@ const History = () => {
             {historyItems.map((item) => (
               <AccordionItem key={item.id} value={item.id}>
                 <Card className="mb-3 shadow-sm overflow-hidden">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <div className="flex flex-col items-start w-full">
-                      <div className="flex justify-between w-full mb-1">
-                        <span className="text-xs text-gray-500">{formatDate(item.date)}</span>
-                        <Badge className={`${getLevelBadgeStyle(item.opicLevel)}`}>
-                          {item.opicLevel}
-                        </Badge>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <AccordionTrigger className="hover:no-underline flex-1">
+                      <div className="flex flex-col items-start w-full">
+                        <div className="flex justify-between w-full mb-1">
+                          <span className="text-xs text-gray-500">{formatDate(item.date)}</span>
+                          <Badge className={`${getLevelBadgeStyle(item.opicLevel)}`}>
+                            {item.opicLevel}
+                          </Badge>
+                        </div>
+                        <h3 className="font-medium text-sm text-left">{item.question}</h3>
                       </div>
-                      <h3 className="font-medium text-sm text-left">{item.question}</h3>
-                    </div>
-                  </AccordionTrigger>
+                    </AccordionTrigger>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteHistoryItem(item.id);
+                      }}
+                      className="ml-2 text-gray-500 hover:text-red-500"
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  </div>
                   
                   <AccordionContent>
                     <CardContent className="px-4 pt-1 pb-4">
@@ -240,7 +283,7 @@ const History = () => {
                         
                         <TabsContent value="feedback" className="pt-3">
                           {item.feedbackItems?.map((feedbackItem, index) => (
-                            <div key={index} className="mb-3">
+                            <div key={index} className={`mb-3 p-2 rounded-md ${getCategoryBackgroundColor(feedbackItem.category)}`}>
                               <h4 className="text-xs font-medium capitalize mb-1">{feedbackItem.category}</h4>
                               <p className="text-xs text-gray-600">{feedbackItem.feedback}</p>
                             </div>
