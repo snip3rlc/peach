@@ -17,14 +17,15 @@ const RecordAnswer = () => {
   
   useEffect(() => {
     // Check if coming directly from template selection (without practice answer)
-    const pathParts = location.pathname.split('/');
     const prevPath = document.referrer;
     if (prevPath.includes('/template') && !prevPath.includes('/practice-answer')) {
       setIsDirectNavigation(true);
       setAnswer(""); // No prepared answer
+      console.log("Direct navigation detected from template page");
     } else {
       // This is the example answer from PracticeAnswer page
       setAnswer("In my daily life, I usually wake up at 7. The first thing I do is play soccer. After that, I play soccer. In the afternoon, I typically play soccer. My favorite part of the day is when I play soccer because it's fun.");
+      console.log("Navigation from practice-answer page detected");
     }
   }, [location]);
   
@@ -44,11 +45,19 @@ const RecordAnswer = () => {
       
       // If we have an answer and it's a direct navigation, use text-to-speech
       if (isDirectNavigation && window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance("I'm recording my answer without using a template.");
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        setSpeechSynthesis(utterance);
+        window.speechSynthesis.speak(utterance);
+        console.log("Text-to-speech activated for direct navigation");
+      } else if (!isDirectNavigation && window.speechSynthesis) {
         const utterance = new SpeechSynthesisUtterance(answer);
         utterance.lang = 'en-US';
         utterance.rate = 0.9;
         setSpeechSynthesis(utterance);
         window.speechSynthesis.speak(utterance);
+        console.log("Text-to-speech activated for prepared answer");
       }
       
       // Start timer

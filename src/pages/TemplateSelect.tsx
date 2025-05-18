@@ -13,6 +13,9 @@ const TemplateSelect = () => {
     const levelParam = searchParams.get('level');
     if (levelParam) {
       setLevel(levelParam);
+    } else {
+      // For testing, set a default level to show the Don't Need Template option
+      setLevel('intermediate');
     }
   }, [location]);
 
@@ -26,6 +29,11 @@ const TemplateSelect = () => {
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
           <h2 className="text-lg font-medium mb-2">답변 템플릿을 선택하세요</h2>
           <p className="text-sm text-gray-600">Tell me about your daily life.</p>
+          {level && (
+            <p className="text-xs text-gray-500 mt-2">
+              Current level: {level}
+            </p>
+          )}
         </div>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4">
