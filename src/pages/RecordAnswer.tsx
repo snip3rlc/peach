@@ -14,6 +14,10 @@ const RecordAnswer = () => {
   const [answer, setAnswer] = useState("");
   const [isDirectNavigation, setIsDirectNavigation] = useState(false);
   const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
+  const [transcription, setTranscription] = useState("");
+  
+  // For handling speech recognition (Web Speech API)
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
   
   useEffect(() => {
     // Check if coming directly from template selection (without practice answer)
@@ -27,12 +31,47 @@ const RecordAnswer = () => {
       setAnswer("In my daily life, I usually wake up at 7. The first thing I do is play soccer. After that, I play soccer. In the afternoon, I typically play soccer. My favorite part of the day is when I play soccer because it's fun.");
       console.log("Navigation from practice-answer page detected");
     }
+    
+    // Initialize speech recognition
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = true;
+      recognitionInstance.interimResults = true;
+      recognitionInstance.lang = 'en-US';
+      
+      recognitionInstance.onresult = (event) => {
+        let transcript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setTranscription(transcript);
+        // If this is a direct navigation (Speak Freely), update the answer too
+        if (isDirectNavigation) {
+          setAnswer(transcript);
+        }
+      };
+      
+      setRecognition(recognitionInstance);
+    }
+    
+    return () => {
+      // Clean up speech recognition
+      if (recognition) {
+        recognition.stop();
+      }
+    };
   }, [location]);
   
   const toggleRecording = () => {
     if (isRecording) {
       setIsRecording(false);
       setRecordingComplete(true);
+      
+      // Stop the speech recognition if it's active
+      if (recognition) {
+        recognition.stop();
+      }
       
       // Stop the text-to-speech if it's playing
       if (speechSynthesis) {
@@ -43,15 +82,12 @@ const RecordAnswer = () => {
       setRecordingTime(0);
       setRecordingComplete(false);
       
-      // If we have an answer and it's a direct navigation, use text-to-speech
-      if (isDirectNavigation && window.speechSynthesis) {
-        const utterance = new SpeechSynthesisUtterance("I'm recording my answer without using a template.");
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-        setSpeechSynthesis(utterance);
-        window.speechSynthesis.speak(utterance);
-        console.log("Text-to-speech activated for direct navigation");
+      // Start speech recognition if it's a direct navigation (Speak Freely mode)
+      if (isDirectNavigation && recognition) {
+        recognition.start();
+        console.log("Speech recognition started for direct navigation");
       } else if (!isDirectNavigation && window.speechSynthesis) {
+        // If we have a prepared answer, use text-to-speech
         const utterance = new SpeechSynthesisUtterance(answer);
         utterance.lang = 'en-US';
         utterance.rate = 0.9;
@@ -86,10 +122,10 @@ const RecordAnswer = () => {
           <p className="mt-1">Tell me about your daily life.</p>
         </div>
         
-        {answer && (
+        {(answer || (isDirectNavigation && transcription)) && (
           <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
             <h3 className="font-medium mb-3">작성한 답변</h3>
-            <p className="text-sm text-gray-700">{answer}</p>
+            <p className="text-sm text-gray-700">{isDirectNavigation ? transcription : answer}</p>
           </div>
         )}
         
@@ -153,5 +189,13 @@ const RecordAnswer = () => {
     </div>
   );
 };
+
+// Add this to fix TypeScript errors
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
 
 export default RecordAnswer;

@@ -45,13 +45,15 @@ const TemplateSelect = () => {
           </p>
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4 opacity-50">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4 opacity-50 relative">
+          <div className="absolute top-3 right-3">
+            <span className="text-xs px-2 py-1 bg-opic-purple text-white rounded-full inline-block">프리미엄</span>
+          </div>
           <h3 className="font-medium mb-3">Detailed Schedule</h3>
           <p className="text-sm text-gray-600 mb-1">
             On weekdays, I wake up ___ and ___. My daily 
             routine is _____. When I _____... 
           </p>
-          <span className="text-xs px-2 py-1 bg-opic-purple text-white rounded-full inline-block mt-2">프리미엄</span>
         </div>
         
         {isIntermediateOrAdvanced && (
@@ -62,8 +64,7 @@ const TemplateSelect = () => {
             <div>
               <h3 className="font-medium mb-3">Speak Freely</h3>
               <p className="text-sm text-gray-600">
-                Create your own answer without using a template. 
-                Express yourself naturally and confidently.
+                템플릿 없이 바로 내 말로 답해볼게요
               </p>
             </div>
           </Link>
