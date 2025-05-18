@@ -17,7 +17,7 @@ interface FeedbackItem {
 }
 
 interface FeedbackResult {
-  overallScore: number;
+  opicLevel: string;
   items: FeedbackItem[];
   suggestions: string;
 }
@@ -55,8 +55,20 @@ const Feedback = () => {
     const isShort = text.split(' ').length < 20;
     const hasRepetition = /(play soccer.*){2,}/i.test(text);
     
+    // Determine OPIc level based on criteria
+    let opicLevel = 'IM';
+    if (hasGrammarIssues && isShort) {
+      opicLevel = 'IL';
+    } else if (!hasGrammarIssues && !isShort && !hasRepetition) {
+      opicLevel = 'IH';
+    } else if (!hasGrammarIssues && !isShort && hasRepetition) {
+      opicLevel = 'IM2';
+    } else if (text.length > 200 && !hasGrammarIssues && !isShort && !hasRepetition) {
+      opicLevel = 'AL';
+    }
+    
     return {
-      overallScore: hasGrammarIssues ? 65 : (isShort ? 75 : 90),
+      opicLevel,
       items: [
         {
           category: 'grammar',
@@ -120,7 +132,7 @@ const Feedback = () => {
                 <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-medium">전체 평가</h3>
-                    <span className="text-2xl font-bold text-opic-purple">{feedbackResult.overallScore}/100</span>
+                    <span className="text-2xl font-bold text-opic-purple">{feedbackResult.opicLevel}</span>
                   </div>
                   
                   <h4 className="font-medium text-sm mb-2">카테고리별 평가</h4>
@@ -162,7 +174,7 @@ const Feedback = () => {
                 <GrammarChecker answer={userAnswer} />
                 
                 <Button
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/')}
                   className="w-full bg-opic-purple hover:bg-opic-dark-purple mt-6"
                 >
                   연습 완료

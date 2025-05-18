@@ -58,14 +58,14 @@ const RecordAnswer = () => {
     {
       id: 0,
       name: "Speak Freely",
-      description: "Answer freely, your speech will be transcribed in real-time",
+      description: "",
       locked: false,
       content: ""
     },
     {
       id: 1, 
       name: "Template 1",
-      description: "Basic structure for daily life responses",
+      description: "",
       locked: false,
       fields: [
         { name: "time", label: "time:" },
@@ -77,7 +77,7 @@ const RecordAnswer = () => {
     {
       id: 2,
       name: "Template 2",
-      description: "Advanced structure with more detail",
+      description: "",
       locked: !isPremiumUser,
       fields: [
         { name: "time", label: "time:" },
@@ -89,7 +89,7 @@ const RecordAnswer = () => {
     {
       id: 3,
       name: "Template 3",
-      description: "Professional response template",
+      description: "",
       locked: !isPremiumUser,
       fields: [
         { name: "time", label: "time:" },
@@ -248,14 +248,33 @@ const RecordAnswer = () => {
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-          <h2 className="font-medium">질문</h2>
           <p className="mt-1">Tell me about your daily life.</p>
         </div>
         
         <Carousel className="mb-6" ref={emblaRef}>
-          <div className="flex justify-center mb-2">
-            <CarouselPrevious className="static translate-y-0 mr-2" />
-            <CarouselNext className="static translate-y-0" />
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex">
+              <CarouselPrevious className="static translate-y-0 mr-2" />
+              <CarouselNext className="static translate-y-0" />
+            </div>
+            <div className="flex space-x-2">
+              {recordingComplete && (
+                <>
+                  <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Volume2 size={18} className="text-gray-700" />
+                  </button>
+                  <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <RefreshCw size={18} className="text-gray-700" />
+                  </button>
+                </>
+              )}
+              <button 
+                onClick={toggleRecording}
+                className={`w-10 h-10 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
+              >
+                {isRecording ? <Square size={20} /> : <Mic size={20} />}
+              </button>
+            </div>
           </div>
           
           <CarouselContent>
@@ -280,7 +299,6 @@ const RecordAnswer = () => {
                   <CardContent className="p-4 pt-4">
                     <div className="mb-2">
                       <h3 className="font-medium">{template.name}</h3>
-                      <p className="text-sm text-gray-600 mb-3">{template.description}</p>
                     </div>
                     
                     {!template.locked && (
@@ -332,62 +350,20 @@ const RecordAnswer = () => {
           </CarouselContent>
         </Carousel>
         
-        <div className="text-center mb-8">
-          <p className="text-gray-700 mb-6">
-            {activeTemplate === 0 
-              ? "자유롭게 답변을 녹음하세요" 
-              : "준비된 답변을 소리내어 읽고 녹음하세요"}
-          </p>
-          
-          <div className="flex flex-col items-center">
-            {isRecording ? (
-              <button 
-                onClick={toggleRecording}
-                className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-2 text-white"
-              >
-                <Square size={24} />
-              </button>
-            ) : (
-              <button 
-                onClick={toggleRecording} 
-                className="w-16 h-16 bg-opic-purple rounded-full flex items-center justify-center mb-2 text-white"
-              >
-                <Mic size={24} />
-              </button>
-            )}
-            
-            <p className="text-sm text-gray-500">
-              {isRecording ? '눌러서 녹음 중지' : (recordingComplete ? '눌러서 녹음 시작' : '눌러서 녹음 시작')}
-            </p>
-            
-            {isRecording && (
-              <div className="mt-2 text-opic-purple font-medium">
-                {formatTime(recordingTime)}
-              </div>
-            )}
-            
-            {recordingComplete && (
-              <div className="mt-4 flex space-x-4">
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Volume2 size={20} className="text-gray-700" />
-                </button>
-                <button className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                  <RefreshCw size={20} className="text-gray-700" />
-                </button>
-              </div>
-            )}
+        {isRecording && (
+          <div className="text-center mt-2 mb-8">
+            <div className="mt-2 text-opic-purple font-medium">
+              {formatTime(recordingTime)}
+            </div>
           </div>
-        </div>
+        )}
         
         <Button
           onClick={handleContinue}
           className="w-full bg-opic-purple hover:bg-opic-dark-purple"
           disabled={!completedAnswer}
         >
-          계속하기
-          <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          Next &gt;
         </Button>
       </div>
     </div>
