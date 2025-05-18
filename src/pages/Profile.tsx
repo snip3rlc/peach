@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package } from 'lucide-react';
+import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package, Edit, Camera } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
@@ -11,9 +11,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('게스트 사용자');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [name, setName] = useState('게스트 사용자');
+  
+  const handleChangeName = () => {
+    if (isEditingName) {
+      setUserName(name);
+    }
+    setIsEditingName(!isEditingName);
+  };
   
   return (
     <div>
@@ -22,14 +34,42 @@ const Profile = () => {
       <div className="p-4">
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
           <div className="flex items-center">
-            <div className="w-16 h-16 bg-opic-light-purple text-opic-purple rounded-full flex items-center justify-center text-xl font-medium">
-              게스
+            <div className="relative">
+              <Avatar className="w-16 h-16 bg-opic-light-purple text-opic-purple">
+                <AvatarFallback className="text-xl font-medium">
+                  {userName.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <button className="absolute bottom-0 right-0 w-6 h-6 bg-opic-purple rounded-full flex items-center justify-center text-white">
+                <Camera size={14} />
+              </button>
             </div>
             <div className="ml-4 flex-1">
-              <h2 className="text-lg font-medium mb-1 flex items-center">
-                게스트 사용자
-                <ChevronRight size={20} className="ml-1 text-gray-400" />
-              </h2>
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <Input 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
+                    className="text-lg font-medium"
+                  />
+                  <button 
+                    className="bg-opic-purple text-white p-1 rounded-full"
+                    onClick={handleChangeName}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              ) : (
+                <h2 className="text-lg font-medium mb-1 flex items-center">
+                  {userName}
+                  <button 
+                    className="ml-1 text-gray-400"
+                    onClick={handleChangeName}
+                  >
+                    <Edit size={16} />
+                  </button>
+                </h2>
+              )}
               <p className="text-gray-500 text-sm">guest@example.com</p>
               <p className="text-gray-500 text-sm">가입일: 2025년 5월 17일</p>
             </div>
@@ -70,6 +110,7 @@ const Profile = () => {
           </div>
         </div>
         
+        {/* FAQ Accordion - now separate */}
         <Accordion type="single" collapsible className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
           <AccordionItem value="faq" className="border-b-0">
             <AccordionTrigger className="p-4 hover:no-underline">
@@ -97,8 +138,11 @@ const Profile = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
-          
-          <AccordionItem value="app-info" className="border-t border-gray-100">
+        </Accordion>
+        
+        {/* App Info Accordion - now separate */}
+        <Accordion type="single" collapsible className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
+          <AccordionItem value="app-info" className="border-b-0">
             <AccordionTrigger className="p-4 hover:no-underline">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
@@ -115,8 +159,8 @@ const Profile = () => {
           </AccordionItem>
         </Accordion>
         
-        <button className="w-full p-4 text-center text-red-500 flex items-center justify-center">
-          <LogOut size={20} className="mr-2" />
+        <button className="w-full p-2 text-left text-sm text-black flex items-center">
+          <LogOut size={16} className="mr-2" />
           <span>로그아웃</span>
         </button>
       </div>

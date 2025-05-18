@@ -1,14 +1,15 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
   showBack?: boolean;
+  children?: ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, showBack = true }) => {
+const Header: React.FC<HeaderProps> = ({ title, showBack = true, children }) => {
   const navigate = useNavigate();
 
   return (
@@ -22,6 +23,11 @@ const Header: React.FC<HeaderProps> = ({ title, showBack = true }) => {
         </button>
       )}
       <h1 className="text-lg font-medium text-center flex-1">{title}</h1>
+      {children && (
+        <div className="ml-auto">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

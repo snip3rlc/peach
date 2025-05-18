@@ -244,35 +244,44 @@ const RecordAnswer = () => {
 
   return (
     <div className="pb-20">
-      <Header title="답변 녹음" showBack />
+      <Header title="답변 녹음" showBack>
+        <Button
+          onClick={handleContinue}
+          size="sm"
+          className="bg-opic-purple hover:bg-opic-dark-purple"
+          disabled={!completedAnswer}
+        >
+          Next &gt;
+        </Button>
+      </Header>
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-          <p className="mt-1">Tell me about your daily life.</p>
+          <p>Tell me about your daily life.</p>
         </div>
         
         <Carousel className="mb-6" ref={emblaRef}>
           <div className="flex justify-between items-center mb-2">
             <div className="flex">
-              <CarouselPrevious className="static translate-y-0 mr-2" />
-              <CarouselNext className="static translate-y-0" />
+              <CarouselPrevious className="static translate-y-0 mr-2 h-7 w-7" />
+              <CarouselNext className="static translate-y-0 h-7 w-7" />
             </div>
             <div className="flex space-x-2">
               {recordingComplete && (
                 <>
-                  <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Volume2 size={18} className="text-gray-700" />
+                  <button className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Volume2 size={16} className="text-gray-700" />
                   </button>
-                  <button className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <RefreshCw size={18} className="text-gray-700" />
+                  <button className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center">
+                    <RefreshCw size={16} className="text-gray-700" />
                   </button>
                 </>
               )}
               <button 
                 onClick={toggleRecording}
-                className={`w-10 h-10 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
+                className={`w-9 h-9 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
               >
-                {isRecording ? <Square size={20} /> : <Mic size={20} />}
+                {isRecording ? <Square size={18} /> : <Mic size={18} />}
               </button>
             </div>
           </div>
@@ -357,14 +366,6 @@ const RecordAnswer = () => {
             </div>
           </div>
         )}
-        
-        <Button
-          onClick={handleContinue}
-          className="w-full bg-opic-purple hover:bg-opic-dark-purple"
-          disabled={!completedAnswer}
-        >
-          Next &gt;
-        </Button>
       </div>
     </div>
   );

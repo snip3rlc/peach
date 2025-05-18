@@ -1,11 +1,12 @@
 
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { 
   Accordion,
   AccordionContent,
@@ -47,7 +48,28 @@ const languageTips = [
   }
 ];
 
+// Culture tips data
+const cultureTips = [
+  {
+    emoji: '🍽️',
+    title: '식사 예절',
+    content: '미국에서는 식사 중에 팁을 남기는 것이 일반적입니다. 보통 계산서의 15-20%를 팁으로 남깁니다.',
+  },
+  {
+    emoji: '👋',
+    title: '인사 방법',
+    content: '영어권 국가에서는 처음 만났을 때 악수를 하는 것이 일반적입니다.',
+  },
+  {
+    emoji: '⏰',
+    title: '시간 개념',
+    content: '미국과 영국에서는 시간을 정확히 지키는 것이 중요합니다. 약속 시간보다 5-10분 일찍 도착하는 것이 예의입니다.',
+  }
+];
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+  
   // Get a random tip that changes daily (or randomly if you prefer)
   const randomTip = useMemo(() => {
     // For daily change, use the current date as seed
@@ -55,9 +77,13 @@ const Dashboard = () => {
     const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const index = seed % languageTips.length;
     return languageTips[index];
-    
-    // For completely random selection on each render, use:
-    // return languageTips[Math.floor(Math.random() * languageTips.length)];
+  }, []);
+
+  const randomCultureTip = useMemo(() => {
+    const today = new Date().toDateString();
+    const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = seed % cultureTips.length;
+    return cultureTips[index];
   }, []);
 
   return (
@@ -89,17 +115,24 @@ const Dashboard = () => {
             <div className="h-full bg-white rounded-full" style={{ width: '60%' }}></div>
           </div>
         </div>
+        
+        <Button 
+          className="w-full mt-4 bg-white text-opic-purple hover:bg-white/90" 
+          onClick={() => navigate('/level-select')}
+        >
+          Let's start
+        </Button>
       </div>
       
-      {/* Daily Expression Card - Section with 20px margin */}
+      {/* Daily Expression Card - Section with smaller title */}
       <div className="mx-6 mb-8">
-        <h2 className="text-lg font-medium mb-4">오늘의 표현</h2>
+        <h2 className="text-base font-medium mb-4">오늘의 표현</h2>
         <Card className="overflow-hidden shadow-sm">
           <CardContent className="p-5">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-medium text-lg text-opic-purple mb-1">"I'm swamped"</h3>
-                <p className="text-gray-700 mb-3">바빠서 정신이 없어요</p>
+                <p className="text-xs text-gray-700 mb-3">바빠서 정신이 없어요</p>
                 <Separator className="my-3 bg-gray-100" />
                 <p className="text-sm text-gray-600 italic leading-relaxed">"I can't meet today, I'm totally swamped with work."</p>
               </div>
@@ -112,38 +145,57 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Conversation Tip - Now with smaller card and subtle styling */}
+      {/* Tips Section - Two cards side by side */}
       <div className="mx-6 mb-8">
-        <h2 className="text-lg font-medium mb-4">{randomTip.emoji} 대화 팁</h2>
-        <Card className="shadow-sm">
-          <CardContent className="p-3">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="tip" className="border-none">
-                <AccordionTrigger className="py-1 text-sm">
-                  {randomTip.title}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <p className="text-sm text-gray-700 mb-2">{randomTip.content}</p>
-                  {randomTip.example && (
-                    <>
-                      <Separator className="my-2 bg-gray-100" />
-                      <div className="text-xs text-gray-600 space-y-1">
-                        {randomTip.example.split('\n').map((line, idx) => (
-                          <p key={idx} className="italic leading-relaxed">{line}</p>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Conversation Tip */}
+          <div>
+            <h2 className="text-base font-medium mb-4">대화 팁</h2>
+            <Card className="shadow-sm h-full">
+              <CardContent className="p-3">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="tip" className="border-none">
+                    <AccordionTrigger className="py-1 text-sm">
+                      {randomTip.title}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <p className="text-sm text-gray-700 mb-2">{randomTip.content}</p>
+                      {randomTip.example && (
+                        <>
+                          <Separator className="my-2 bg-gray-100" />
+                          <div className="text-xs text-gray-600 space-y-1">
+                            {randomTip.example.split('\n').map((line, idx) => (
+                              <p key={idx} className="italic leading-relaxed">{line}</p>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Culture Tip */}
+          <div>
+            <h2 className="text-base font-medium mb-4">문화 팁</h2>
+            <Card className="shadow-sm h-full">
+              <CardContent className="p-3">
+                <div className="flex items-center mb-2">
+                  <span className="mr-2 text-lg">{randomCultureTip.emoji}</span>
+                  <h3 className="text-sm font-medium">{randomCultureTip.title}</h3>
+                </div>
+                <p className="text-xs text-gray-700">{randomCultureTip.content}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
       
-      {/* Recent Practice - Section with proper spacing */}
+      {/* Recent Practice - Section with smaller title */}
       <div className="mx-6 mb-6">
-        <h2 className="text-lg font-medium mb-4">최근 연습</h2>
+        <h2 className="text-base font-medium mb-4">최근 연습</h2>
         <Card className="shadow-sm">
           <CardContent className="p-5">
             <div className="flex justify-between items-center mb-3">
