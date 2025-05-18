@@ -9,8 +9,6 @@ import Dashboard from "./pages/Dashboard";
 import LevelSelect from "./pages/LevelSelect";
 import TopicSelect from "./pages/TopicSelect";
 import QuestionSelect from "./pages/QuestionSelect";
-import TemplateSelect from "./pages/TemplateSelect";
-import PracticeAnswer from "./pages/PracticeAnswer";
 import RecordAnswer from "./pages/RecordAnswer";
 import Feedback from "./pages/Feedback";
 import Practice from "./pages/Practice";
@@ -69,18 +67,6 @@ const App = () => {
               <Route path="/questions" element={
                 <>
                   <QuestionSelect />
-                  <BottomNav />
-                </>
-              } />
-              <Route path="/template" element={
-                <>
-                  <TemplateSelect />
-                  <BottomNav />
-                </>
-              } />
-              <Route path="/practice-answer" element={
-                <>
-                  <PracticeAnswer />
                   <BottomNav />
                 </>
               } />

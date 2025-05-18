@@ -20,7 +20,7 @@ const QuestionSelect = () => {
         
         <div className="space-y-4">
           <Link 
-            to="/template"
+            to="/record-answer"
             className="block bg-white rounded-lg border border-gray-100 shadow-sm p-4"
           >
             <div className="flex items-center justify-between">
@@ -34,7 +34,7 @@ const QuestionSelect = () => {
           </Link>
           
           <Link 
-            to="/template"
+            to="/record-answer"
             className="block bg-white rounded-lg border border-gray-100 shadow-sm p-4"
           >
             <div className="flex items-center justify-between">
