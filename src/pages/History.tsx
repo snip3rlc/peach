@@ -242,18 +242,19 @@ const History = () => {
             {historyItems.map((item) => (
               <AccordionItem key={item.id} value={item.id}>
                 <Card className="mb-3 shadow-sm overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <AccordionTrigger className="hover:no-underline flex-1">
-                      <div className="flex flex-col items-start">
-                        <div className="text-xs text-gray-500 mb-1">{formatDate(item.date)}</div>
-                        <h3 className="font-medium text-sm text-left">{item.question}</h3>
-                      </div>
-                    </AccordionTrigger>
-                    <div className="flex flex-col items-end">
-                      <Badge className={`${getLevelBadgeStyle(item.opicLevel)} mb-1`}>
+                  <div className="px-4 py-3">
+                    {/* First row with date and badge */}
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-xs text-gray-500">{formatDate(item.date)}</div>
+                      <Badge className={`${getLevelBadgeStyle(item.opicLevel)}`}>
                         {item.opicLevel}
                       </Badge>
                     </div>
+                    
+                    {/* Second row with question and dropdown arrow */}
+                    <AccordionTrigger className="hover:no-underline p-0 flex items-start">
+                      <h3 className="font-medium text-sm text-left">{item.question}</h3>
+                    </AccordionTrigger>
                   </div>
                   
                   <AccordionContent>
