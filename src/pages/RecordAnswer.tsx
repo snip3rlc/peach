@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/carousel';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import useEmblaCarousel from 'embla-carousel-react';
 
 // Define SpeechRecognition type for TypeScript
 interface SpeechRecognitionInstance extends EventTarget {
@@ -37,6 +38,9 @@ const RecordAnswer = () => {
   const [transcription, setTranscription] = useState("");
   const [isPremiumUser] = useState(false); // This would come from auth context in a real app
   const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
+  
+  // For embla carousel
+  const [emblaRef, emblaApi] = useEmblaCarousel();
   
   // For template form data
   const [formData, setFormData] = useState({
@@ -135,6 +139,27 @@ const RecordAnswer = () => {
     };
   }, [activeTemplate, formData]);
   
+  // Sync carousel with active template
+  useEffect(() => {
+    if (emblaApi && emblaApi.scrollTo) {
+      emblaApi.scrollTo(activeTemplate);
+    }
+  }, [emblaApi, activeTemplate]);
+  
+  // Update activeTemplate when carousel changes
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onSelect = () => {
+      setActiveTemplate(emblaApi.selectedScrollSnap());
+    };
+    
+    emblaApi.on('select', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
+  
   const updateCompletedAnswer = () => {
     if (activeTemplate === 0) {
       // Direct transcription
@@ -230,7 +255,7 @@ const RecordAnswer = () => {
           <CarouselNext className="static translate-y-0" />
         </div>
         
-        <Carousel className="mb-6" value={activeTemplate} onValueChange={setActiveTemplate}>
+        <Carousel className="mb-6" ref={emblaRef}>
           <CarouselContent>
             {templates.map((template) => (
               <CarouselItem key={template.id}>
