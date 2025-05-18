@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, History, DollarSign, User } from 'lucide-react';
+import { Home, BookOpen, History, FileText, User } from 'lucide-react';
 
 const BottomNav = () => {
   const location = useLocation();
@@ -24,9 +24,9 @@ const BottomNav = () => {
         <History size={20} />
         <span className="text-xs mt-1">History</span>
       </Link>
-      <Link to="/plans" className={`flex flex-col items-center ${isActive('/plans')}`}>
-        <DollarSign size={20} />
-        <span className="text-xs mt-1">Plans</span>
+      <Link to="/tests" className={`flex flex-col items-center ${isActive('/tests')}`}>
+        <FileText size={20} />
+        <span className="text-xs mt-1">Tests</span>
       </Link>
       <Link to="/profile" className={`flex flex-col items-center ${isActive('/profile')}`}>
         <User size={20} />

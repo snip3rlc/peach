@@ -21,6 +21,7 @@ import Referral from "./pages/Referral";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import SignIn from "./pages/SignIn";
+import Tests from "./pages/Tests";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,12 @@ const App = () => {
               <Route path="/referral" element={
                 <>
                   <Referral />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/tests" element={
+                <>
+                  <Tests />
                   <BottomNav />
                 </>
               } />

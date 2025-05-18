@@ -31,19 +31,10 @@ const Profile = () => {
         </div>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-          <h3 className="font-medium mb-4">구독 정보</h3>
-          <div className="flex justify-between items-center">
-            <p className="text-gray-700">현재 플랜</p>
-            <div className="flex items-center">
-              <span className="text-black font-medium mr-2">스타터</span>
-              <button 
-                className="px-3 py-1 border border-opic-purple text-opic-purple rounded text-sm font-medium"
-                onClick={() => navigate('/plans')}
-              >
-                변경
-              </button>
-            </div>
-          </div>
+          <Link to="/plans" className="flex justify-between items-center">
+            <h3 className="font-medium">구독 정보</h3>
+            <ChevronRight size={20} className="text-gray-400" />
+          </Link>
         </div>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
