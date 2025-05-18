@@ -126,16 +126,11 @@ const RecordAnswer = () => {
       
       setRecognition(recognitionInstance);
     }
-    
-    // Set completedAnswer based on active template and form data
+  }, []);
+  
+  // Update completedAnswer based on active template and form data
+  useEffect(() => {
     updateCompletedAnswer();
-    
-    return () => {
-      // Clean up speech recognition
-      if (recognition) {
-        recognition.stop();
-      }
-    };
   }, [activeTemplate, formData]);
   
   // Sync carousel with active template
@@ -151,6 +146,8 @@ const RecordAnswer = () => {
     
     const onSelect = () => {
       setActiveTemplate(emblaApi.selectedScrollSnap());
+      // Update the completed answer when template changes
+      updateCompletedAnswer();
     };
     
     emblaApi.on('select', onSelect);
@@ -166,10 +163,12 @@ const RecordAnswer = () => {
     } else {
       // Template-based answer
       const template = templates[activeTemplate];
-      if (template) {
+      if (template && !template.locked) {
         let answer = template.template;
+        // Replace each placeholder with form data or keep the placeholder if not filled
         Object.entries(formData).forEach(([key, value]) => {
-          answer = answer.replace(new RegExp(`\\[${key}\\]`, 'g'), value || `[${key}]`);
+          const regex = new RegExp(`\\[${key}\\]`, 'g');
+          answer = answer.replace(regex, value || `[${key}]`);
         });
         
         setCompletedAnswer(answer);
@@ -179,10 +178,14 @@ const RecordAnswer = () => {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [name]: value
+      };
+      
+      return newData;
+    });
   };
   
   const toggleRecording = () => {
@@ -313,7 +316,10 @@ const RecordAnswer = () => {
                             
                             <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
                               <h3 className="font-medium mb-3">완성된 답변</h3>
-                              <p className="text-sm text-gray-700">{completedAnswer}</p>
+                              <p className="text-sm text-gray-700">
+                                {activeTemplate === template.id && completedAnswer}
+                                {activeTemplate !== template.id && template.template.replace(/\[(.*?)\]/g, '[$1]')}
+                              </p>
                             </div>
                           </>
                         )}
