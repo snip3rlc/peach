@@ -145,57 +145,63 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Tips Section - Two cards side by side */}
+      {/* Tips Section - New layout based on the image */}
       <div className="mx-6 mb-8">
+        <h2 className="text-sm font-medium mb-4">오늘의 표현</h2>
+        
+        <Card className="overflow-hidden shadow-sm mb-5">
+          <CardContent className="p-5">
+            <div className="flex items-center mb-2">
+              <div className="w-10 h-10 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple">
+                <BookOpen size={20} />
+              </div>
+              <div className="ml-4">
+                <h3 className="font-medium">Put yourself in someone else's shoes</h3>
+                <p className="text-xs text-gray-600">다른 사람의 입장이 되어보세요</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-700 mt-3 italic">
+              "When dealing with conflicts, try to put yourself in someone else's shoes to understand their perspective."
+            </p>
+          </CardContent>
+        </Card>
+        
         <div className="grid grid-cols-2 gap-4">
-          {/* Conversation Tip */}
-          <div>
-            <h2 className="text-base font-medium mb-4">대화 팁</h2>
-            <Card className="shadow-sm h-full">
-              <CardContent className="p-3">
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="tip" className="border-none">
-                    <AccordionTrigger className="py-1 text-sm">
-                      {randomTip.title}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <p className="text-sm text-gray-700 mb-2">{randomTip.content}</p>
-                      {randomTip.example && (
-                        <>
-                          <Separator className="my-2 bg-gray-100" />
-                          <div className="text-xs text-gray-600 space-y-1">
-                            {randomTip.example.split('\n').map((line, idx) => (
-                              <p key={idx} className="italic leading-relaxed">{line}</p>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Culture Tip */}
-          <div>
-            <h2 className="text-base font-medium mb-4">문화 팁</h2>
-            <Card className="shadow-sm h-full">
-              <CardContent className="p-3">
-                <div className="flex items-center mb-2">
-                  <span className="mr-2 text-lg">{randomCultureTip.emoji}</span>
-                  <h3 className="text-sm font-medium">{randomCultureTip.title}</h3>
+          {/* Culture Tip Card */}
+          <Card className="shadow-sm h-full">
+            <CardContent className="p-4">
+              <div className="flex items-start mb-2">
+                <span className="text-amber-500 mr-2">💡</span>
+                <div>
+                  <h3 className="text-sm font-medium">문화 팁</h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다.
+                  </p>
                 </div>
-                <p className="text-xs text-gray-700">{randomCultureTip.content}</p>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Speaking Tip Card */}
+          <Card className="shadow-sm h-full">
+            <CardContent className="p-4">
+              <div className="flex items-start mb-2">
+                <span className="text-blue-500 mr-2">💬</span>
+                <div>
+                  <h3 className="text-sm font-medium">스피킹 팁</h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
       
       {/* Recent Practice - Section with smaller title */}
       <div className="mx-6 mb-6">
-        <h2 className="text-base font-medium mb-4">최근 연습</h2>
+        <h2 className="text-sm font-medium mb-4">최근 연습</h2>
         <Card className="shadow-sm">
           <CardContent className="p-5">
             <div className="flex justify-between items-center mb-3">

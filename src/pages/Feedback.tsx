@@ -40,6 +40,9 @@ const Feedback = () => {
         const simulatedFeedback = generateSimulatedFeedback(transcript);
         setFeedbackResult(simulatedFeedback);
         setLoading(false);
+        
+        // Save result to history automatically
+        saveResultToHistory(transcript, simulatedFeedback);
       }, 2000);
     } else {
       // If no transcript, provide default feedback
@@ -47,6 +50,33 @@ const Feedback = () => {
       setUserAnswer('No answer recorded.');
     }
   }, []);
+  
+  // Function to save results to history
+  const saveResultToHistory = (transcript: string, feedback: FeedbackResult) => {
+    try {
+      // Get existing history or initialize empty array
+      const existingHistory = JSON.parse(localStorage.getItem('practiceHistory') || '[]');
+      
+      // Add current result to history
+      const newHistoryItem = {
+        date: new Date().toISOString(),
+        transcript: transcript,
+        opicLevel: feedback.opicLevel,
+        scores: feedback.items.reduce((acc, item) => {
+          acc[item.category] = item.score;
+          return acc;
+        }, {} as Record<string, number>),
+        question: 'Tell me about your daily life.'
+      };
+      
+      // Add to history and save back to localStorage
+      localStorage.setItem('practiceHistory', JSON.stringify([newHistoryItem, ...existingHistory]));
+      
+      console.log('Result saved to history successfully');
+    } catch (error) {
+      console.error('Error saving result to history:', error);
+    }
+  };
 
   // This function simulates the ChatGPT API response
   // In a real application, this would be replaced with an actual API call

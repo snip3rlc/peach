@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -249,7 +250,6 @@ const RecordAnswer = () => {
           onClick={handleContinue}
           size="sm"
           className="bg-opic-purple hover:bg-opic-dark-purple"
-          disabled={!completedAnswer}
         >
           Next &gt;
         </Button>
@@ -263,25 +263,25 @@ const RecordAnswer = () => {
         <Carousel className="mb-6" ref={emblaRef}>
           <div className="flex justify-between items-center mb-2">
             <div className="flex">
-              <CarouselPrevious className="static translate-y-0 mr-2 h-7 w-7" />
-              <CarouselNext className="static translate-y-0 h-7 w-7" />
+              <CarouselPrevious className="static translate-y-0 mr-2 h-6 w-6" />
+              <CarouselNext className="static translate-y-0 h-6 w-6" />
             </div>
             <div className="flex space-x-2">
               {recordingComplete && (
                 <>
-                  <button className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Volume2 size={16} className="text-gray-700" />
+                  <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Volume2 size={14} className="text-gray-700" />
                   </button>
-                  <button className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center">
-                    <RefreshCw size={16} className="text-gray-700" />
+                  <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <RefreshCw size={14} className="text-gray-700" />
                   </button>
                 </>
               )}
               <button 
                 onClick={toggleRecording}
-                className={`w-9 h-9 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
+                className={`w-8 h-8 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
               >
-                {isRecording ? <Square size={18} /> : <Mic size={18} />}
+                {isRecording ? <Square size={16} /> : <Mic size={16} />}
               </button>
             </div>
           </div>
@@ -291,66 +291,85 @@ const RecordAnswer = () => {
               <CarouselItem key={template.id}>
                 <Card className={`${template.locked ? 'bg-gray-50' : 'bg-white'} relative`}>
                   {template.locked && (
-                    <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center rounded-lg z-10">
-                      <div className="flex flex-col items-center">
-                        <Lock className="h-8 w-8 text-gray-500 mb-2" />
-                        <p className="text-sm text-gray-700">프리미엄 템플릿</p>
-                        <Button 
-                          variant="outline" 
-                          className="mt-2 text-xs px-2 py-1 h-auto border-opic-purple text-opic-purple"
-                          onClick={() => navigate('/plans')}
-                        >
-                          업그레이드
-                        </Button>
-                      </div>
+                    <div className="absolute top-4 right-4 z-20">
+                      <Button 
+                        variant="outline" 
+                        className="text-xs px-2 py-1 h-auto border-opic-purple text-opic-purple"
+                        onClick={() => navigate('/plans')}
+                      >
+                        Upgrade
+                      </Button>
                     </div>
                   )}
                   <CardContent className="p-4 pt-4">
-                    <div className="mb-2">
+                    <div className="mb-4">
                       <h3 className="font-medium">{template.name}</h3>
                     </div>
                     
-                    {!template.locked && (
+                    {/* For "Speak Freely" option */}
+                    {template.id === 0 && (
+                      <Textarea 
+                        value={completedAnswer}
+                        onChange={(e) => setCompletedAnswer(e.target.value)}
+                        className="text-sm text-gray-700 min-h-[100px]"
+                        placeholder="녹음을 시작하면 여기에 답변이 표시됩니다..."
+                      />
+                    )}
+                    
+                    {/* For regular template options */}
+                    {template.id > 0 && !template.locked && (
                       <>
-                        {/* For "Speak Freely" option */}
-                        {template.id === 0 && (
-                          <Textarea 
-                            value={completedAnswer}
-                            onChange={(e) => setCompletedAnswer(e.target.value)}
-                            className="text-sm text-gray-700 min-h-[100px]"
-                            placeholder="녹음을 시작하면 여기에 답변이 표시됩니다..."
-                          />
-                        )}
+                        <div className="space-y-4 mb-4">
+                          {template.fields?.map((field) => (
+                            <div key={field.name}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                              <Input
+                                type="text"
+                                name={field.name}
+                                placeholder={`Enter your ${field.name}...`}
+                                value={formData[field.name as keyof typeof formData] || ''}
+                                onChange={handleInputChange}
+                                className="w-full"
+                              />
+                            </div>
+                          ))}
+                        </div>
                         
-                        {/* For template options */}
-                        {template.id > 0 && (
-                          <>
-                            <div className="space-y-4 mb-4">
-                              {template.fields?.map((field) => (
-                                <div key={field.name}>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-                                  <Input
-                                    type="text"
-                                    name={field.name}
-                                    placeholder={`Enter your ${field.name}...`}
-                                    value={formData[field.name as keyof typeof formData] || ''}
-                                    onChange={handleInputChange}
-                                    className="w-full"
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                            
-                            <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
-                              <h3 className="font-medium mb-3">완성된 답변</h3>
-                              <p className="text-sm text-gray-700">
-                                {activeTemplate === template.id && completedAnswer}
-                                {activeTemplate !== template.id && template.template.replace(/\[(.*?)\]/g, '[$1]')}
-                              </p>
-                            </div>
-                          </>
-                        )}
+                        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
+                          <h3 className="font-medium mb-3">완성된 답변</h3>
+                          <p className="text-sm text-gray-700">
+                            {activeTemplate === template.id && completedAnswer}
+                            {activeTemplate !== template.id && template.template.replace(/\[(.*?)\]/g, '[$1]')}
+                          </p>
+                        </div>
                       </>
+                    )}
+                    
+                    {/* For locked template options - show similar UI but blurred */}
+                    {template.id > 0 && template.locked && (
+                      <div className="relative">
+                        <div className="space-y-4 mb-4 filter blur-[3px]">
+                          {template.fields?.map((field) => (
+                            <div key={field.name}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                              <div className="h-10 bg-gray-100 rounded-md"></div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 filter blur-[3px]">
+                          <h3 className="font-medium mb-3">완성된 답변</h3>
+                          <p className="text-sm text-gray-700">
+                            {template.template.replace(/\[(.*?)\]/g, '[$1]')}
+                          </p>
+                        </div>
+                        <div className="absolute inset-0 bg-gray-200 bg-opacity-10 flex items-center justify-center z-10">
+                          <div className="flex flex-col items-center">
+                            <Lock className="h-6 w-6 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-700 mb-2">프리미엄 템플릿</p>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
