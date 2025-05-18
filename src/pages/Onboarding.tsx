@@ -11,18 +11,18 @@ const Onboarding = () => {
   const slides = [
     {
       icon: <BookOpen size={64} className="text-opic-purple mb-6" />,
-      title: "OPIc 마스터로 연습하세요",
-      description: "실제 시험과 같은 환경에서 OPIc 시험 준비를 시작해보세요."
+      title: "진짜 시험처럼 연습해요",
+      description: "실제 OPIc 시험과 동일한 환경에서 부담 없이 연습할 수 있어요."
     },
     {
       icon: <MessageCircle size={64} className="text-opic-purple mb-6" />,
-      title: "AI 맞춤형 피드백",
-      description: "AI가 당신의 답변을 분석하고 맞춤형 피드백을 제공합니다."
+      title: "AI가 도와드려요",
+      description: "내 말하기를 분석해서 어떻게 하면 더 자연스러운지 알려줘요."
     },
     {
       icon: <Award size={64} className="text-opic-purple mb-6" />,
-      title: "점수 향상 보장",
-      description: "꾸준한 연습으로 자신감을 키우고 OPIc 점수를 향상시켜보세요."
+      title: "실력이 쑥쑥 늘어요",
+      description: "꾸준히 연습하면 자신감이 생기고 OPIc 점수도 올라가요!"
     }
   ];
   
@@ -45,7 +45,9 @@ const Onboarding = () => {
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md text-center">
-          {slides[currentSlide].icon}
+          <div className="flex justify-center mb-6">
+            {slides[currentSlide].icon}
+          </div>
           <h1 className="text-2xl font-bold mb-4">{slides[currentSlide].title}</h1>
           <p className="text-gray-600 mb-8">{slides[currentSlide].description}</p>
           

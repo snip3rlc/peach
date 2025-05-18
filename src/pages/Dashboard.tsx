@@ -1,19 +1,25 @@
 
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, CircleAlert, Book, Headphones } from 'lucide-react';
+import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 // Language tips and facts data
 const languageTips = [
   {
     emoji: '💡',
-    title: '대화 팁',
-    content: '질문에 답할 때는 예시를 들어 설명하면 더 명확해집니다.',
-    example: '"What do you like about your job?" → "I like the creative aspects, for example, designing new solutions."'
+    title: '질문으로 대화를 시작하세요',
+    content: '대화가 막힐 때 상대방에게 질문을 던져보세요.',
+    example: 'A: "만약 초능력이 있다면 어떤 능력을 갖고 싶어요?" \nB: "음... 초능력이 있다면 무엇을 할까요..."'
   },
   {
     emoji: '🌍',
@@ -23,9 +29,9 @@ const languageTips = [
   },
   {
     emoji: '💡',
-    title: '대화 팁',
-    content: '대화 중 모르는 단어가 나오면, "Could you explain what that means?" 라고 물어보세요.',
-    example: 'A: "The situation is quite nebulous." B: "Could you explain what nebulous means?"'
+    title: '상대방의 관심사에 집중하세요',
+    content: '상대방이 이야기한 내용에 관심을 보이면 대화가 자연스럽게 이어집니다.',
+    example: 'A: "주말에 등산을 다녀왔어요." \nB: "어디 산에 가셨어요? 등산하는 것을 좋아하시나요?"'
   },
   {
     emoji: '🌍',
@@ -35,8 +41,8 @@ const languageTips = [
   },
   {
     emoji: '💡',
-    title: '대화 팁',
-    content: '자신감 있게 말하려면 속도보다 명확함에 집중하세요.',
+    title: '자신감 있게 말하세요',
+    content: '속도보다 명확함에 집중하세요. 천천히 말해도 괜찮습니다.',
     example: '"I think... um... the best solution is... to practice regularly" → "I believe regular practice is the best solution."'
   }
 ];
@@ -106,30 +112,31 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Conversation Tip or Language Fact Card - Section with 20px margin */}
+      {/* Conversation Tip - Now with Accordion */}
       <div className="mx-6 mb-8">
-        <h2 className="text-lg font-medium mb-4">{randomTip.emoji} {randomTip.title}</h2>
+        <h2 className="text-lg font-medium mb-4">{randomTip.emoji} 대화 팁</h2>
         <Card className="shadow-sm">
-          <CardContent className="p-5">
-            <div>
-              <p className="text-gray-700 mb-3 text-base font-medium">{randomTip.content}</p>
-              {randomTip.example && (
-                <>
-                  <Separator className="my-3 bg-gray-100" />
-                  {randomTip.example.includes('A:') ? (
-                    <div className="space-y-2 text-sm text-gray-600 italic">
-                      {randomTip.example.split('B:').map((part, index) => (
-                        <div key={index} className="leading-relaxed">
-                          {index === 0 ? part : `B:${part}`}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-600 italic leading-relaxed">{randomTip.example}</p>
+          <CardContent className="p-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="tip" className="border-none">
+                <AccordionTrigger className="py-2 font-medium text-base">
+                  {randomTip.title}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-gray-700 mb-3">{randomTip.content}</p>
+                  {randomTip.example && (
+                    <>
+                      <Separator className="my-3 bg-gray-100" />
+                      <div className="text-sm text-gray-600 space-y-2">
+                        {randomTip.example.split('\n').map((line, idx) => (
+                          <p key={idx} className="italic leading-relaxed">{line}</p>
+                        ))}
+                      </div>
+                    </>
                   )}
-                </>
-              )}
-            </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </CardContent>
         </Card>
       </div>
