@@ -33,11 +33,11 @@ const Tests = () => {
 
   return (
     <div className="pb-20">
-      <Header title="OPIc Tests" />
+      <Header title="Actual Tests" />
       
       <div className="p-4">
         <p className="text-gray-600 mb-6">
-          Complete full OPIc test simulations with 15 questions each. Receive detailed feedback and scoring after completion.
+          각 15문항으로 구성된 완전한 OPIc 모의 테스트를 완료하세요. 테스트 완료 후 상세한 피드백과 점수를 받을 수 있습니다.
         </p>
         
         <div className="space-y-4">

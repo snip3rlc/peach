@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -306,30 +305,30 @@ const RecordAnswer = () => {
                       <h3 className="font-medium">{template.name}</h3>
                     </div>
                     
-                    {/* For "Speak Freely" option */}
+                    {/* For "Speak Freely" option - make font smaller */}
                     {template.id === 0 && (
                       <Textarea 
                         value={completedAnswer}
                         onChange={(e) => setCompletedAnswer(e.target.value)}
-                        className="text-sm text-gray-700 min-h-[100px]"
+                        className="text-xs text-gray-700 min-h-[100px]"
                         placeholder="녹음을 시작하면 여기에 답변이 표시됩니다..."
                       />
                     )}
                     
-                    {/* For regular template options */}
+                    {/* For regular template options - make font smaller in inputs */}
                     {template.id > 0 && !template.locked && (
                       <>
                         <div className="space-y-4 mb-4">
                           {template.fields?.map((field) => (
                             <div key={field.name}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                              <label className="block text-xs font-medium text-gray-700 mb-1">{field.label}</label>
                               <Input
                                 type="text"
                                 name={field.name}
                                 placeholder={`Enter your ${field.name}...`}
                                 value={formData[field.name as keyof typeof formData] || ''}
                                 onChange={handleInputChange}
-                                className="w-full"
+                                className="w-full text-xs"
                               />
                             </div>
                           ))}
@@ -351,7 +350,7 @@ const RecordAnswer = () => {
                         <div className="space-y-4 mb-4 filter blur-[3px]">
                           {template.fields?.map((field) => (
                             <div key={field.name}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                              <label className="block text-xs font-medium text-gray-700 mb-1">{field.label}</label>
                               <div className="h-10 bg-gray-100 rounded-md"></div>
                             </div>
                           ))}

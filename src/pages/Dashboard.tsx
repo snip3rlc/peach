@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
@@ -89,7 +88,8 @@ const Dashboard = () => {
   return (
     <div>
       <div className="p-4">
-        <h1 className="text-xl font-medium mb-4 text-center">대시보드</h1>
+        {/* Removed 대시보드 text but kept the heading space */}
+        <h1 className="text-xl font-medium mb-4 text-center">&nbsp;</h1>
       </div>
       
       {/* Welcome Card */}
@@ -126,7 +126,7 @@ const Dashboard = () => {
       
       {/* Daily Expression Card - Section with smaller title */}
       <div className="mx-6 mb-8">
-        <h2 className="text-base font-medium mb-4">오늘의 표현</h2>
+        <h2 className="text-sm font-medium mb-4">오늘의 표현</h2>
         <Card className="overflow-hidden shadow-sm">
           <CardContent className="p-5">
             <div className="flex justify-between items-start">
@@ -145,9 +145,9 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Tips Section - New layout based on the image */}
+      {/* Tips Section - Keeping the layout based on the image */}
       <div className="mx-6 mb-8">
-        <h2 className="text-sm font-medium mb-4">오늘의 표현</h2>
+        <h2 className="text-sm font-medium mb-4">팁</h2>
         
         <Card className="overflow-hidden shadow-sm mb-5">
           <CardContent className="p-5">
@@ -188,7 +188,7 @@ const Dashboard = () => {
               <div className="flex items-start mb-2">
                 <span className="text-blue-500 mr-2">💬</span>
                 <div>
-                  <h3 className="text-sm font-medium">스피킹 팁</h3>
+                  <h3 className="text-sm font-medium">대화 팁</h3>
                   <p className="text-xs text-gray-600 mt-1">
                     긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다.
                   </p>
