@@ -36,7 +36,7 @@ const TemplateSelect = () => {
           )}
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4 hover:bg-gray-50">
           <h3 className="font-medium mb-3">Basic Daily Routine</h3>
           <p className="text-sm text-gray-600 mb-1">
             In my daily life, I usually wake up at _____. The first thing 
@@ -59,11 +59,12 @@ const TemplateSelect = () => {
             to="/record-answer" 
             className="block bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6 hover:bg-gray-50"
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium">Don't Need Template</h3>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+            <div>
+              <h3 className="font-medium mb-3">Speak Freely</h3>
+              <p className="text-sm text-gray-600">
+                Create your own answer without using a template. 
+                Express yourself naturally and confidently.
+              </p>
             </div>
           </Link>
         )}

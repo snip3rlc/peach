@@ -9,7 +9,7 @@ const Plans = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>("starter");
   
   return (
-    <div>
+    <div className="pb-20">
       <Header title="구독 플랜" />
       
       <div className="p-4">
@@ -91,6 +91,37 @@ const Plans = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
+            
+            {expandedPlan === "premium" && (
+              <div className="p-4">
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">모든 레벨 접근 가능</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">모든 주제 이용 가능</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">2개 템플릿 이용</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">상세 피드백</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">연습 히스토리 저장</span>
+                  </li>
+                </ul>
+                
+                <Button className="w-full mt-4">
+                  업그레이드
+                </Button>
+              </div>
+            )}
           </div>
           
           <div 
@@ -112,6 +143,45 @@ const Plans = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
+            
+            {expandedPlan === "professional" && (
+              <div className="p-4">
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">모든 레벨 접근 가능</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">모든 주제 이용 가능</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">모든 템플릿 이용 (3개)</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">상세 피드백 및 분석</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">연습 히스토리 저장</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">PDF로 내보내기</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check size={18} className="text-opic-purple mr-2" />
+                    <span className="text-sm">소셜 미디어 공유</span>
+                  </li>
+                </ul>
+                
+                <Button className="w-full mt-4">
+                  업그레이드
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         
