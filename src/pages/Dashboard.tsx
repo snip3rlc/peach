@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
@@ -88,15 +87,11 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="p-4">
-        <h1 className="text-xl font-medium mb-4 text-center">대시보드</h1>
-      </div>
-      
       {/* Welcome Card */}
       <div className="mx-6 mb-6 bg-opic-purple rounded-xl p-5 text-white shadow-md">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-lg font-medium mb-1">안녕하세요, 게스트 사용자님!</h2>
+            <h2 className="text-lg font-medium mb-1">안녕하세요, ��스트 사용자님!</h2>
             <p className="text-sm opacity-90">오늘도 영어 실력을 향상시켜 보세요.</p>
           </div>
           <div className="bg-white/20 rounded-full p-2">
@@ -147,8 +142,6 @@ const Dashboard = () => {
       
       {/* Tips Section - New layout based on the image */}
       <div className="mx-6 mb-8">
-        <h2 className="text-sm font-medium mb-4">오늘의 표현</h2>
-        
         <Card className="overflow-hidden shadow-sm mb-5">
           <CardContent className="p-5">
             <div className="flex items-center mb-2">
