@@ -1,11 +1,58 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+
+// Language tips and facts data
+const languageTips = [
+  {
+    emoji: '💡',
+    title: '대화 팁',
+    content: '질문에 답할 때는 예시를 들어 설명하면 더 명확해집니다.',
+    example: '"What do you like about your job?" → "I like the creative aspects, for example, designing new solutions."'
+  },
+  {
+    emoji: '🌍',
+    title: '언어 사실',
+    content: '영어에는 약 170,000개의 단어가 있지만, 원어민들은 일상 대화에서 3,000단어만 사용합니다.',
+    example: null
+  },
+  {
+    emoji: '💡',
+    title: '대화 팁',
+    content: '대화 중 모르는 단어가 나오면, "Could you explain what that means?" 라고 물어보세요.',
+    example: 'A: "The situation is quite nebulous." B: "Could you explain what nebulous means?"'
+  },
+  {
+    emoji: '🌍',
+    title: '언어 사실',
+    content: '영어와 한국어는 문장 구조가 다릅니다. 영어는 주어-동사-목적어 순서지만, 한국어는 주어-목적어-동사 순서입니다.',
+    example: null
+  },
+  {
+    emoji: '💡',
+    title: '대화 팁',
+    content: '자신감 있게 말하려면 속도보다 명확함에 집중하세요.',
+    example: '"I think... um... the best solution is... to practice regularly" → "I believe regular practice is the best solution."'
+  }
+];
 
 const Dashboard = () => {
+  // Get a random tip that changes daily (or randomly if you prefer)
+  const randomTip = useMemo(() => {
+    // For daily change, use the current date as seed
+    const today = new Date().toDateString();
+    const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = seed % languageTips.length;
+    return languageTips[index];
+    
+    // For completely random selection on each render, use:
+    // return languageTips[Math.floor(Math.random() * languageTips.length)];
+  }, []);
+
   return (
     <div>
       <div className="p-4">
@@ -55,19 +102,16 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Subscription Plan */}
+      {/* Conversation Tip or Language Fact Card (replaces Premium Plan) */}
       <div className="mx-4 mb-6">
-        <div className="bg-opic-light-purple border border-dashed border-opic-purple rounded-lg p-4">
-          <div className="mb-2">현재 무료 플랜 이용 중</div>
-          <p className="text-sm text-gray-600 mb-4">
-            프리미엄 기능으로 업그레이드하여 더 많은 템플릿과 기능을 사용해 보세요.
-          </p>
-          <Link 
-            to="/plans" 
-            className="block text-center bg-opic-purple text-white py-3 px-4 rounded-lg w-full"
-          >
-            프리미엄으로 업그레이드
-          </Link>
+        <h2 className="text-lg font-medium mb-4">{randomTip.emoji} {randomTip.title}</h2>
+        <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+          <div>
+            <p className="text-gray-700 mb-2">{randomTip.content}</p>
+            {randomTip.example && (
+              <p className="text-sm text-gray-600 italic">{randomTip.example}</p>
+            )}
+          </div>
         </div>
       </div>
       
