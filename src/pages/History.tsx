@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { Card, CardContent } from '@/components/ui/card';
@@ -244,16 +243,14 @@ const History = () => {
                 <Card className="mb-3 shadow-sm overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3">
                     <AccordionTrigger className="hover:no-underline flex-1">
-                      <div className="flex flex-col items-start w-full">
-                        <div className="flex justify-between w-full mb-1">
-                          <span className="text-xs text-gray-500">{formatDate(item.date)}</span>
-                          <Badge className={`${getLevelBadgeStyle(item.opicLevel)}`}>
-                            {item.opicLevel}
-                          </Badge>
-                        </div>
+                      <div className="flex flex-col items-start">
+                        <div className="text-xs text-gray-500 mb-1">{formatDate(item.date)}</div>
                         <h3 className="font-medium text-sm text-left">{item.question}</h3>
                       </div>
                     </AccordionTrigger>
+                    <Badge className={`${getLevelBadgeStyle(item.opicLevel)} mr-2`}>
+                      {item.opicLevel}
+                    </Badge>
                   </div>
                   
                   <AccordionContent>
@@ -286,7 +283,7 @@ const History = () => {
                                 e.stopPropagation();
                                 deleteHistoryItem(item.id);
                               }}
-                              className="flex items-center gap-1 hover:text-red-500"
+                              className="flex items-center gap-1 hover:text-red-500 shadow-sm"
                             >
                               <Trash size={16} />
                               <span className="text-sm">Delete</span>

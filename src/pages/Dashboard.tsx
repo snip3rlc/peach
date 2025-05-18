@@ -145,26 +145,9 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Tips Section - Keeping the layout based on the image */}
+      {/* Tips Section - Removed the specific tip card */}
       <div className="mx-6 mb-8">
         <h2 className="text-sm font-medium mb-4">팁</h2>
-        
-        <Card className="overflow-hidden shadow-sm mb-5">
-          <CardContent className="p-5">
-            <div className="flex items-center mb-2">
-              <div className="w-10 h-10 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple">
-                <BookOpen size={20} />
-              </div>
-              <div className="ml-4">
-                <h3 className="font-medium">Put yourself in someone else's shoes</h3>
-                <p className="text-xs text-gray-600">다른 사람의 입장이 되어보세요</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-700 mt-3 italic">
-              "When dealing with conflicts, try to put yourself in someone else's shoes to understand their perspective."
-            </p>
-          </CardContent>
-        </Card>
         
         <div className="grid grid-cols-2 gap-4">
           {/* Culture Tip Card */}
