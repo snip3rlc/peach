@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -126,6 +127,16 @@ const RecordAnswer = () => {
     return `${mins}:${secs}`;
   };
 
+  const handleContinue = () => {
+    // Save the transcribed text to local storage so it can be used by the Feedback page
+    if (isDirectNavigation && transcription) {
+      localStorage.setItem('userSpeechTranscript', transcription);
+    } else {
+      localStorage.setItem('userSpeechTranscript', answer);
+    }
+    navigate('/feedback');
+  };
+
   return (
     <div className="pb-20">
       <Header title="답변 녹음" showBack />
@@ -191,8 +202,9 @@ const RecordAnswer = () => {
         </div>
         
         <Button
-          onClick={() => navigate('/feedback')}
+          onClick={handleContinue}
           className="w-full bg-opic-purple hover:bg-opic-dark-purple"
+          disabled={isDirectNavigation && !transcription}
         >
           계속하기
           <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
