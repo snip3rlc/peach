@@ -180,7 +180,7 @@ const History = () => {
       case 'fluency':
         return 'bg-[#F2FCE2]'; // Light green
       case 'vocabulary':
-        return 'bg-[#E5DEFF]'; // Light purple
+        return 'bg-[#D3E4FD]'; // Light blue
       default:
         return 'bg-white';
     }
@@ -254,17 +254,6 @@ const History = () => {
                         <h3 className="font-medium text-sm text-left">{item.question}</h3>
                       </div>
                     </AccordionTrigger>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteHistoryItem(item.id);
-                      }}
-                      className="ml-2 text-gray-500 hover:text-red-500"
-                    >
-                      <Trash size={16} />
-                    </Button>
                   </div>
                   
                   <AccordionContent>
@@ -288,6 +277,21 @@ const History = () => {
                               <p className="text-xs text-gray-600">{feedbackItem.feedback}</p>
                             </div>
                           ))}
+                          
+                          <div className="mt-4 flex items-center justify-end text-gray-500">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteHistoryItem(item.id);
+                              }}
+                              className="flex items-center gap-1 hover:text-red-500"
+                            >
+                              <Trash size={16} />
+                              <span className="text-sm">Delete</span>
+                            </Button>
+                          </div>
                         </TabsContent>
                         
                         <TabsContent value="corrected" className="pt-3">

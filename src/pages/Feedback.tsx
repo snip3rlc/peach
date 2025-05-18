@@ -158,7 +158,7 @@ const Feedback = () => {
       case 'fluency':
         return 'bg-[#F2FCE2]'; // Light green
       case 'vocabulary':
-        return 'bg-[#E5DEFF]'; // Light purple
+        return 'bg-[#D3E4FD]'; // Light blue
       default:
         return 'bg-white';
     }
@@ -181,8 +181,8 @@ const Feedback = () => {
           <>
             {feedbackResult && (
               <>
-                <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4">
-                  <h3 className="font-medium mb-3 text-gray-700">{feedbackResult.question}</h3>
+                <div className="bg-opic-purple text-white rounded-lg border border-gray-100 shadow-sm p-4 mb-4">
+                  <h3 className="font-medium mb-3">{feedbackResult.question}</h3>
                 </div>
                 
                 <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
