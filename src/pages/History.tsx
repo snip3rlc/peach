@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { Card, CardContent } from '@/components/ui/card';
@@ -248,9 +249,11 @@ const History = () => {
                         <h3 className="font-medium text-sm text-left">{item.question}</h3>
                       </div>
                     </AccordionTrigger>
-                    <Badge className={`${getLevelBadgeStyle(item.opicLevel)} mr-2`}>
-                      {item.opicLevel}
-                    </Badge>
+                    <div className="flex flex-col items-end">
+                      <Badge className={`${getLevelBadgeStyle(item.opicLevel)} mb-1`}>
+                        {item.opicLevel}
+                      </Badge>
+                    </div>
                   </div>
                   
                   <AccordionContent>
