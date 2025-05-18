@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -250,12 +249,12 @@ const RecordAnswer = () => {
           <p className="mt-1">Tell me about your daily life.</p>
         </div>
         
-        <div className="flex justify-center mb-2">
-          <CarouselPrevious className="static translate-y-0 mr-2" />
-          <CarouselNext className="static translate-y-0" />
-        </div>
-        
         <Carousel className="mb-6" ref={emblaRef}>
+          <div className="flex justify-center mb-2">
+            <CarouselPrevious className="static translate-y-0 mr-2" />
+            <CarouselNext className="static translate-y-0" />
+          </div>
+          
           <CarouselContent>
             {templates.map((template) => (
               <CarouselItem key={template.id}>
