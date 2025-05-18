@@ -5,6 +5,7 @@ import { BookOpen, CircleAlert, Book, Headphones } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 // Language tips and facts data
 const languageTips = [
@@ -60,7 +61,7 @@ const Dashboard = () => {
       </div>
       
       {/* Welcome Card */}
-      <div className="mx-4 mb-6 bg-opic-purple rounded-xl p-5 text-white">
+      <div className="mx-6 mb-6 bg-opic-purple rounded-xl p-5 text-white shadow-md">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-lg font-medium mb-1">안녕하세요, 게스트 사용자님!</h2>
@@ -84,51 +85,71 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Daily Expression Card */}
-      <div className="mx-4 mb-6">
+      {/* Daily Expression Card - Section with 20px margin */}
+      <div className="mx-6 mb-8">
         <h2 className="text-lg font-medium mb-4">오늘의 표현</h2>
-        <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="font-medium text-opic-purple">"I'm swamped"</h3>
-              <p className="text-gray-700 mb-2">바빠서 정신이 없어요</p>
-              <p className="text-sm text-gray-600 italic">"I can't meet today, I'm totally swamped with work."</p>
+        <Card className="overflow-hidden shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-lg text-opic-purple mb-1">"I'm swamped"</h3>
+                <p className="text-gray-700 mb-3">바빠서 정신이 없어요</p>
+                <Separator className="my-3 bg-gray-100" />
+                <p className="text-sm text-gray-600 italic leading-relaxed">"I can't meet today, I'm totally swamped with work."</p>
+              </div>
+              <button className="flex flex-col items-center justify-center text-opic-purple ml-3">
+                <Headphones size={24} />
+                <span className="text-xs mt-1">듣기</span>
+              </button>
             </div>
-            <button className="flex flex-col items-center justify-center text-opic-purple">
-              <Headphones size={24} />
-              <span className="text-xs mt-1">듣기</span>
-            </button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
       
-      {/* Conversation Tip or Language Fact Card (replaces Premium Plan) */}
-      <div className="mx-4 mb-6">
+      {/* Conversation Tip or Language Fact Card - Section with 20px margin */}
+      <div className="mx-6 mb-8">
         <h2 className="text-lg font-medium mb-4">{randomTip.emoji} {randomTip.title}</h2>
-        <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
-          <div>
-            <p className="text-gray-700 mb-2">{randomTip.content}</p>
-            {randomTip.example && (
-              <p className="text-sm text-gray-600 italic">{randomTip.example}</p>
-            )}
-          </div>
-        </div>
+        <Card className="shadow-sm">
+          <CardContent className="p-5">
+            <div>
+              <p className="text-gray-700 mb-3 text-base font-medium">{randomTip.content}</p>
+              {randomTip.example && (
+                <>
+                  <Separator className="my-3 bg-gray-100" />
+                  {randomTip.example.includes('A:') ? (
+                    <div className="space-y-2 text-sm text-gray-600 italic">
+                      {randomTip.example.split('B:').map((part, index) => (
+                        <div key={index} className="leading-relaxed">
+                          {index === 0 ? part : `B:${part}`}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-600 italic leading-relaxed">{randomTip.example}</p>
+                  )}
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
       
-      {/* Recent Practice */}
-      <div className="mx-4 mb-6">
+      {/* Recent Practice - Section with proper spacing */}
+      <div className="mx-6 mb-6">
         <h2 className="text-lg font-medium mb-4">최근 연습</h2>
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
-          <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center text-sm text-gray-500">
-              <span>2023-05-15</span>
+        <Card className="shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center text-sm text-gray-500">
+                <span>2023-05-15</span>
+              </div>
+              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Intermediate</Badge>
             </div>
-            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Intermediate</Badge>
-          </div>
-          <h3 className="font-medium mb-2">일상생활에 대해 이야기해보세요</h3>
-          <p className="text-sm text-gray-500 mb-1">유창성 점수</p>
-          <ProgressBar progress={85} />
-        </div>
+            <h3 className="font-medium mb-3">일상생활에 대해 이야기해보세요</h3>
+            <p className="text-sm text-gray-500 mb-1">유창성 점수</p>
+            <ProgressBar progress={85} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
