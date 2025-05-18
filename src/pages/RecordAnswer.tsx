@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -188,13 +189,5 @@ const RecordAnswer = () => {
     </div>
   );
 };
-
-// Add this to fix TypeScript errors
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
 
 export default RecordAnswer;
