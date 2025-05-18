@@ -29,9 +29,9 @@ const languageTips = [
   },
   {
     emoji: '💡',
-    title: '상대방의 관심사에 집중하세요',
-    content: '상대방이 이야기한 내용에 관심을 보이면 대화가 자연스럽게 이어집니다.',
-    example: 'A: "주말에 등산을 다녀왔어요." \nB: "어디 산에 가셨어요? 등산하는 것을 좋아하시나요?"'
+    title: 'Focus on the other person\'s interests',
+    content: 'Showing interest in what the other person is talking about helps the conversation flow naturally.',
+    example: 'A: "I went hiking this weekend." \nB: "Which mountain did you go to? Do you enjoy hiking?"'
   },
   {
     emoji: '🌍',
@@ -112,22 +112,22 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Conversation Tip - Now with Accordion */}
+      {/* Conversation Tip - Now with smaller card and subtle styling */}
       <div className="mx-6 mb-8">
         <h2 className="text-lg font-medium mb-4">{randomTip.emoji} 대화 팁</h2>
         <Card className="shadow-sm">
-          <CardContent className="p-4">
+          <CardContent className="p-3">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="tip" className="border-none">
-                <AccordionTrigger className="py-2 font-medium text-base">
+                <AccordionTrigger className="py-1 text-sm">
                   {randomTip.title}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-gray-700 mb-3">{randomTip.content}</p>
+                  <p className="text-sm text-gray-700 mb-2">{randomTip.content}</p>
                   {randomTip.example && (
                     <>
-                      <Separator className="my-3 bg-gray-100" />
-                      <div className="text-sm text-gray-600 space-y-2">
+                      <Separator className="my-2 bg-gray-100" />
+                      <div className="text-xs text-gray-600 space-y-1">
                         {randomTip.example.split('\n').map((line, idx) => (
                           <p key={idx} className="italic leading-relaxed">{line}</p>
                         ))}
