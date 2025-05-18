@@ -2,9 +2,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut } from 'lucide-react';
+import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -32,7 +38,12 @@ const Profile = () => {
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
           <Link to="/plans" className="flex justify-between items-center">
-            <h3 className="font-medium">구독 정보</h3>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
+                <Package size={20} />
+              </div>
+              <h3 className="font-medium">구독 정보</h3>
+            </div>
             <ChevronRight size={20} className="text-gray-400" />
           </Link>
         </div>
@@ -59,16 +70,17 @@ const Profile = () => {
           </div>
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
-          <Collapsible>
-            <CollapsibleTrigger className="p-4 flex items-center w-full text-left">
-              <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
-                <HelpCircle size={20} />
+        <Accordion type="single" collapsible className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
+          <AccordionItem value="faq" className="border-b-0">
+            <AccordionTrigger className="p-4 hover:no-underline">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
+                  <HelpCircle size={20} />
+                </div>
+                <span>자주 묻는 질문</span>
               </div>
-              <span className="flex-1">자주 묻는 질문</span>
-              <ChevronRight size={20} className="text-gray-400" />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4 pt-1">
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4 pt-1">
               <div className="border-t border-gray-100 pt-3">
                 <div className="mb-3">
                   <h4 className="font-medium text-sm mb-1">OPIc 시험은 어떻게 준비해야 하나요?</h4>
@@ -83,24 +95,25 @@ const Profile = () => {
                   <p className="text-xs text-gray-600">네, 히스토리에서 과거 연습 기록을 확인하실 수 있습니다.</p>
                 </div>
               </div>
-            </CollapsibleContent>
-          </Collapsible>
+            </AccordionContent>
+          </AccordionItem>
           
-          <Collapsible>
-            <CollapsibleTrigger className="p-4 flex items-center w-full text-left border-t border-gray-100">
-              <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
-                <HelpCircle size={20} />
+          <AccordionItem value="app-info" className="border-t border-gray-100">
+            <AccordionTrigger className="p-4 hover:no-underline">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
+                  <HelpCircle size={20} />
+                </div>
+                <span>앱 정보</span>
               </div>
-              <span className="flex-1">앱 정보</span>
-              <ChevronRight size={20} className="text-gray-400" />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 pb-4 pt-1">
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4 pt-1">
               <div className="border-t border-gray-100 pt-3">
                 <p className="text-sm text-gray-600">버전: 1.0.1</p>
               </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
         
         <button className="w-full p-4 text-center text-red-500 flex items-center justify-center">
           <LogOut size={20} className="mr-2" />
