@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import TipsCarousel from '@/components/TipsCarousel';
 import { TipCardProps } from '@/components/TipCard';
+import DailyTrivia from '@/components/DailyTrivia';
 
 // Language tips and facts data
 const languageTips = [
@@ -119,6 +119,13 @@ const Dashboard = () => {
     ];
   }, []);
 
+  // Daily trivia question and options
+  const triviaQuestion = "I'm happy ___ see you.";
+  const triviaOptions = [
+    { text: "to", isCorrect: true },
+    { text: "for", isCorrect: false }
+  ];
+
   return (
     <div>
       <div className="p-4">
@@ -179,12 +186,17 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Tips Carousel Section - New implementation */}
+      {/* Daily Trivia Section - New addition */}
+      <div className="mx-6">
+        <DailyTrivia question={triviaQuestion} options={triviaOptions} />
+      </div>
+      
+      {/* Tips Carousel Section */}
       <div className="mx-6 mb-8">
         <TipsCarousel tips={tipCards} />
       </div>
       
-      {/* Recent Practice - Fixed display issue by adding proper bottom margin */}
+      {/* Recent Practice */}
       <div className="mx-6 mb-20">
         <h2 className="text-sm font-medium mb-4">최근 연습</h2>
         <Card className="shadow-sm">
