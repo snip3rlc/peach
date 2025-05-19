@@ -19,9 +19,6 @@ const DidYouKnow = ({ question, answer, type = "culture" }: DidYouKnowProps) => 
     <div className="w-full mb-8">
       <div className="mb-4">
         <h2 className="text-lg font-medium">💡 알고 계셨나요?</h2>
-        <p className="text-sm text-gray-500">
-          매일 새로운 영어 지식을 알아보세요.
-        </p>
       </div>
 
       <Card className="shadow-md overflow-hidden">
