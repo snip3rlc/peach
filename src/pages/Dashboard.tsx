@@ -150,40 +150,36 @@ const Dashboard = () => {
         <h2 className="text-sm font-medium mb-4">팁</h2>
         
         <div className="grid grid-cols-2 gap-4">
-          {/* Culture Tip Card */}
+          {/* Culture Tip Card - Optimized layout */}
           <Card className="shadow-sm h-full">
-            <CardContent className="p-4">
-              <div className="flex items-start mb-2">
-                <span className="text-amber-500 mr-2">💡</span>
-                <div>
-                  <h3 className="text-sm font-medium">문화 팁</h3>
-                  <p className="text-xs text-gray-600 mt-1">
-                    미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다.
-                  </p>
-                </div>
+            <CardContent className="py-4 px-5">
+              <div className="flex items-center mb-1 gap-2">
+                <span className="text-amber-500">💡</span>
+                <h3 className="text-sm font-medium">문화 팁</h3>
               </div>
+              <p className="text-[15px] text-gray-600 leading-relaxed">
+                미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다.
+              </p>
             </CardContent>
           </Card>
           
-          {/* Speaking Tip Card */}
+          {/* Speaking Tip Card - Optimized layout */}
           <Card className="shadow-sm h-full">
-            <CardContent className="p-4">
-              <div className="flex items-start mb-2">
-                <span className="text-blue-500 mr-2">💬</span>
-                <div>
-                  <h3 className="text-sm font-medium">대화 팁</h3>
-                  <p className="text-xs text-gray-600 mt-1">
-                    긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다.
-                  </p>
-                </div>
+            <CardContent className="py-4 px-5">
+              <div className="flex items-center mb-1 gap-2">
+                <span className="text-blue-500">💬</span>
+                <h3 className="text-sm font-medium">대화 팁</h3>
               </div>
+              <p className="text-[15px] text-gray-600 leading-relaxed">
+                긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다.
+              </p>
             </CardContent>
           </Card>
         </div>
       </div>
       
-      {/* Recent Practice - Section with smaller title */}
-      <div className="mx-6 mb-6">
+      {/* Recent Practice - Fixed display issue by adding proper bottom margin */}
+      <div className="mx-6 mb-20">
         <h2 className="text-sm font-medium mb-4">최근 연습</h2>
         <Card className="shadow-sm">
           <CardContent className="p-5">
