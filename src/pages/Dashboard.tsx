@@ -12,9 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import TipsCarousel from '@/components/TipsCarousel';
-import { TipCardProps } from '@/components/TipCard';
 import DailyTrivia from '@/components/DailyTrivia';
+import DidYouKnow from '@/components/DidYouKnow';
 
 // Language tips and facts data
 const languageTips = [
@@ -69,10 +68,29 @@ const cultureTips = [
   }
 ];
 
+// Did you know facts
+const didYouKnowFacts = [
+  {
+    question: "Why do Americans talk to strangers in elevators or stores?",
+    answer: "Small talk is a common way to show friendliness and build casual social connections in the U.S. It's considered polite and helps create a comfortable atmosphere in public spaces.",
+    type: "culture"
+  },
+  {
+    question: "Why do English speakers say 'Bless you' when someone sneezes?",
+    answer: "This tradition dates back centuries when people believed sneezing expelled evil spirits or that your soul could escape. Saying 'bless you' was meant to protect the person who sneezed.",
+    type: "culture"
+  },
+  {
+    question: "Why is the letter 'W' called 'double-U' when it looks like 'double-V'?",
+    answer: "In Old English, the letter 'W' was actually written as two 'U's placed side by side, which explains why we call it 'double-U' despite its current appearance.",
+    type: "conversation"
+  }
+];
+
 const Dashboard = () => {
   const navigate = useNavigate();
   
-  // Get a random tip that changes daily (or randomly if you prefer)
+  // Get a random tip that changes daily (or randomly)
   const randomTip = useMemo(() => {
     // For daily change, use the current date as seed
     const today = new Date().toDateString();
@@ -87,36 +105,13 @@ const Dashboard = () => {
     const index = seed % cultureTips.length;
     return cultureTips[index];
   }, []);
-  
-  // Create a combined array of tips for the carousel
-  const tipCards: TipCardProps[] = useMemo(() => {
-    return [
-      {
-        type: "conversation",
-        title: "대화 팁",
-        content: "긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다."
-      },
-      {
-        type: "culture",
-        title: "문화 팁",
-        content: "미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다."
-      },
-      {
-        type: "conversation",
-        title: "대화 팁",
-        content: "상대방이 말할 때 고개를 끄덕이거나 '맞아요', '정말요?' 같은 반응을 보여주면 적극적으로 듣고 있다는 인상을 줍니다."
-      },
-      {
-        type: "culture",
-        title: "문화 팁",
-        content: "미국에서는 식사 중에 팁을 남기는 것이 일반적입니다. 보통 계산서의 15-20%를 팁으로 남깁니다."
-      },
-      {
-        type: "conversation",
-        title: "대화 팁",
-        content: "영어로 말할 때 실수를 두려워하지 마세요. 원어민들도 종종 실수를 합니다."
-      }
-    ];
+
+  // Get daily "Did you know" fact
+  const dailyFact = useMemo(() => {
+    const today = new Date().toDateString();
+    const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = seed % didYouKnowFacts.length;
+    return didYouKnowFacts[index];
   }, []);
 
   // Daily trivia question and options
@@ -186,14 +181,18 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Daily Trivia Section - New addition */}
+      {/* Daily Trivia Section */}
       <div className="mx-6">
         <DailyTrivia question={triviaQuestion} options={triviaOptions} />
       </div>
       
-      {/* Tips Carousel Section */}
+      {/* Did You Know Section - New addition */}
       <div className="mx-6 mb-8">
-        <TipsCarousel tips={tipCards} />
+        <DidYouKnow 
+          question={dailyFact.question} 
+          answer={dailyFact.answer} 
+          type={dailyFact.type as "culture" | "conversation"} 
+        />
       </div>
       
       {/* Recent Practice */}
