@@ -16,7 +16,6 @@ interface DailyTriviaProps {
 
 const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
@@ -30,15 +29,12 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
       setTimeout(() => setShowFireworks(false), 3000);
     } else {
       setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 500);
+      setTimeout(() => {
+        setIsShaking(false);
+        // Auto-reset after wrong answer
+        setSelectedOption(null);
+      }, 500);
     }
-  };
-
-  const resetQuestion = () => {
-    setSelectedOption(null);
-    setIsCorrect(false);
-    setShowAnswer(false);
-    setShowFireworks(false);
   };
 
   const getButtonVariant = (option: TriviaOption) => {
@@ -51,7 +47,7 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
   return (
     <div className="w-full mb-8">
       <div className="mb-4">
-        <h2 className="text-lg font-medium">✏️ 오늘의 문제</h2>
+        <h2 className="text-sm font-medium">오늘의 문제</h2>
       </div>
 
       <Card className="shadow-md">
@@ -87,21 +83,9 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
             ))}
           </div>
           
-          {selectedOption && (
-            <div className="mt-3 flex items-center justify-between">
-              <p className={isCorrect ? "text-green-600" : "text-red-600"}>
-                {isCorrect 
-                  ? "정답입니다! 👏" 
-                  : `틀렸습니다. 다시 시도해보세요.`}
-              </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={resetQuestion}
-                className="ml-2"
-              >
-                다시 풀기
-              </Button>
+          {isCorrect && (
+            <div className="mt-3">
+              <p className="text-green-600">정답입니다! 👏</p>
             </div>
           )}
         </CardContent>

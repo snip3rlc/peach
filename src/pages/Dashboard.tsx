@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
+import { BookOpen, CircleAlert, Book, Speaker, ChevronDown } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -119,7 +119,8 @@ const Dashboard = () => {
   const triviaQuestion = "I'm happy ___ see you.";
   const triviaOptions = [
     { text: "to", isCorrect: true },
-    { text: "for", isCorrect: false }
+    { text: "for", isCorrect: false },
+    { text: "in", isCorrect: false }
   ];
 
   return (
@@ -174,7 +175,7 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600 italic leading-relaxed">"I can't meet today, I'm totally swamped with work."</p>
               </div>
               <button className="flex flex-col items-center justify-center text-opic-purple ml-3">
-                <Headphones size={24} />
+                <Speaker size={24} />
                 <span className="text-xs mt-1">듣기</span>
               </button>
             </div>
@@ -187,7 +188,7 @@ const Dashboard = () => {
         <DailyTrivia question={triviaQuestion} options={triviaOptions} />
       </div>
       
-      {/* Did You Know Section - New addition */}
+      {/* Did You Know Section */}
       <div className="mx-6 mb-8">
         <DidYouKnow 
           question={dailyFact.question} 

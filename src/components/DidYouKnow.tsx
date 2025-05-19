@@ -18,7 +18,7 @@ const DidYouKnow = ({ question, answer, type = "culture" }: DidYouKnowProps) => 
   return (
     <div className="w-full mb-8">
       <div className="mb-4">
-        <h2 className="text-lg font-medium">💡 알고 계셨나요?</h2>
+        <h2 className="text-sm font-medium">알고 계셨나요?</h2>
       </div>
 
       <Card className="shadow-md overflow-hidden">
