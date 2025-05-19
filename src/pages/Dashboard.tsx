@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
@@ -12,6 +13,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import TipsCarousel from '@/components/TipsCarousel';
+import { TipCardProps } from '@/components/TipCard';
 
 // Language tips and facts data
 const languageTips = [
@@ -84,6 +87,37 @@ const Dashboard = () => {
     const index = seed % cultureTips.length;
     return cultureTips[index];
   }, []);
+  
+  // Create a combined array of tips for the carousel
+  const tipCards: TipCardProps[] = useMemo(() => {
+    return [
+      {
+        type: "conversation",
+        title: "대화 팁",
+        content: "긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다."
+      },
+      {
+        type: "culture",
+        title: "문화 팁",
+        content: "미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다."
+      },
+      {
+        type: "conversation",
+        title: "대화 팁",
+        content: "상대방이 말할 때 고개를 끄덕이거나 '맞아요', '정말요?' 같은 반응을 보여주면 적극적으로 듣고 있다는 인상을 줍니다."
+      },
+      {
+        type: "culture",
+        title: "문화 팁",
+        content: "미국에서는 식사 중에 팁을 남기는 것이 일반적입니다. 보통 계산서의 15-20%를 팁으로 남깁니다."
+      },
+      {
+        type: "conversation",
+        title: "대화 팁",
+        content: "영어로 말할 때 실수를 두려워하지 마세요. 원어민들도 종종 실수를 합니다."
+      }
+    ];
+  }, []);
 
   return (
     <div>
@@ -145,37 +179,9 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Tips Section - Removed the specific tip card */}
+      {/* Tips Carousel Section - New implementation */}
       <div className="mx-6 mb-8">
-        <h2 className="text-sm font-medium mb-4">팁</h2>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {/* Culture Tip Card - Optimized layout */}
-          <Card className="shadow-sm h-full">
-            <CardContent className="py-4 px-5">
-              <div className="flex items-center mb-1 gap-2">
-                <span className="text-amber-500">💡</span>
-                <h3 className="text-sm font-medium">문화 팁</h3>
-              </div>
-              <p className="text-[15px] text-gray-600 leading-relaxed">
-                미국에서는 모르는 사람과 엘리베이터에서 간단한 인삿말이나 미소를 교환하는 것이 일반적입니다.
-              </p>
-            </CardContent>
-          </Card>
-          
-          {/* Speaking Tip Card - Optimized layout */}
-          <Card className="shadow-sm h-full">
-            <CardContent className="py-4 px-5">
-              <div className="flex items-center mb-1 gap-2">
-                <span className="text-blue-500">💬</span>
-                <h3 className="text-sm font-medium">대화 팁</h3>
-              </div>
-              <p className="text-[15px] text-gray-600 leading-relaxed">
-                긴 문장보다는 짧고 명확한 문장을 여러 개 사용하면 유창함이 더 돋보입니다.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <TipsCarousel tips={tipCards} />
       </div>
       
       {/* Recent Practice - Fixed display issue by adding proper bottom margin */}
