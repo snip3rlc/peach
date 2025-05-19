@@ -28,7 +28,7 @@ const DidYouKnow = ({ question, answer, type = "culture" }: DidYouKnowProps) => 
         <Collapsible className="w-full">
           <CollapsibleTrigger className="w-full p-5 flex justify-between items-center hover:bg-gray-50 transition-colors">
             <div className="text-left">
-              <p className="text-base font-medium">{question}</p>
+              <p className="text-sm font-medium">{question}</p>
             </div>
             <ChevronDown className="h-5 w-5 text-gray-500 transition-transform duration-200 ease-in-out" />
           </CollapsibleTrigger>

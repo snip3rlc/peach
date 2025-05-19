@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Headphones, ChevronDown } from 'lucide-react';
@@ -71,18 +72,18 @@ const cultureTips = [
 // Did you know facts
 const didYouKnowFacts = [
   {
-    question: "Why do Americans talk to strangers in elevators or stores?",
-    answer: "Small talk is a common way to show friendliness and build casual social connections in the U.S. It's considered polite and helps create a comfortable atmosphere in public spaces.",
+    question: "미국인들은 왜 엘리베이터나 상점에서 모르는 사람과 대화를 시작할까요?",
+    answer: "미국에서는 '스몰 토크'가 친근함을 표현하고 일상적인 사회적 관계를 형성하는 일반적인 방법입니다. 이것은 공공장소에서 편안한 분위기를 조성하기 위한 예의로 여겨집니다.",
     type: "culture"
   },
   {
-    question: "Why do English speakers say 'Bless you' when someone sneezes?",
-    answer: "This tradition dates back centuries when people believed sneezing expelled evil spirits or that your soul could escape. Saying 'bless you' was meant to protect the person who sneezed.",
+    question: "영어 사용자들이 재채기할 때 'Bless you'라고 말하는 이유는 무엇일까요?",
+    answer: "이 전통은 몇 세기 전으로 거슬러 올라가는데, 당시 사람들은 재채기를 통해 악령이 빠져나가거나 영혼이 빠져나갈 수 있다고 믿었습니다. 'Bless you'라고 말하는 것은 재채기를 한 사람을 보호하기 위한 것이었습니다.",
     type: "culture"
   },
   {
-    question: "Why is the letter 'W' called 'double-U' when it looks like 'double-V'?",
-    answer: "In Old English, the letter 'W' was actually written as two 'U's placed side by side, which explains why we call it 'double-U' despite its current appearance.",
+    question: "'W'가 'double-V'처럼 보이는데 왜 'double-U'라고 부를까요?",
+    answer: "고대 영어에서 'W'는 실제로 두 개의 'U'를 나란히 배치하여 작성되었습니다. 이것이 현재의 모양에도 불구하고 'double-U'라고 부르는 이유입니다.",
     type: "conversation"
   }
 ];
