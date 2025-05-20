@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import BottomNav from "./components/BottomNav";
 import Dashboard from "./pages/Dashboard";
-import LevelSelect from "./pages/LevelSelect";
 import TopicSelect from "./pages/TopicSelect";
 import QuestionSelect from "./pages/QuestionSelect";
 import RecordAnswer from "./pages/RecordAnswer";
@@ -51,12 +50,6 @@ const App = () => {
               <Route path="/practice" element={
                 <>
                   <Practice />
-                  <BottomNav />
-                </>
-              } />
-              <Route path="/level-select" element={
-                <>
-                  <LevelSelect />
                   <BottomNav />
                 </>
               } />
