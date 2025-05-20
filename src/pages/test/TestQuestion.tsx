@@ -72,15 +72,30 @@ const TestQuestion = () => {
       setRecognition(recognitionInstance);
     }
     
-    // Load existing test progress if any
-    const storedAnswers = localStorage.getItem(`opicTest${testId}Answers`);
-    if (storedAnswers) {
+    // Check if the test is already completed to redirect to results
+    const storedTests = localStorage.getItem('opicTests');
+    if (storedTests) {
       try {
-        const parsedAnswers = JSON.parse(storedAnswers);
-        setTestAnswers(parsedAnswers);
-        setCurrentQuestionIndex(parsedAnswers.length);
+        const parsedTests = JSON.parse(storedTests);
+        const currentTest = parsedTests.find((test: any) => test.id.toString() === testId);
+        if (currentTest && currentTest.completed) {
+          // If the test is already completed, reset it instead of loading previous answers
+          resetTest();
+        } else {
+          // Load existing test progress if any
+          const storedAnswers = localStorage.getItem(`opicTest${testId}Answers`);
+          if (storedAnswers) {
+            try {
+              const parsedAnswers = JSON.parse(storedAnswers);
+              setTestAnswers(parsedAnswers);
+              setCurrentQuestionIndex(parsedAnswers.length);
+            } catch (error) {
+              console.error('Error parsing test answers:', error);
+            }
+          }
+        }
       } catch (error) {
-        console.error('Error parsing test answers:', error);
+        console.error('Error parsing tests:', error);
       }
     }
     
@@ -90,6 +105,13 @@ const TestQuestion = () => {
       }
     };
   }, [testId]);
+
+  const resetTest = () => {
+    // Reset the current test progress
+    setCurrentQuestionIndex(0);
+    setTestAnswers([]);
+    localStorage.removeItem(`opicTest${testId}Answers`);
+  };
   
   const toggleRecording = () => {
     if (isRecording) {
@@ -195,9 +217,9 @@ const TestQuestion = () => {
         <div className="mb-4">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
             <span>Question {currentQuestionIndex + 1}/{opicQuestions.length}</span>
-            <span>{Math.round(((currentQuestionIndex + 1) / opicQuestions.length) * 100)}%</span>
+            <span>{Math.min(Math.round(((currentQuestionIndex + 1) / opicQuestions.length) * 100), 100)}%</span>
           </div>
-          <Progress value={((currentQuestionIndex + 1) / opicQuestions.length) * 100} className="h-2" />
+          <Progress value={Math.min(((currentQuestionIndex + 1) / opicQuestions.length) * 100, 100)} className="h-2" />
         </div>
         
         {/* Question */}

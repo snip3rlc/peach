@@ -72,39 +72,43 @@ const Tests = () => {
         
         <div className="space-y-4">
           {testsList.map((test) => (
-            <Link 
-              key={test.id}
-              to={test.completed ? `/test/${test.id}/results` : `/test/${test.id}`}
-              className="block"
-            >
-              <Card className="shadow-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium">{test.name}</h3>
-                      {test.completed && test.date && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Completed on {formatDate(test.date)}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center">
-                      {test.completed ? (
+            <Card key={test.id} className="shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">{test.name}</h3>
+                    {test.completed && test.date && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Completed on {formatDate(test.date)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center">
+                    {test.completed ? (
+                      <div className="flex items-center">
+                        <Link 
+                          to={`/test/${test.id}/results`}
+                          className="mr-3 text-xs text-opic-purple font-medium"
+                        >
+                          See results
+                        </Link>
                         <CheckCircle className="text-green-500 mr-2" size={20} />
-                      ) : (
+                      </div>
+                    ) : (
+                      <Link to={`/test/${test.id}`}>
                         <Button 
                           variant="outline" 
                           className="text-xs px-3 py-1 h-auto border-opic-purple text-opic-purple mr-2"
                         >
                           Start
                         </Button>
-                      )}
-                      <ChevronRight className="text-gray-400" size={20} />
-                    </div>
+                      </Link>
+                    )}
+                    <ChevronRight className="text-gray-400" size={20} />
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
