@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
@@ -7,7 +6,7 @@ import { Coffee, Building, Heart, Utensils, Plane, Film, BookOpen, Users } from 
 const TopicSelect = () => {
   return (
     <div className="pb-20">
-      <Header title="주제 선택" showBack />
+      <Header title="Topic" showBack />
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">

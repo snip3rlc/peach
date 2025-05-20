@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Speaker, ChevronDown } from 'lucide-react';
 import ProgressBar from '../components/ProgressBar';
@@ -90,6 +90,7 @@ const didYouKnowFacts = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [mostRecentPractice, setMostRecentPractice] = useState<any>(null);
   
   // Get a random tip that changes daily (or randomly)
   const randomTip = useMemo(() => {
@@ -122,6 +123,45 @@ const Dashboard = () => {
     { text: "for", isCorrect: false },
     { text: "in", isCorrect: false }
   ];
+
+  // Load most recent practice from localStorage
+  useEffect(() => {
+    try {
+      const storedHistory = localStorage.getItem('practiceHistory');
+      
+      if (storedHistory) {
+        const parsedHistory = JSON.parse(storedHistory);
+        if (parsedHistory.length > 0) {
+          // Get the most recent item (first item)
+          setMostRecentPractice(parsedHistory[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading practice history:', error);
+    }
+  }, []);
+
+  // Format date
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    
+    try {
+      const date = new Date(dateStr);
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
+
+  // Badge style based on level
+  const getLevelBadgeStyle = (level: string) => {
+    if (!level) return 'bg-yellow-100 text-yellow-800';
+    
+    if (level.startsWith('N')) return 'bg-gray-100 text-gray-800'; // Novice
+    if (level.startsWith('I')) return 'bg-yellow-100 text-yellow-800'; // Intermediate
+    if (level.startsWith('A')) return 'bg-opic-light-purple text-opic-purple'; // Advanced
+    return 'bg-blue-100 text-blue-800'; // Superior or others
+  };
 
   return (
     <div>
@@ -199,20 +239,43 @@ const Dashboard = () => {
       
       {/* Recent Practice */}
       <div className="mx-6 mb-20">
-        <h2 className="text-sm font-medium mb-4">최근 연습</h2>
-        <Card className="shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center text-sm text-gray-500">
-                <span>2023-05-15</span>
+        <h2 className="text-sm font-medium mb-4">Practice</h2>
+        {mostRecentPractice ? (
+          <Link to="/history">
+            <Card className="shadow-sm">
+              <CardContent className="p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>{formatDate(mostRecentPractice.date)}</span>
+                  </div>
+                  <Badge className={getLevelBadgeStyle(mostRecentPractice.opicLevel)}>
+                    {mostRecentPractice.opicLevel || 'IM'}
+                  </Badge>
+                </div>
+                <h3 className="font-medium mb-3">{mostRecentPractice.question || '일상생활에 대해 이야기해보세요'}</h3>
+                <p className="text-sm text-gray-500 mb-1">유창성 점수</p>
+                <ProgressBar progress={85} />
+              </CardContent>
+            </Card>
+          </Link>
+        ) : (
+          <Card className="shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center text-sm text-gray-500">
+                  <span>No practice history</span>
+                </div>
               </div>
-              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Intermediate</Badge>
-            </div>
-            <h3 className="font-medium mb-3">일상생활에 대해 이야기해보세요</h3>
-            <p className="text-sm text-gray-500 mb-1">유창성 점수</p>
-            <ProgressBar progress={85} />
-          </CardContent>
-        </Card>
+              <h3 className="font-medium mb-3">Start practicing to see your history</h3>
+              <Button 
+                className="w-full bg-opic-purple hover:bg-opic-dark-purple"
+                onClick={() => navigate('/practice')}
+              >
+                Start Practice
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

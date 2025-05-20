@@ -29,7 +29,7 @@ const Profile = () => {
   
   return (
     <div>
-      <Header title="프로필" />
+      <Header title="Profile" />
       
       <div className="p-4">
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
@@ -8,7 +7,7 @@ import { ChevronRight } from 'lucide-react';
 const QuestionSelect = () => {
   return (
     <div className="pb-20">
-      <Header title="질문 선택" showBack />
+      <Header title="Question" showBack />
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -245,7 +244,7 @@ const RecordAnswer = () => {
 
   return (
     <div className="pb-20">
-      <Header title="답변 녹음" showBack>
+      <Header title="Question" showBack>
         <Button
           onClick={handleContinue}
           size="sm"
@@ -266,7 +265,7 @@ const RecordAnswer = () => {
               <CarouselPrevious className="static translate-y-0 mr-2 h-6 w-6" />
               <CarouselNext className="static translate-y-0 h-6 w-6" />
             </div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
               {recordingComplete && (
                 <>
                   <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
@@ -276,6 +275,11 @@ const RecordAnswer = () => {
                     <RefreshCw size={14} className="text-gray-700" />
                   </button>
                 </>
+              )}
+              {isRecording && (
+                <div className="text-opic-purple font-medium mr-2">
+                  {formatTime(recordingTime)}
+                </div>
               )}
               <button 
                 onClick={toggleRecording}
