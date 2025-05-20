@@ -83,22 +83,17 @@ const Tests = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
+                    {test.completed && (
+                      <CheckCircle className="text-green-500 mr-1 flex-shrink-0" size={18} />
+                    )}
                     <div>
-                      <h3 className="font-medium">{test.name}</h3>
+                      <h3 className="font-medium text-sm">{test.name}</h3>
                       {test.completed && test.date && (
                         <p className="text-xs text-gray-500 mt-1">
                           Completed on {formatDate(test.date)}
                         </p>
                       )}
                     </div>
-                    {test.completed && (
-                      <Badge 
-                        variant="default" 
-                        className="ml-2 bg-green-100 text-green-800 border-green-200"
-                      >
-                        Completed
-                      </Badge>
-                    )}
                   </div>
                   <div className="flex items-center">
                     {test.completed ? (
@@ -109,7 +104,6 @@ const Tests = () => {
                         >
                           See Results
                         </Link>
-                        <CheckCircle className="text-green-500 mr-2" size={20} />
                       </div>
                     ) : (
                       <Link to={`/test/${test.id}`}>

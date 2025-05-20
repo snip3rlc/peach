@@ -215,7 +215,6 @@ const Dashboard = () => {
               </div>
               <button className="flex flex-col items-center justify-center text-opic-purple ml-3">
                 <Speaker size={24} />
-                <span className="text-xs mt-1">듣기</span>
               </button>
             </div>
           </CardContent>
@@ -224,9 +223,7 @@ const Dashboard = () => {
       
       {/* Daily Trivia Section - Add dotted purple border */}
       <div className="mx-6">
-        <div className="border-2 border-opic-purple border-dashed rounded-lg p-1">
-          <DailyTrivia question={triviaQuestion} options={triviaOptions} />
-        </div>
+        <DailyTrivia question={triviaQuestion} options={triviaOptions} />
       </div>
       
       {/* Did You Know Section */}
@@ -240,7 +237,7 @@ const Dashboard = () => {
       
       {/* Recent Practice */}
       <div className="mx-6 mb-20">
-        <h2 className="text-sm font-medium mb-4">Practice</h2>
+        <h2 className="text-sm font-medium mb-4">최근 연습</h2>
         {mostRecentPractice ? (
           <Link to="/history">
             <Card className="shadow-sm">
