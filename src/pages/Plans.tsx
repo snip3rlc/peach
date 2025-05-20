@@ -34,9 +34,9 @@ const Plans = () => {
               onClick={() => setExpandedPlan(expandedPlan === "starter" ? null : "starter")}
             >
               <div className="flex-1">
-                <h3 className="font-medium text-black flex items-center">
+                <h3 className="font-medium text-black flex items-center justify-between">
                   스타터 
-                  <div className="inline-block px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-medium ml-2">현재 구독 중</div>
+                  <div className="inline-block px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-[10px] font-medium ml-1">현재 구독 중</div>
                 </h3>
                 <p className="text-opic-purple font-medium">무료</p>
               </div>
@@ -85,9 +85,9 @@ const Plans = () => {
               onClick={() => setExpandedPlan(expandedPlan === "premium" ? null : "premium")}
             >
               <div className="flex-1">
-                <h3 className="font-medium flex items-center">
+                <h3 className="font-medium flex items-center justify-between">
                   프리미엄
-                  <div className="inline-block px-2 py-0.5 bg-opic-light-purple text-opic-purple rounded-full text-xs font-medium ml-2">인기</div>
+                  <div className="inline-block px-2 py-0.5 bg-opic-light-purple text-opic-purple rounded-full text-[10px] font-medium ml-1">인기</div>
                 </h3>
                 <p className="text-opic-purple font-medium">₩5,000 /월</p>
               </div>

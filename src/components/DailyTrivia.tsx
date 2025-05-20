@@ -46,7 +46,8 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
 
   return (
     <div className="w-full mb-8">
-      <style jsx>{`
+      <style>
+        {`
         @keyframes shake {
           0% { transform: translateX(0); }
           25% { transform: translateX(5px); }
@@ -60,13 +61,14 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
           50% { transform: scale(1.05); background-color: #22c55e; }
           100% { transform: scale(1); }
         }
-      `}</style>
+        `}
+      </style>
 
       <div className="mb-4">
         <h2 className="text-sm font-medium">오늘의 문제</h2>
       </div>
 
-      <Card className="shadow-md">
+      <Card className="shadow-md border border-dotted border-[#A78BFA] rounded-[12px] p-[16px]">
         <CardContent className="py-4 px-5">
           {showFireworks && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

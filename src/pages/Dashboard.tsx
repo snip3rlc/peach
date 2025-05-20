@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import DailyTrivia from '@/components/DailyTrivia';
 import DidYouKnow from '@/components/DidYouKnow';
+import UpgradeCard from '@/components/UpgradeCard';
 
 // Language tips and facts data
 const languageTips = [
@@ -201,17 +202,17 @@ const Dashboard = () => {
         </Button>
       </div>
       
-      {/* Daily Expression Card - Section with smaller title */}
-      <div className="mx-6 mb-8">
-        <h2 className="text-sm font-medium mb-4">오늘의 표현</h2>
-        <Card className="overflow-hidden shadow-sm">
-          <CardContent className="p-5">
+      {/* Daily Expression Card - Updated with smaller spacing */}
+      <div className="mx-6 mb-5">
+        <h2 className="text-sm font-medium mb-3">오늘의 표현</h2>
+        <Card className="overflow-hidden shadow-sm rounded-[20px]">
+          <CardContent className="p-4">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-medium text-lg text-opic-purple mb-1">"I'm swamped"</h3>
-                <p className="text-xs text-gray-700 mb-3">바빠서 정신이 없어요</p>
-                <Separator className="my-3 bg-gray-100" />
-                <p className="text-sm text-gray-600 italic leading-relaxed">"I can't meet today, I'm totally swamped with work."</p>
+                <h3 className="font-semibold text-lg text-opic-purple">"I'm swamped"</h3>
+                <p className="text-[14px] text-gray-700 mb-1">바빠서 정신이 없어요</p>
+                <Separator className="my-2 bg-gray-100" />
+                <p className="text-[13px] text-gray-500 italic leading-relaxed">"I can't meet today, I'm totally swamped with work."</p>
               </div>
               <button className="flex flex-col items-center justify-center text-opic-purple ml-3">
                 <Speaker size={24} />
@@ -221,13 +222,13 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Daily Trivia Section */}
+      {/* Daily Trivia Section - Now with dotted border */}
       <div className="mx-6">
         <DailyTrivia question={triviaQuestion} options={triviaOptions} />
       </div>
       
-      {/* Did You Know Section */}
-      <div className="mx-6 mb-8">
+      {/* Did You Know Section - Now with dotted border */}
+      <div className="mx-6 mb-4">
         <DidYouKnow 
           question={dailyFact.question} 
           answer={dailyFact.answer} 
@@ -235,36 +236,41 @@ const Dashboard = () => {
         />
       </div>
       
-      {/* Recent Practice */}
+      {/* New Upgrade Card */}
+      <div className="mx-6">
+        <UpgradeCard />
+      </div>
+      
+      {/* Recent Practice - Reduced spacing */}
       <div className="mx-6 mb-20">
-        <h2 className="text-sm font-medium mb-4">최근 연습</h2>
+        <h2 className="text-sm font-medium mb-3">최근 연습</h2>
         {mostRecentPractice ? (
           <Link to="/history">
             <Card className="shadow-sm">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center text-sm text-gray-500">
+              <CardContent className="p-3">
+                <div className="flex justify-between items-center mb-1">
+                  <div className="flex items-center text-xs text-gray-500">
                     <span>{formatDate(mostRecentPractice.date)}</span>
                   </div>
                   <Badge className={getLevelBadgeStyle(mostRecentPractice.opicLevel)}>
                     {mostRecentPractice.opicLevel || 'IM'}
                   </Badge>
                 </div>
-                <h3 className="font-medium mb-3">{mostRecentPractice.question || '일상생활에 대해 이야기해보세요'}</h3>
+                <h3 className="font-medium text-sm">{mostRecentPractice.question || '일상생활에 대해 이야기해보세요'}</h3>
               </CardContent>
             </Card>
           </Link>
         ) : (
           <Card className="shadow-sm">
-            <CardContent className="p-5">
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center text-sm text-gray-500">
+            <CardContent className="p-3">
+              <div className="flex justify-between items-center mb-1">
+                <div className="flex items-center text-xs text-gray-500">
                   <span>No practice history</span>
                 </div>
               </div>
-              <h3 className="font-medium mb-3">Start practicing to see your history</h3>
+              <h3 className="font-medium text-sm">Start practicing to see your history</h3>
               <Button 
-                className="w-full bg-opic-purple hover:bg-opic-dark-purple"
+                className="w-full bg-opic-purple hover:bg-opic-dark-purple text-sm py-2 mt-2"
                 onClick={() => navigate('/practice')}
               >
                 Start Practice

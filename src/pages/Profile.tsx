@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Badge } from '@/components/ui/badge';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -84,7 +85,10 @@ const Profile = () => {
               </div>
               <h3 className="font-medium">구독 정보</h3>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <div className="flex items-center">
+              <Badge className="bg-green-100 text-green-800 font-medium mr-2 text-xs">스타터</Badge>
+              <ChevronRight size={20} className="text-gray-400" />
+            </div>
           </Link>
         </div>
         
@@ -131,9 +135,17 @@ const Profile = () => {
                   <h4 className="font-medium text-sm mb-1">레벨은 어떻게 선택하나요?</h4>
                   <p className="text-xs text-gray-600">자신의 영어 실력에 맞는 레벨을 선택하시면 됩니다. 시작은 낮은 레벨부터 점차 높여가는 것을 추천합니다.</p>
                 </div>
-                <div>
+                <div className="mb-3">
                   <h4 className="font-medium text-sm mb-1">녹음한 답변을 다시 들을 수 있나요?</h4>
                   <p className="text-xs text-gray-600">네, 히스토리에서 과거 연습 기록을 확인하실 수 있습니다.</p>
+                </div>
+                <div className="mb-3">
+                  <h4 className="font-medium text-sm mb-1">구독 플랜은 어떻게 변경하나요?</h4>
+                  <p className="text-xs text-gray-600">프로필의 '구독 정보'에서 '변경' 버튼을 눌러 플랜을 변경할 수 있습니다.</p>
+                </div>
+                <div className="mb-3">
+                  <h4 className="font-medium text-sm mb-1">친구 초대는 어떻게 하나요?</h4>
+                  <p className="text-xs text-gray-600">프로필의 '친구 초대' 메뉴에서 추천 코드를 확인하고 공유할 수 있습니다.</p>
                 </div>
               </div>
             </AccordionContent>

@@ -21,7 +21,7 @@ const DidYouKnow = ({ question, answer, type = "culture" }: DidYouKnowProps) => 
         <h2 className="text-sm font-medium">알고 계셨나요?</h2>
       </div>
 
-      <Card className="shadow-md overflow-hidden">
+      <Card className="shadow-md border border-dotted border-[#A78BFA] rounded-[12px] p-[16px]">
         <Collapsible className="w-full">
           <CollapsibleTrigger className="w-full p-5 flex justify-between items-center hover:bg-gray-50 transition-colors">
             <div className="text-left">

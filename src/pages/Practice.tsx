@@ -25,11 +25,11 @@ const Practice = () => {
           >
             <div className="flex items-center">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-500">
-                <BookOpen size={24} />
+                <BookOpen size={20} />
               </div>
               <div className="ml-4 flex-1">
                 <h3 className="font-medium text-xs">Novice</h3>
-                <p className="text-xs text-gray-500">기본적인 일상 대화와 간단한 자기소개를 할 수 있는 단계</p>
+                <p className="text-[11px] text-gray-500">기본적인 일상 대화와 간단한 자기소개를 할 수 있는 단계</p>
               </div>
             </div>
           </Link>
@@ -41,11 +41,11 @@ const Practice = () => {
           >
             <div className="flex items-center">
               <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-500">
-                <Zap size={24} />
+                <Zap size={20} />
               </div>
               <div className="ml-4 flex-1">
                 <h3 className="font-medium text-xs">Intermediate</h3>
-                <p className="text-xs text-gray-500">다양한 주제에 대해 자세한 의견을 표현할 수 있는 단계</p>
+                <p className="text-[11px] text-gray-500">다양한 주제에 대해 자세한 의견을 표현할 수 있는 단계</p>
               </div>
             </div>
           </Link>
@@ -57,11 +57,11 @@ const Practice = () => {
           >
             <div className="flex items-center">
               <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-500">
-                <Trophy size={24} />
+                <Trophy size={20} />
               </div>
               <div className="ml-4 flex-1">
                 <h3 className="font-medium text-xs">Advanced</h3>
-                <p className="text-xs text-gray-500">복잡한 주제에 대해 유창하고 논리적으로 의견을 표현할 수 있는 단계</p>
+                <p className="text-[11px] text-gray-500">복잡한 주제에 대해 유창하고 논리적으로 의견을 표현할 수 있는 단계</p>
               </div>
             </div>
           </Link>
