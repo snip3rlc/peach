@@ -100,8 +100,8 @@ const RecordAnswer = () => {
     }
   ];
   
+  // Initialize speech recognition
   useEffect(() => {
-    // Initialize speech recognition
     const SpeechRecognitionAPI = (window as any).SpeechRecognition || 
                                 (window as any).webkitSpeechRecognition;
     
@@ -310,12 +310,12 @@ const RecordAnswer = () => {
                       <h3 className="font-medium">{template.name}</h3>
                     </div>
                     
-                    {/* For "Speak Freely" option - make font smaller and increase height */}
+                    {/* For "Speak Freely" option - increased height */}
                     {template.id === 0 && (
                       <Textarea 
                         value={completedAnswer}
                         onChange={(e) => setCompletedAnswer(e.target.value)}
-                        className="text-xs text-gray-700 min-h-[150px]"
+                        className="text-xs text-gray-700 min-h-[200px]"
                         placeholder="녹음을 시작하면 여기에 답변이 표시됩니다..."
                       />
                     )}
@@ -397,14 +397,6 @@ const RecordAnswer = () => {
             />
           ))}
         </div>
-        
-        {isRecording && (
-          <div className="text-center mt-2 mb-8">
-            <div className="mt-2 text-opic-purple font-medium">
-              {formatTime(recordingTime)}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

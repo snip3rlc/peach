@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CircleAlert, Book, Speaker, ChevronDown } from 'lucide-react';
@@ -223,9 +222,11 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Daily Trivia Section */}
+      {/* Daily Trivia Section - Add dotted purple border */}
       <div className="mx-6">
-        <DailyTrivia question={triviaQuestion} options={triviaOptions} />
+        <div className="border-2 border-opic-purple border-dashed rounded-lg p-1">
+          <DailyTrivia question={triviaQuestion} options={triviaOptions} />
+        </div>
       </div>
       
       {/* Did You Know Section */}

@@ -20,6 +20,8 @@ import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import SignIn from "./pages/SignIn";
 import Tests from "./pages/Tests";
+import TestQuestion from "./pages/test/TestQuestion";
+import TestResults from "./pages/test/TestResults";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +114,21 @@ const App = () => {
                   <BottomNav />
                 </>
               } />
+              
+              {/* Test routes */}
+              <Route path="/test/:testId" element={
+                <>
+                  <TestQuestion />
+                  <BottomNav />
+                </>
+              } />
+              <Route path="/test/:testId/results" element={
+                <>
+                  <TestResults />
+                  <BottomNav />
+                </>
+              } />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
