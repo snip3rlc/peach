@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ChevronRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 // Sample OPIc tests structure
 const tests = [
@@ -63,7 +64,7 @@ const Tests = () => {
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
-          <h2 className="text-lg font-medium mb-2">OPIc 모의고사</h2>
+          <h2 className="text-lg font-medium mb-2">OPIc Practice</h2>
           <p className="text-sm text-gray-600">
             15개의 질문으로 구성된 OPIc 모의고사로 실전 감각을 키워보세요. 
             테스트 후 자세한 피드백을 받을 수 있습니다.
@@ -75,12 +76,22 @@ const Tests = () => {
             <Card key={test.id} className="shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">{test.name}</h3>
-                    {test.completed && test.date && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Completed on {formatDate(test.date)}
-                      </p>
+                  <div className="flex items-center">
+                    <div>
+                      <h3 className="font-medium">{test.name}</h3>
+                      {test.completed && test.date && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Completed on {formatDate(test.date)}
+                        </p>
+                      )}
+                    </div>
+                    {test.completed && (
+                      <Badge 
+                        variant="default" 
+                        className="ml-2 bg-green-100 text-green-800 border-green-200"
+                      >
+                        Completed
+                      </Badge>
                     )}
                   </div>
                   <div className="flex items-center">

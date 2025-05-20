@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProgressBar from '../../components/ProgressBar';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 // OPIc levels in ascending order
 const opicLevels = ['NL', 'NM', 'NH', 'IL', 'IM', 'IH', 'AL', 'AM', 'AH'];
@@ -21,6 +22,7 @@ const TestResults = () => {
     correctedAnswer: string,
     sampleAnswer: string
   }>>([]);
+  const [expandedQuestions, setExpandedQuestions] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [opicLevel, setOpicLevel] = useState('');
   
@@ -61,6 +63,17 @@ const TestResults = () => {
       setIsLoading(false);
     }
   }, [testId]);
+  
+  // Helper function to toggle question expansion
+  const toggleQuestionExpand = (index: number) => {
+    setExpandedQuestions(prevExpanded => {
+      if (prevExpanded.includes(index)) {
+        return prevExpanded.filter(i => i !== index);
+      } else {
+        return [...prevExpanded, index];
+      }
+    });
+  };
   
   // Mock feedback generators - in a real app, these would be API calls
   const generateFeedback = (answer: string): string => {
@@ -159,33 +172,48 @@ const TestResults = () => {
             {testFeedback.map((item, index) => (
               <Card key={index} className="mb-4">
                 <CardContent className="p-4">
-                  <h3 className="font-medium mb-2">Question {index + 1}</h3>
-                  <p className="text-sm text-gray-700 mb-4">{item.question}</p>
-                  
-                  <div className="bg-gray-50 p-3 rounded-md mb-4">
-                    <p className="text-sm text-gray-600 italic">Your answer:</p>
-                    <p className="text-sm">{item.answer}</p>
+                  <div 
+                    className="flex justify-between items-center cursor-pointer" 
+                    onClick={() => toggleQuestionExpand(index)}
+                  >
+                    <div>
+                      <h3 className="font-medium">Question {index + 1}</h3>
+                      <p className="text-sm text-gray-700">{item.question}</p>
+                    </div>
+                    {expandedQuestions.includes(index) ? 
+                      <ChevronUp className="text-gray-500" size={20} /> : 
+                      <ChevronDown className="text-gray-500" size={20} />
+                    }
                   </div>
                   
-                  <Tabs defaultValue="feedback">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="feedback">Feedback</TabsTrigger>
-                      <TabsTrigger value="corrected">Corrected</TabsTrigger>
-                      <TabsTrigger value="sample">Sample</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="feedback" className="p-3 bg-white rounded-md mt-2">
-                      <p className="text-sm">{item.feedback}</p>
-                    </TabsContent>
-                    
-                    <TabsContent value="corrected" className="p-3 bg-white rounded-md mt-2">
-                      <p className="text-sm">{item.correctedAnswer}</p>
-                    </TabsContent>
-                    
-                    <TabsContent value="sample" className="p-3 bg-white rounded-md mt-2">
-                      <p className="text-sm">{item.sampleAnswer}</p>
-                    </TabsContent>
-                  </Tabs>
+                  {expandedQuestions.includes(index) && (
+                    <div className="mt-4">
+                      <div className="bg-gray-50 p-3 rounded-md mb-4">
+                        <p className="text-sm text-gray-600 italic">Your answer:</p>
+                        <p className="text-sm">{item.answer}</p>
+                      </div>
+                      
+                      <Tabs defaultValue="feedback">
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+                          <TabsTrigger value="corrected">Corrected</TabsTrigger>
+                          <TabsTrigger value="sample">Sample</TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="feedback" className="p-3 bg-white rounded-md mt-2">
+                          <p className="text-sm">{item.feedback}</p>
+                        </TabsContent>
+                        
+                        <TabsContent value="corrected" className="p-3 bg-white rounded-md mt-2">
+                          <p className="text-sm">{item.correctedAnswer}</p>
+                        </TabsContent>
+                        
+                        <TabsContent value="sample" className="p-3 bg-white rounded-md mt-2">
+                          <p className="text-sm">{item.sampleAnswer}</p>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
