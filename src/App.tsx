@@ -1,9 +1,9 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import BottomNav from "./components/BottomNav";
 import Dashboard from "./pages/Dashboard";
 import LevelSelect from "./pages/LevelSelect";
@@ -31,10 +31,10 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+      <BrowserRouter>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
           <div className="min-h-screen">
             <Routes>
               {/* Authentication and onboarding routes */}
@@ -132,8 +132,8 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </BrowserRouter>
-      </TooltipProvider>
+        </TooltipProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 };
