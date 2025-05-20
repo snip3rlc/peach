@@ -221,7 +221,7 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Daily Trivia Section - Add dotted purple border */}
+      {/* Daily Trivia Section */}
       <div className="mx-6">
         <DailyTrivia question={triviaQuestion} options={triviaOptions} />
       </div>
@@ -251,8 +251,6 @@ const Dashboard = () => {
                   </Badge>
                 </div>
                 <h3 className="font-medium mb-3">{mostRecentPractice.question || '일상생활에 대해 이야기해보세요'}</h3>
-                <p className="text-sm text-gray-500 mb-1">유창성 점수</p>
-                <ProgressBar progress={85} />
               </CardContent>
             </Card>
           </Link>

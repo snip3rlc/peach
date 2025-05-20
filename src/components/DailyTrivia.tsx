@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 interface TriviaOption {
   text: string;
@@ -46,6 +46,22 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
 
   return (
     <div className="w-full mb-8">
+      <style jsx>{`
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(5px); }
+          50% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+          100% { transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); background-color: #22c55e; }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+
       <div className="mb-4">
         <h2 className="text-sm font-medium">오늘의 문제</h2>
       </div>
@@ -73,21 +89,9 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
                 disabled={isCorrect}
               >
                 {option.text}
-                {selectedOption === option.text && option.isCorrect && (
-                  <Check className="ml-2 h-4 w-4 text-white" />
-                )}
-                {selectedOption === option.text && !option.isCorrect && (
-                  <X className="ml-2 h-4 w-4" />
-                )}
               </Button>
             ))}
           </div>
-          
-          {isCorrect && (
-            <div className="mt-3">
-              <p className="text-green-600">정답입니다! 👏</p>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

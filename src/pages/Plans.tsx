@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 const Plans = () => {
-  const [expandedPlan, setExpandedPlan] = useState<string | null>("starter");
+  const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   
   return (
     <div className="pb-20">
@@ -33,9 +33,11 @@ const Plans = () => {
               }`}
               onClick={() => setExpandedPlan(expandedPlan === "starter" ? null : "starter")}
             >
-              <div>
-                <div className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium mb-1">현재 구독 중</div>
-                <h3 className="font-medium text-black">스타터</h3>
+              <div className="flex-1">
+                <h3 className="font-medium text-black flex items-center">
+                  스타터 
+                  <div className="inline-block px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-medium ml-2">현재 구독 중</div>
+                </h3>
                 <p className="text-opic-purple font-medium">무료</p>
               </div>
               <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "starter" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -82,9 +84,11 @@ const Plans = () => {
               }`}
               onClick={() => setExpandedPlan(expandedPlan === "premium" ? null : "premium")}
             >
-              <div>
-                <div className="inline-block px-2 py-1 bg-opic-light-purple text-opic-purple rounded-full text-xs font-medium mb-1">인기</div>
-                <h3 className="font-medium">프리미엄</h3>
+              <div className="flex-1">
+                <h3 className="font-medium flex items-center">
+                  프리미엄
+                  <div className="inline-block px-2 py-0.5 bg-opic-light-purple text-opic-purple rounded-full text-xs font-medium ml-2">인기</div>
+                </h3>
                 <p className="text-opic-purple font-medium">₩5,000 /월</p>
               </div>
               <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "premium" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

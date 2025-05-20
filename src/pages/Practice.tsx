@@ -11,7 +11,7 @@ const Practice = () => {
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
-          <h2 className="text-sm font-medium mb-2">연습할 레벨을 선택하세요</h2>
+          <h2 className="text-xs font-medium mb-2">연습할 레벨을 선택하세요</h2>
           <p className="text-xs text-gray-600">
             현재 영어 실력에 맞는 레벨을 선택하면 적합한 연습 문제와 템플릿을 제공해 드립니다.
           </p>
@@ -28,7 +28,7 @@ const Practice = () => {
                 <BookOpen size={24} />
               </div>
               <div className="ml-4 flex-1">
-                <h3 className="font-medium text-sm">Novice</h3>
+                <h3 className="font-medium text-xs">Novice</h3>
                 <p className="text-xs text-gray-500">기본적인 일상 대화와 간단한 자기소개를 할 수 있는 단계</p>
               </div>
             </div>
@@ -44,7 +44,7 @@ const Practice = () => {
                 <Zap size={24} />
               </div>
               <div className="ml-4 flex-1">
-                <h3 className="font-medium text-sm">Intermediate</h3>
+                <h3 className="font-medium text-xs">Intermediate</h3>
                 <p className="text-xs text-gray-500">다양한 주제에 대해 자세한 의견을 표현할 수 있는 단계</p>
               </div>
             </div>
@@ -60,7 +60,7 @@ const Practice = () => {
                 <Trophy size={24} />
               </div>
               <div className="ml-4 flex-1">
-                <h3 className="font-medium text-sm">Advanced</h3>
+                <h3 className="font-medium text-xs">Advanced</h3>
                 <p className="text-xs text-gray-500">복잡한 주제에 대해 유창하고 논리적으로 의견을 표현할 수 있는 단계</p>
               </div>
             </div>
