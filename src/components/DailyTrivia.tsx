@@ -45,7 +45,7 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
   };
 
   return (
-    <div className="w-full mb-8">
+    <div className="w-full mb-6">
       <style>
         {`
         @keyframes shake {
@@ -64,12 +64,12 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
         `}
       </style>
 
-      <div className="mb-4">
+      <div className="mb-2">
         <h2 className="text-sm font-medium">오늘의 문제</h2>
       </div>
 
-      <Card className="shadow-md border border-dotted border-[#A78BFA] rounded-[12px] p-[16px]">
-        <CardContent className="py-4 px-5">
+      <Card className="shadow-md border border-dotted border-[#A78BFA] rounded-[12px] p-[12px]">
+        <CardContent className="py-2 px-3">
           {showFireworks && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="animate-fade-in">
@@ -78,13 +78,13 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
             </div>
           )}
           
-          <p className="text-base mb-4 font-medium">{question}</p>
-          <div className="flex gap-3">
+          <p className="text-sm mb-2 font-medium">{question}</p>
+          <div className="flex gap-2">
             {options.map((option, index) => (
               <Button
                 key={index}
                 variant={getButtonVariant(option)}
-                className={`flex-1 transition-colors ${
+                className={`flex-1 text-xs py-1 transition-colors ${
                   selectedOption === option.text && !option.isCorrect ? "animate-[shake_0.5s_ease-in-out]" : ""
                 } ${selectedOption === option.text && option.isCorrect ? "animate-[pulse_1s_ease-in-out]" : ""}`}
                 onClick={() => handleOptionClick(option)}
