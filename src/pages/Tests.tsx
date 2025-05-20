@@ -8,13 +8,13 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-// Sample OPIc tests structure
-const tests = [
+// Sample OPIc tests structure with mock completed data
+const mockTests = [
   {
     id: 1,
     name: "OPIc Practice Test 1",
-    completed: false,
-    date: null
+    completed: true,
+    date: "2025-05-19T15:30:00.000Z"
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const tests = [
 
 const Tests = () => {
   const navigate = useNavigate();
-  const [testsList, setTestsList] = useState(tests);
+  const [testsList, setTestsList] = useState(mockTests);
   
   // Load tests from localStorage if available
   useEffect(() => {
@@ -43,7 +43,13 @@ const Tests = () => {
         setTestsList(parsedTests);
       } catch (error) {
         console.error('Error parsing tests from localStorage:', error);
+        // If there's an error parsing, use the mock data
+        setTestsList(mockTests);
       }
+    } else {
+      // If no stored data, initialize localStorage with mock data
+      localStorage.setItem('opicTests', JSON.stringify(mockTests));
+      setTestsList(mockTests);
     }
   }, []);
   
@@ -76,7 +82,7 @@ const Tests = () => {
             <Card key={test.id} className="shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     <div>
                       <h3 className="font-medium">{test.name}</h3>
                       {test.completed && test.date && (
@@ -101,7 +107,7 @@ const Tests = () => {
                           to={`/test/${test.id}/results`}
                           className="mr-3 text-xs text-opic-purple font-medium"
                         >
-                          See results
+                          See Results
                         </Link>
                         <CheckCircle className="text-green-500 mr-2" size={20} />
                       </div>
