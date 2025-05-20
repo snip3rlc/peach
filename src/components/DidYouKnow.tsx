@@ -25,12 +25,12 @@ const DidYouKnow = ({ question, answer, type = "culture" }: DidYouKnowProps) => 
         <Collapsible className="w-full">
           <CollapsibleTrigger className="w-full p-3 flex justify-between items-center hover:bg-gray-50 transition-colors">
             <div className="text-left">
-              <p className="text-xs font-medium">{question}</p>
+              <p className="text-sm font-medium">{question}</p>
             </div>
             <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 ease-in-out" />
           </CollapsibleTrigger>
           <CollapsibleContent className="px-3 pb-3 bg-gray-50 border-t border-gray-100 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-            <p className="text-xs leading-relaxed pt-2">{answer}</p>
+            <p className="text-sm leading-relaxed pt-2">{answer}</p>
           </CollapsibleContent>
         </Collapsible>
       </Card>
