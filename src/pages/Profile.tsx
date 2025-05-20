@@ -118,7 +118,7 @@ const Profile = () => {
                 <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
                   <HelpCircle size={20} />
                 </div>
-                <span>자주 묻는 질문</span>
+                <span>F.A.Q.</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4 pt-1">

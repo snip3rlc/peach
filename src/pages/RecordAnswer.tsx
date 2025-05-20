@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -305,12 +306,12 @@ const RecordAnswer = () => {
                       <h3 className="font-medium">{template.name}</h3>
                     </div>
                     
-                    {/* For "Speak Freely" option - make font smaller */}
+                    {/* For "Speak Freely" option - make font smaller and increase height */}
                     {template.id === 0 && (
                       <Textarea 
                         value={completedAnswer}
                         onChange={(e) => setCompletedAnswer(e.target.value)}
-                        className="text-xs text-gray-700 min-h-[100px]"
+                        className="text-xs text-gray-700 min-h-[150px]"
                         placeholder="녹음을 시작하면 여기에 답변이 표시됩니다..."
                       />
                     )}
@@ -376,6 +377,22 @@ const RecordAnswer = () => {
             ))}
           </CarouselContent>
         </Carousel>
+        
+        {/* Pagination indicator */}
+        <div className="flex justify-center gap-2 mb-6">
+          {templates.map((_, index) => (
+            <button
+              key={index}
+              className={`w-2 h-2 rounded-full ${activeTemplate === index ? 'bg-opic-purple' : 'bg-gray-300'}`}
+              onClick={() => {
+                setActiveTemplate(index);
+                if (emblaApi && emblaApi.scrollTo) {
+                  emblaApi.scrollTo(index);
+                }
+              }}
+            />
+          ))}
+        </div>
         
         {isRecording && (
           <div className="text-center mt-2 mb-8">
