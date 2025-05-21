@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBack = true, children }) => 
   const navigate = useNavigate();
 
   return (
-    <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-4 flex items-center">
+    <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-4 flex items-center safe-area-top">
       {showBack && (
         <button 
           onClick={() => navigate(-1)}
