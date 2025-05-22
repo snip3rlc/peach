@@ -90,16 +90,24 @@ const SignIn = () => {
       <div className="flex-1 flex flex-col justify-center items-center px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">OPIc Practice</h1>
-            <p className="text-gray-600">소셜 계정으로 로그인하세요</p>
+            {/* Peach Logo */}
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/lovable-uploads/e9d80f88-d744-4ab5-abe5-a07a30414899.png" 
+                alt="Peach Logo" 
+                className="h-24 w-24 animate-fade-in" 
+              />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">Peach</h1>
+            <p className="text-gray-700 font-medium text-lg">Peach와 함께 오픽, 매일매일 실력 업!</p>
           </div>
           
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <div className="space-y-4">
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+            <div className="space-y-5">
               <Button 
                 onClick={() => handleSocialSignIn('google')} 
                 variant="outline" 
-                className="w-full flex items-center justify-center gap-2 py-6 border-2 border-gray-200"
+                className="w-full flex items-center justify-center gap-2 py-6 border-2 border-gray-200 hover:border-opic-purple hover:bg-white hover:shadow-md transition-all"
                 disabled={loading}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
@@ -114,7 +122,7 @@ const SignIn = () => {
               <Button 
                 onClick={() => handleSocialSignIn('kakao')} 
                 variant="outline" 
-                className="w-full flex items-center justify-center gap-2 py-6 bg-[#FEE500] border-0 text-black hover:bg-[#FDD800]"
+                className="w-full flex items-center justify-center gap-2 py-6 bg-[#FEE500] border-0 text-black hover:bg-[#FDD800] hover:shadow-md transition-all"
                 disabled={loading}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -126,7 +134,7 @@ const SignIn = () => {
               <Button 
                 onClick={() => handleSocialSignIn('apple')} 
                 variant="outline" 
-                className="w-full flex items-center justify-center gap-2 py-6 bg-black text-white hover:bg-gray-800 border-0"
+                className="w-full flex items-center justify-center gap-2 py-6 bg-black text-white hover:bg-gray-800 hover:shadow-md transition-all border-0"
                 disabled={loading}
               >
                 <Apple size={24} />
@@ -135,7 +143,7 @@ const SignIn = () => {
             </div>
           </div>
           
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-8 text-center text-sm text-gray-500">
             <p>로그인하면 <a href="#" className="text-opic-purple hover:underline">서비스 약관</a>과 <a href="#" className="text-opic-purple hover:underline">개인정보 보호정책</a>에 동의하게 됩니다.</p>
           </div>
         </div>
