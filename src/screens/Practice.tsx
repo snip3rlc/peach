@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -8,13 +9,20 @@ import {
   ScrollView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+// Define the navigation parameter types
+type RootStackParamList = {
+  TopicSelect: { level: string };
+};
+
+type PracticeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'TopicSelect'>;
 
 const Practice = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<PracticeScreenNavigationProp>();
   
   const handleLevelSelect = (level: string) => {
-    // Fixed: Properly type the navigation parameters
-    navigation.navigate('TopicSelect' as never, { level } as never);
+    navigation.navigate('TopicSelect', { level });
   };
   
   return (
