@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
 import { Apple, LogIn } from 'lucide-react';
 
 const SignIn = () => {
@@ -85,17 +84,17 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header title="로그인" showBack={true} />
+      {/* Removed the Header component completely */}
       
       <div className="flex-1 flex flex-col justify-center items-center px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            {/* Peach Logo */}
+            {/* Peach Logo - with transparent background class */}
             <div className="flex justify-center mb-4">
               <img 
                 src="/lovable-uploads/e9d80f88-d744-4ab5-abe5-a07a30414899.png" 
                 alt="Peach Logo" 
-                className="h-24 w-24 animate-fade-in" 
+                className="h-24 w-24 animate-fade-in object-contain" 
               />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-3">Peach</h1>
