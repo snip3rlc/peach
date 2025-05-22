@@ -69,15 +69,8 @@ const SignIn = () => {
       setLoading(true);
       setAuthProvider(provider);
       
-      // Check if the provider is configured before attempting sign in
-      const { data: providers } = await supabase.auth.getSettings();
-      const enabledProviders = providers?.external?.providers || [];
-      
-      if (!enabledProviders.includes(provider)) {
-        toast.error(`${provider} 로그인이 설정되지 않았습니다. 관리자에게 문의하세요.`);
-        return;
-      }
-      
+      // Instead of checking provider configuration which isn't available via client API,
+      // we'll handle the error if the provider isn't configured
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
@@ -86,7 +79,12 @@ const SignIn = () => {
       });
       
       if (error) {
-        toast.error(`${provider} 로그인 중 오류가 발생했습니다.`);
+        // Show appropriate error message based on error
+        if (error.message.includes('provider is not enabled')) {
+          toast.error(`${provider} 로그인이 설정되지 않았습니다. 관리자에게 문의하세요.`);
+        } else {
+          toast.error(`${provider} 로그인 중 오류가 발생했습니다.`);
+        }
         console.error(`Error signing in with ${provider}:`, error);
       }
     } catch (error) {
