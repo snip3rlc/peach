@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBack = true, children }) => 
       {showBack && (
         <button 
           onClick={() => navigate(-1)}
-          className="mr-2"
+          className="mr-2 text-opic-purple"
         >
           <ChevronLeft size={24} />
         </button>
@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBack = true, children }) => 
         </div>
       ) : !user ? (
         <div className="ml-auto">
-          <button onClick={() => navigate('/signin')} className="p-2">
+          <button onClick={() => navigate('/signin')} className="p-2 text-opic-purple">
             <User size={20} />
           </button>
         </div>
