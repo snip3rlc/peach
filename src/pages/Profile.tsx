@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package, Edit, Camera, Loader2 } from 'lucide-react';
@@ -16,51 +17,27 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { AuthContext } from '@/App';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('게스트 사용자');
   const [isEditingName, setIsEditingName] = useState(false);
   const [name, setName] = useState('게스트 사용자');
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [subscription, setSubscription] = useState<any>(null);
   const [managingSubscription, setManagingSubscription] = useState(false);
   
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) {
-          navigate('/signin');
-          return;
-        }
-        setUser(data.session.user);
-        
-        // Check subscription status
-        checkSubscription();
-      } catch (error) {
-        console.error('Error checking auth:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
-  }, [navigate]);
+  const { user, subscription, loading } = useContext(AuthContext);
   
-  const checkSubscription = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
-      if (error) {
-        console.error('Error checking subscription:', error);
-        return;
-      }
-      setSubscription(data);
-    } catch (error) {
-      console.error('Error:', error);
+  useEffect(() => {
+    if (user?.user_metadata?.full_name) {
+      setUserName(user.user_metadata.full_name);
+      setName(user.user_metadata.full_name);
+    } else if (user?.email) {
+      const emailName = user.email.split('@')[0];
+      setUserName(emailName);
+      setName(emailName);
     }
-  };
+  }, [user]);
   
   const handleChangeName = () => {
     if (isEditingName) {

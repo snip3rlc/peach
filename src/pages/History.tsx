@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useContext } from 'react';
 import Header from '../components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { AuthContext } from '@/App';
 
 interface FeedbackItem {
   category: 'grammar' | 'fluency' | 'vocabulary';
@@ -34,12 +36,12 @@ const History = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
-  const [isPremium, setIsPremium] = useState(true); // For demonstration, set to true to show history
+  const { subscription } = useContext(AuthContext);
+  const isPremium = subscription?.active || true; // For demonstration, set to true to show history
 
   useEffect(() => {
     // Check if user has premium access (for demonstration, we'll set to true)
     // In a real app, this would check user subscription status
-    setIsPremium(true);
     
     // Get practice history from localStorage
     try {
