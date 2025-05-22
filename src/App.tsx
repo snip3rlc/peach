@@ -2,7 +2,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { createContext, useEffect, useState } from "react";
 import BottomNav from "./components/BottomNav";
@@ -32,12 +32,24 @@ export const AuthContext = createContext<{
   user: any;
   subscription: any;
   loading: boolean;
+  signOut: () => Promise<void>;
 }>({
   session: null,
   user: null,
   subscription: null,
   loading: true,
+  signOut: async () => {},
 });
+
+// Helper function to clean up authentication state
+const cleanupAuthState = () => {
+  // Remove all Supabase auth keys from localStorage
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+};
 
 const App = () => {
   const [session, setSession] = useState<any>(null);
@@ -50,6 +62,7 @@ const App = () => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -101,6 +114,26 @@ const App = () => {
       console.error('Error checking subscription:', error);
     }
   };
+  
+  const signOut = async () => {
+    try {
+      // Clean up auth state
+      cleanupAuthState();
+      
+      // Attempt global sign out
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      if (error) {
+        console.error('Error signing out:', error);
+      }
+      
+      // Reset state
+      setSession(null);
+      setUser(null);
+      setSubscription(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   // Protected route component
   const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -117,7 +150,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={{ session, user, subscription, loading }}>
+      <AuthContext.Provider value={{ session, user, subscription, loading, signOut }}>
         <BrowserRouter>
           <TooltipProvider>
             <Toaster />
@@ -130,10 +163,14 @@ const App = () => {
                 
                 {/* Main app routes */}
                 <Route path="/" element={
-                  <>
-                    <Dashboard />
-                    <BottomNav />
-                  </>
+                  session ? (
+                    <>
+                      <Dashboard />
+                      <BottomNav />
+                    </>
+                  ) : (
+                    <Navigate to="/signin" />
+                  )
                 } />
                 <Route path="/practice" element={
                   <>

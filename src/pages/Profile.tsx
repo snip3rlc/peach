@@ -26,7 +26,7 @@ const Profile = () => {
   const [name, setName] = useState('게스트 사용자');
   const [managingSubscription, setManagingSubscription] = useState(false);
   
-  const { user, subscription, loading } = useContext(AuthContext);
+  const { user, subscription, loading, signOut } = useContext(AuthContext);
   
   useEffect(() => {
     if (user?.user_metadata?.full_name) {
@@ -74,10 +74,11 @@ const Profile = () => {
   
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut();
       navigate('/signin');
     } catch (error) {
       console.error('Error signing out:', error);
+      toast.error('로그아웃 중 오류가 발생했습니다.');
     }
   };
   
