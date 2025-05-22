@@ -47,7 +47,8 @@ const TestQuestion = () => {
   const [transcription, setTranscription] = useState("");
   const [testAnswers, setTestAnswers] = useState<Array<{question: string, answer: string}>>([]);
   const [recognition, setRecognition] = useState<SpeechRecognitionInstance | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // Fix the timer reference type to use ReturnType<typeof setInterval>
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Initialize speech recognition
   useEffect(() => {
