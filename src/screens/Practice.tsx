@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   View,
@@ -14,6 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 // Define the navigation parameter types
 type RootStackParamList = {
   TopicSelect: { level: string };
+  Home: undefined;
 };
 
 type PracticeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'TopicSelect'>;
