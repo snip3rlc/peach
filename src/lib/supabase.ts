@@ -18,8 +18,8 @@ const ExpoSecureStoreAdapter = {
 };
 
 // Replace with your Supabase URL and anon key
-const supabaseUrl = 'https://your-supabase-url.supabase.co';
-const supabaseAnonKey = 'your-supabase-anon-key';
+const supabaseUrl = 'https://gzopcuobfictkngqcffb.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6b3BjdW9iZmljdGtuZ3FjZmZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDI3NDIsImV4cCI6MjA2MzMxODc0Mn0.7gifgfQBovWjhs4pLPCTE3b0uF2VEAjqjtKg_OHMjqo';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

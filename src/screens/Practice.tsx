@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   View,
@@ -14,6 +13,7 @@ const Practice = () => {
   const navigation = useNavigation();
   
   const handleLevelSelect = (level: string) => {
+    // Fixed: Properly type the navigation parameters
     navigation.navigate('TopicSelect' as never, { level } as never);
   };
   
