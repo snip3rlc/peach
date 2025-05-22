@@ -1,8 +1,7 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package, Edit, Camera } from 'lucide-react';
+import { ChevronRight, CreditCard, Bell, HelpCircle, LogOut, Package, Edit, Camera, Loader2 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
@@ -14,12 +13,54 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('게스트 사용자');
   const [isEditingName, setIsEditingName] = useState(false);
   const [name, setName] = useState('게스트 사용자');
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<any>(null);
+  const [managingSubscription, setManagingSubscription] = useState(false);
+  
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) {
+          navigate('/signin');
+          return;
+        }
+        setUser(data.session.user);
+        
+        // Check subscription status
+        checkSubscription();
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
+  
+  const checkSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+      setSubscription(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   
   const handleChangeName = () => {
     if (isEditingName) {
@@ -27,6 +68,52 @@ const Profile = () => {
     }
     setIsEditingName(!isEditingName);
   };
+  
+  const handleManageSubscription = async () => {
+    if (!subscription?.active) {
+      navigate('/plans');
+      return;
+    }
+    
+    try {
+      setManagingSubscription(true);
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) {
+        toast.error('구독 관리 페이지를 불러오는 중 오류가 발생했습니다.');
+        console.error('Error opening customer portal:', error);
+        return;
+      }
+      
+      // Open Stripe customer portal in a new tab
+      window.open(data.url, '_blank');
+    } catch (error) {
+      toast.error('구독 관리 페이지를 불러오는 중 오류가 발생했습니다.');
+      console.error('Error:', error);
+    } finally {
+      setManagingSubscription(false);
+    }
+  };
+  
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/signin');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+  
+  if (loading) {
+    return (
+      <div>
+        <Header title="Profile" />
+        <div className="flex justify-center items-center h-[80vh]">
+          <Loader2 className="w-8 h-8 text-opic-purple animate-spin" />
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div>
@@ -71,14 +158,14 @@ const Profile = () => {
                   </button>
                 </h2>
               )}
-              <p className="text-gray-500 text-sm">guest@example.com</p>
-              <p className="text-gray-500 text-sm">가입일: 2025년 5월 17일</p>
+              <p className="text-gray-500 text-sm">{user?.email || 'guest@example.com'}</p>
+              <p className="text-gray-500 text-sm">가입일: {user ? new Date(user.created_at).toLocaleDateString('ko-KR') : '2025년 5월 17일'}</p>
             </div>
           </div>
         </div>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-          <Link to="/plans" className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
                 <Package size={20} />
@@ -86,10 +173,52 @@ const Profile = () => {
               <h3 className="font-medium">구독 정보</h3>
             </div>
             <div className="flex items-center">
-              <Badge className="bg-green-100 text-green-800 font-medium mr-2 text-xs">스타터</Badge>
-              <ChevronRight size={20} className="text-gray-400" />
+              <Badge 
+                className={`${
+                  subscription?.active 
+                    ? subscription.plan === 'silver'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                    : 'bg-green-100 text-green-800'
+                } font-medium mr-2 text-xs`}
+              >
+                {subscription?.active 
+                  ? subscription.plan === 'silver' 
+                    ? '실버 플랜'
+                    : '골드 플랜'
+                  : '스타터'}
+              </Badge>
             </div>
-          </Link>
+          </div>
+          
+          {subscription?.active && (
+            <div className="mt-3 border-t border-gray-100 pt-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">다음 결제일:</span>
+                <span>{subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString('ko-KR') : '-'}</span>
+              </div>
+              {subscription.cancel_at_period_end && (
+                <div className="mt-2 text-sm text-orange-600">
+                  * 구독이 다음 결제일에 자동으로 해지됩니다.
+                </div>
+              )}
+            </div>
+          )}
+          
+          <Button
+            className={`w-full mt-3 ${
+              subscription?.active
+                ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                : 'bg-opic-purple hover:bg-opic-purple/90'
+            }`}
+            onClick={handleManageSubscription}
+            disabled={managingSubscription}
+          >
+            {managingSubscription ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
+            {subscription?.active ? '구독 관리하기' : '구독 시작하기'}
+          </Button>
         </div>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
@@ -171,7 +300,10 @@ const Profile = () => {
           </AccordionItem>
         </Accordion>
         
-        <button className="w-full p-2 text-left text-sm text-black flex items-center">
+        <button 
+          className="w-full p-2 text-left text-sm text-black flex items-center"
+          onClick={handleSignOut}
+        >
           <LogOut size={16} className="mr-2" />
           <span>로그아웃</span>
         </button>

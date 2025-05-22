@@ -75,28 +75,28 @@ const Plans = () => {
           
           <div 
             className={`bg-white rounded-lg border shadow-sm mb-4 ${
-              expandedPlan === "premium" ? "border-opic-purple" : "border-gray-100"
+              expandedPlan === "silver" ? "border-opic-purple" : "border-gray-100"
             }`}
           >
             <div 
               className={`p-4 flex justify-between items-center ${
-                expandedPlan === "premium" ? "border-b border-gray-100" : ""
+                expandedPlan === "silver" ? "border-b border-gray-100" : ""
               }`}
-              onClick={() => setExpandedPlan(expandedPlan === "premium" ? null : "premium")}
+              onClick={() => setExpandedPlan(expandedPlan === "silver" ? null : "silver")}
             >
               <div className="flex-1">
                 <h3 className="font-medium flex items-center justify-between">
-                  프리미엄
+                  실버 플랜
                   <div className="inline-block px-2 py-0.5 bg-opic-light-purple text-opic-purple rounded-full text-[10px] font-medium ml-1">인기</div>
                 </h3>
-                <p className="text-opic-purple font-medium">₩5,000 /월</p>
+                <p className="text-opic-purple font-medium">₩4,500 /월</p>
               </div>
-              <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "premium" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "silver" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
             
-            {expandedPlan === "premium" && (
+            {expandedPlan === "silver" && (
               <div className="p-4">
                 <ul className="space-y-2">
                   <li className="flex items-center">
@@ -121,7 +121,10 @@ const Plans = () => {
                   </li>
                 </ul>
                 
-                <Button className="w-full mt-4">
+                <Button 
+                  className="w-full mt-4"
+                  onClick={() => window.location.href = "/signin?redirect=subscribe&plan=silver"}
+                >
                   업그레이드
                 </Button>
               </div>
@@ -130,25 +133,25 @@ const Plans = () => {
           
           <div 
             className={`bg-white rounded-lg border shadow-sm ${
-              expandedPlan === "professional" ? "border-opic-purple" : "border-gray-100"
+              expandedPlan === "gold" ? "border-opic-purple" : "border-gray-100"
             }`}
           >
             <div 
               className={`p-4 flex justify-between items-center ${
-                expandedPlan === "professional" ? "border-b border-gray-100" : ""
+                expandedPlan === "gold" ? "border-b border-gray-100" : ""
               }`}
-              onClick={() => setExpandedPlan(expandedPlan === "professional" ? null : "professional")}
+              onClick={() => setExpandedPlan(expandedPlan === "gold" ? null : "gold")}
             >
               <div>
-                <h3 className="font-medium">프로페셔널</h3>
+                <h3 className="font-medium">골드 플랜</h3>
                 <p className="text-opic-purple font-medium">₩9,000 /월</p>
               </div>
-              <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "professional" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className={`w-5 h-5 text-gray-500 transform ${expandedPlan === "gold" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
             
-            {expandedPlan === "professional" && (
+            {expandedPlan === "gold" && (
               <div className="p-4">
                 <ul className="space-y-2">
                   <li className="flex items-center">
@@ -181,7 +184,10 @@ const Plans = () => {
                   </li>
                 </ul>
                 
-                <Button className="w-full mt-4">
+                <Button 
+                  className="w-full mt-4"
+                  onClick={() => window.location.href = "/signin?redirect=subscribe&plan=gold"}
+                >
                   업그레이드
                 </Button>
               </div>
