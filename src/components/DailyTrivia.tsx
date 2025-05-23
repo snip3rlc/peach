@@ -25,7 +25,11 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
     
     if (option.isCorrect) {
       setIsCorrect(true);
+      setIsShaking(true);
       setShowFireworks(true);
+      
+      // Stop shaking after animation completes
+      setTimeout(() => setIsShaking(false), 500);
       setTimeout(() => setShowFireworks(false), 3000);
     } else {
       setIsShaking(true);
@@ -42,6 +46,22 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
     if (selectedOption === option.text && option.isCorrect) return "default";
     if (selectedOption === option.text && !option.isCorrect) return "destructive";
     return "outline";
+  };
+
+  const getButtonStyles = (option: TriviaOption) => {
+    let baseStyles = "flex-1 text-xs py-1 transition-colors";
+    
+    // Add shaking animation
+    if (selectedOption === option.text && isShaking) {
+      baseStyles += " animate-[shake_0.5s_ease-in-out]";
+    }
+    
+    // Add green background for correct answer that persists
+    if (selectedOption === option.text && option.isCorrect) {
+      baseStyles += " !bg-green-500 !text-white hover:!bg-green-600 !border-green-500";
+    }
+    
+    return baseStyles;
   };
 
   return (
@@ -84,9 +104,7 @@ const DailyTrivia = ({ question, options }: DailyTriviaProps) => {
               <Button
                 key={index}
                 variant={getButtonVariant(option)}
-                className={`flex-1 text-xs py-1 transition-colors ${
-                  selectedOption === option.text && !option.isCorrect ? "animate-[shake_0.5s_ease-in-out]" : ""
-                } ${selectedOption === option.text && option.isCorrect ? "animate-[pulse_1s_ease-in-out]" : ""}`}
+                className={getButtonStyles(option)}
                 onClick={() => handleOptionClick(option)}
                 disabled={isCorrect}
               >
