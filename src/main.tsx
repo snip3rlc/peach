@@ -9,9 +9,9 @@ if (typeof window !== 'undefined') {
     localStorage.setItem('hasSeenOnboarding', 'false');
   }
 
-  if (!localStorage.getItem('isAuthenticated')) {
-    localStorage.setItem('isAuthenticated', 'false');
-  }
+  // For demonstration purposes, set isAuthenticated to true
+  // In a real application, this would be handled by Supabase auth state
+  localStorage.setItem('isAuthenticated', 'true');
 }
 
 const rootElement = document.getElementById("root");

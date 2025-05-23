@@ -57,64 +57,39 @@ const App = () => {
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
-
+  
+  // For demo purposes - setting mock user
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Check subscription status if user is logged in
-        if (session?.user) {
-          setTimeout(() => {
-            checkSubscription();
-          }, 0);
-        } else {
-          setSubscription(null);
-        }
-      }
-    );
-
-    // Check initial session
-    const initializeAuth = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        
-        // Check subscription status if user is logged in
-        if (data.session?.user) {
-          await checkSubscription();
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setLoading(false);
-      }
+    // This is a mock user for demonstration
+    // In a real app, this would come from Supabase auth
+    const mockUser = {
+      id: 'mock-user-id',
+      email: 'demo@example.com',
+      user_metadata: {
+        full_name: 'Demo User'
+      },
+      created_at: new Date().toISOString()
     };
     
-    initializeAuth();
-    
-    return () => {
-      subscription.unsubscribe();
+    const mockSession = {
+      user: mockUser,
+      access_token: 'mock-token'
     };
+    
+    setSession(mockSession);
+    setUser(mockUser);
+    
+    // Mock subscription data
+    setSubscription({
+      active: true,
+      plan: 'silver',
+      current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    });
+    
+    setLoading(false);
+    
   }, []);
-  
-  const checkSubscription = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
-      if (error) {
-        console.error('Error checking subscription:', error);
-        return;
-      }
-      setSubscription(data);
-    } catch (error) {
-      console.error('Error checking subscription:', error);
-    }
-  };
-  
+
   const signOut = async () => {
     try {
       // Clean up auth state
@@ -130,6 +105,9 @@ const App = () => {
       setSession(null);
       setUser(null);
       setSubscription(null);
+      
+      // Set isAuthenticated to false in localStorage
+      localStorage.setItem('isAuthenticated', 'false');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -141,7 +119,10 @@ const App = () => {
       return <div className="flex items-center justify-center h-screen">Loading...</div>;
     }
     
-    if (!session) {
+    // For demo purposes, we'll check localStorage
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true' || session !== null;
+    
+    if (!isAuthenticated) {
       return <Navigate to="/signin" />;
     }
     
@@ -163,80 +144,70 @@ const App = () => {
                 
                 {/* Main app routes */}
                 <Route path="/" element={
-                  session ? (
-                    <>
-                      <Dashboard />
-                      <BottomNav />
-                    </>
-                  ) : (
-                    <Navigate to="/signin" />
-                  )
+                  <ProtectedRoute>
+                    <Dashboard />
+                    <BottomNav />
+                  </ProtectedRoute>
                 } />
                 <Route path="/practice" element={
-                  <>
+                  <ProtectedRoute>
                     <Practice />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/topics" element={
-                  <>
+                  <ProtectedRoute>
                     <TopicSelect />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/questions" element={
-                  <>
+                  <ProtectedRoute>
                     <QuestionSelect />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/record-answer" element={
-                  <>
+                  <ProtectedRoute>
                     <RecordAnswer />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/feedback" element={
-                  <>
+                  <ProtectedRoute>
                     <Feedback />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/history" element={
-                  <>
-                    <ProtectedRoute>
-                      <History />
-                    </ProtectedRoute>
+                  <ProtectedRoute>
+                    <History />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/plans" element={
-                  <>
+                  <ProtectedRoute>
                     <Plans />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
-                  <>
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
+                  <ProtectedRoute>
+                    <Profile />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/referral" element={
-                  <>
-                    <ProtectedRoute>
-                      <Referral />
-                    </ProtectedRoute>
+                  <ProtectedRoute>
+                    <Referral />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/tests" element={
-                  <>
+                  <ProtectedRoute>
                     <Tests />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 
                 {/* Subscription routes */}
@@ -248,16 +219,16 @@ const App = () => {
                 
                 {/* Test routes */}
                 <Route path="/test/:testId" element={
-                  <>
+                  <ProtectedRoute>
                     <TestQuestion />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 <Route path="/test/:testId/results" element={
-                  <>
+                  <ProtectedRoute>
                     <TestResults />
                     <BottomNav />
-                  </>
+                  </ProtectedRoute>
                 } />
                 
                 <Route path="*" element={<NotFound />} />
