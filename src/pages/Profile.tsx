@@ -142,62 +142,36 @@ const Profile = () => {
           </div>
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
-                <Package size={20} />
+        <Link to="/plans" className="block mb-6">
+          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-opic-light-purple rounded-lg flex items-center justify-center text-opic-purple mr-3">
+                  <Package size={20} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium">구독 정보</h3>
+                  <Badge 
+                    className={`${
+                      subscription?.active 
+                        ? subscription.plan === 'silver'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800'
+                    } font-medium text-xs`}
+                  >
+                    {subscription?.active 
+                      ? subscription.plan === 'silver' 
+                        ? '실버 플랜'
+                        : '골드 플랜'
+                      : '스타터'}
+                  </Badge>
+                </div>
               </div>
-              <h3 className="font-medium">구독 정보</h3>
-            </div>
-            <div className="flex items-center">
-              <Badge 
-                className={`${
-                  subscription?.active 
-                    ? subscription.plan === 'silver'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                    : 'bg-green-100 text-green-800'
-                } font-medium mr-2 text-xs`}
-              >
-                {subscription?.active 
-                  ? subscription.plan === 'silver' 
-                    ? '실버 플랜'
-                    : '골드 플랜'
-                  : '스타터'}
-              </Badge>
+              <ChevronRight size={20} className="text-gray-400" />
             </div>
           </div>
-          
-          {subscription?.active && (
-            <div className="mt-3 border-t border-gray-100 pt-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">다음 결제일:</span>
-                <span>{subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString('ko-KR') : '-'}</span>
-              </div>
-              {subscription.cancel_at_period_end && (
-                <div className="mt-2 text-sm text-orange-600">
-                  * 구독이 다음 결제일에 자동으로 해지됩니다.
-                </div>
-              )}
-            </div>
-          )}
-          
-          <Button
-            className={`w-full mt-3 ${
-              subscription?.active
-                ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                : 'bg-opic-purple hover:bg-opic-purple/90'
-            }`}
-            onClick={handleManageSubscription}
-            disabled={managingSubscription}
-          >
-            {managingSubscription ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
-            {subscription?.active ? '구독 관리하기' : '구독 시작하기'}
-          </Button>
-        </div>
+        </Link>
         
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
           <Link to="/referral" className="p-4 flex items-center w-full text-left">
