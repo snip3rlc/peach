@@ -1,15 +1,35 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
+import ExcelQuestionUploader from '@/components/ExcelQuestionUploader';
 
 const Practice = () => {
+  const [showUploader, setShowUploader] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50 safe-area-inset">
-      <Header title="연습하기" />
+      <Header title="연습하기">
+        <Button
+          onClick={() => setShowUploader(!showUploader)}
+          size="sm"
+          variant="outline"
+          className="flex items-center gap-1"
+        >
+          <Upload size={16} />
+          Upload
+        </Button>
+      </Header>
       
       <div className="px-4 pt-4 pb-24 space-y-6">
+        {showUploader && (
+          <div className="mb-6">
+            <ExcelQuestionUploader />
+          </div>
+        )}
+
         <div className="bg-opic-light-purple rounded-lg p-5">
           <h2 className="text-lg font-medium mb-2">연습할 레벨을 선택하세요</h2>
           <p className="text-sm text-gray-600">

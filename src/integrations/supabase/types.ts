@@ -33,6 +33,42 @@ export type Database = {
         }
         Relationships: []
       }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          is_random: boolean
+          level: string
+          order: number | null
+          question: string
+          question_type: string
+          style: string
+          topic: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_random?: boolean
+          level: string
+          order?: number | null
+          question: string
+          question_type: string
+          style: string
+          topic: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_random?: boolean
+          level?: string
+          order?: number | null
+          question?: string
+          question_type?: string
+          style?: string
+          topic?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
