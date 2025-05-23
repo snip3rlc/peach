@@ -22,21 +22,30 @@ const TopicSelect = () => {
       try {
         console.log('Fetching topics for level:', level);
         
-        // Get all questions for the level
-        const { data: questionsData, error: questionsError } = await supabase
+        // Get distinct topics for the selected level
+        const { data: distinctTopics, error: distinctError } = await supabase
           .from('questions')
           .select('topic')
-          .eq('level', level);
+          .eq('level', level)
+          .not('topic', 'is', null);
         
-        if (questionsError) throw questionsError;
+        if (distinctError) throw distinctError;
         
-        console.log('Raw topics data:', questionsData);
+        console.log('Raw topics data:', distinctTopics);
         
-        // Get unique topics and filter out invalid ones
-        const uniqueTopicsMap = new Map();
+        if (!distinctTopics || distinctTopics.length === 0) {
+          console.warn('No topics found for level:', level);
+          setTopics([]);
+          setIsLoading(false);
+          return;
+        }
         
-        questionsData?.forEach(item => {
+        // Filter and deduplicate topics
+        const validTopics = new Set<string>();
+        
+        distinctTopics.forEach(item => {
           const topic = item.topic?.trim();
+          
           // Skip invalid topic names
           if (!topic || typeof topic !== 'string') return;
           
@@ -56,22 +65,34 @@ const TopicSelect = () => {
           ];
           
           if (!invalidPatterns.some(pattern => pattern.test(topic))) {
-            if (uniqueTopicsMap.has(topic)) {
-              uniqueTopicsMap.set(topic, uniqueTopicsMap.get(topic) + 1);
-            } else {
-              uniqueTopicsMap.set(topic, 1);
-            }
+            validTopics.add(topic);
           }
         });
         
-        // Convert map to array of TopicData objects
-        const topicsWithCount: TopicData[] = Array.from(uniqueTopicsMap, ([topic, count]) => ({ topic, count }));
+        // Now get count of questions for each valid topic
+        const topicsWithCount: TopicData[] = [];
         
-        console.log('Filtered unique topics:', topicsWithCount);
+        for (const topic of validTopics) {
+          const { data: countData, error: countError } = await supabase
+            .from('questions')
+            .select('id', { count: 'exact' })
+            .eq('level', level)
+            .eq('topic', topic);
+          
+          if (countError) {
+            console.error('Error fetching count for topic:', topic, countError);
+            continue;
+          }
+          
+          const count = countData?.length || 0;
+          topicsWithCount.push({ topic, count });
+        }
+        
+        console.log('Filtered unique topics with counts:', topicsWithCount);
         
         if (topicsWithCount.length === 0) {
           console.warn('No valid topics found, using fallback topics');
-          // Fallback to common Korean topics if no valid topics found
+          // Fallback to common topics if no valid topics found
           const fallbackTopics = [
             '일상생활', '직장/학교', '건강/웰빙', '음식/요리', 
             '여행/관광', '취미/여가', '교육', '사회생활'
@@ -133,6 +154,9 @@ const TopicSelect = () => {
           <h2 className="text-lg font-medium mb-2">연습할 주제를 선택하세요</h2>
           <p className="text-sm text-gray-600">
             여러 주제 중에서 연습하고 싶은 주제를 선택하면 관련 문항이 제공됩니다.
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Level: {level}
           </p>
         </div>
         

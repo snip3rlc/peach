@@ -35,17 +35,12 @@ const QuestionSelect = () => {
           return;
         }
         
-        let query = supabase
+        // Build the query to match both level and topic exactly
+        const { data, error } = await supabase
           .from('questions')
           .select('*')
-          .eq('level', level);
-        
-        // Only add topic filter if there's a valid topic
-        if (topic && topic !== 'undefined') {
-          query = query.eq('topic', topic);
-        }
-        
-        const { data, error } = await query;
+          .eq('level', level)
+          .eq('topic', topic);
         
         if (error) {
           throw error;
