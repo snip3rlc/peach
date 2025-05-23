@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
@@ -6,6 +7,7 @@ import { Mic, Square, Volume2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
+import { supabase } from '@/integrations/supabase/client';
 
 // Type for speech recognition
 interface SpeechRecognitionInstance extends EventTarget {
@@ -19,24 +21,11 @@ interface SpeechRecognitionInstance extends EventTarget {
   stop: () => void;
 }
 
-// OPIc sample questions
-const opicQuestions = [
-  "Tell me about your daily routine.",
-  "What kinds of hobbies do you enjoy?",
-  "Describe your hometown and what you like about it.",
-  "What is your typical weekend like?",
-  "Tell me about your favorite restaurant.",
-  "Describe your job or your studies.",
-  "What do you do to stay healthy?",
-  "Tell me about a recent vacation or trip you took.",
-  "What are your plans for the future?",
-  "Describe a movie or book you've enjoyed recently.",
-  "What kinds of music do you like?",
-  "Tell me about your family.",
-  "How do you usually celebrate important holidays?",
-  "What changes would you like to see in your city?",
-  "If you could travel anywhere, where would you go and why?"
-];
+interface TestQuestion {
+  id: string;
+  question_text: string;
+  question_number: number;
+}
 
 const TestQuestion = () => {
   const navigate = useNavigate();
@@ -47,8 +36,77 @@ const TestQuestion = () => {
   const [transcription, setTranscription] = useState("");
   const [testAnswers, setTestAnswers] = useState<Array<{question: string, answer: string}>>([]);
   const [recognition, setRecognition] = useState<SpeechRecognitionInstance | null>(null);
+  const [questions, setQuestions] = useState<TestQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
   // Fix the timer reference type to use ReturnType<typeof setInterval>
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Load questions from Supabase
+  useEffect(() => {
+    loadTestQuestions();
+  }, [testId]);
+  
+  const loadTestQuestions = async () => {
+    if (!testId) return;
+    
+    try {
+      setLoading(true);
+      
+      const { data: questionsData, error } = await supabase
+        .from('opic_tests')
+        .select('id, question_text, question_number')
+        .eq('test_number', parseInt(testId))
+        .order('question_number', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching questions:', error);
+        // Fallback to mock questions
+        loadMockQuestions();
+        return;
+      }
+
+      if (!questionsData || questionsData.length === 0) {
+        console.warn('No questions found for test', testId);
+        loadMockQuestions();
+        return;
+      }
+
+      setQuestions(questionsData);
+    } catch (error) {
+      console.error('Error loading test questions:', error);
+      loadMockQuestions();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMockQuestions = () => {
+    // Fallback mock questions
+    const mockQuestions = [
+      "Tell me about your daily routine.",
+      "What kinds of hobbies do you enjoy?",
+      "Describe your hometown and what you like about it.",
+      "What is your typical weekend like?",
+      "Tell me about your favorite restaurant.",
+      "Describe your job or your studies.",
+      "What do you do to stay healthy?",
+      "Tell me about a recent vacation or trip you took.",
+      "What are your plans for the future?",
+      "Describe a movie or book you've enjoyed recently.",
+      "What kinds of music do you like?",
+      "Tell me about your family.",
+      "How do you usually celebrate important holidays?",
+      "What changes would you like to see in your city?",
+      "If you could travel anywhere, where would you go and why?"
+    ].map((text, index) => ({
+      id: `mock-${index + 1}`,
+      question_text: text,
+      question_number: index + 1
+    }));
+    
+    setQuestions(mockQuestions);
+    setLoading(false);
+  };
   
   // Initialize speech recognition
   useEffect(() => {
@@ -125,7 +183,7 @@ const TestQuestion = () => {
       // Save the answer
       const newAnswers = [...testAnswers];
       newAnswers[currentQuestionIndex] = {
-        question: opicQuestions[currentQuestionIndex],
+        question: questions[currentQuestionIndex]?.question_text || '',
         answer: transcription
       };
       setTestAnswers(newAnswers);
@@ -162,7 +220,7 @@ const TestQuestion = () => {
   };
   
   const handleNext = () => {
-    if (currentQuestionIndex < opicQuestions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
       // Move to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setTranscription("");
@@ -197,6 +255,31 @@ const TestQuestion = () => {
     // Navigate to results page
     navigate(`/test/${testId}/results`);
   };
+
+  if (loading) {
+    return (
+      <div className="pb-20">
+        <Header title="Test" showBack />
+        <div className="p-4 flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="pb-20">
+        <Header title="Test" showBack />
+        <div className="p-4 text-center">
+          <p className="text-gray-500 mb-4">No questions available for this test.</p>
+          <Button onClick={() => navigate('/tests')} className="bg-opic-purple">
+            Back to Tests
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="pb-20">
@@ -207,7 +290,7 @@ const TestQuestion = () => {
             size="sm"
             className="bg-opic-purple hover:bg-opic-dark-purple"
           >
-            {currentQuestionIndex < opicQuestions.length - 1 ? 'Next >' : 'Finish'}
+            {currentQuestionIndex < questions.length - 1 ? 'Next >' : 'Finish'}
           </Button>
         )}
       </Header>
@@ -216,15 +299,15 @@ const TestQuestion = () => {
         {/* Progress bar */}
         <div className="mb-4">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Question {currentQuestionIndex + 1}/{opicQuestions.length}</span>
-            <span>{Math.min(Math.round(((currentQuestionIndex + 1) / opicQuestions.length) * 100), 100)}%</span>
+            <span>Question {currentQuestionIndex + 1}/{questions.length}</span>
+            <span>{Math.min(Math.round(((currentQuestionIndex + 1) / questions.length) * 100), 100)}%</span>
           </div>
-          <Progress value={Math.min(((currentQuestionIndex + 1) / opicQuestions.length) * 100, 100)} className="h-2" />
+          <Progress value={Math.min(((currentQuestionIndex + 1) / questions.length) * 100, 100)} className="h-2" />
         </div>
         
         {/* Question */}
         <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-          <p>{opicQuestions[currentQuestionIndex]}</p>
+          <p>{questions[currentQuestionIndex]?.question_text}</p>
         </div>
         
         {/* Answer area */}
@@ -259,7 +342,7 @@ const TestQuestion = () => {
         </div>
         
         {/* Next button - only shows after recording */}
-        {transcription && !isRecording && currentQuestionIndex < opicQuestions.length - 1 && (
+        {transcription && !isRecording && currentQuestionIndex < questions.length - 1 && (
           <Button
             onClick={handleNext}
             className="w-full mt-6 bg-opic-purple hover:bg-opic-dark-purple"
@@ -269,7 +352,7 @@ const TestQuestion = () => {
         )}
         
         {/* Finish button - only shows on last question after recording */}
-        {transcription && !isRecording && currentQuestionIndex === opicQuestions.length - 1 && (
+        {transcription && !isRecording && currentQuestionIndex === questions.length - 1 && (
           <Button
             onClick={completeTest}
             className="w-full mt-6 bg-opic-purple hover:bg-opic-dark-purple"
