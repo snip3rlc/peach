@@ -1,24 +1,17 @@
 
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { Button } from '@/components/ui/button';
-import { 
-  User, 
-  Settings, 
-  CreditCard, 
-  Bell, 
-  Users, 
-  Info, 
-  LogOut,
-  Crown
-} from 'lucide-react';
+import { ChevronRight, Edit2 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Switch } from '@/components/ui/switch';
 import { AuthContext } from '../App';
 import { toast } from 'sonner';
 
 const Profile = () => {
   const { user, signOut } = useContext(AuthContext);
-
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -27,120 +20,125 @@ const Profile = () => {
       toast.error('로그아웃 중 오류가 발생했습니다');
     }
   };
+  
+  const formatJoinDate = () => {
+    const joinDate = user?.created_at ? new Date(user.created_at) : new Date();
+    return `가입일: ${joinDate.getFullYear()}년 ${joinDate.getMonth() + 1}월 ${joinDate.getDate()}일`;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 safe-area-inset">
-      <Header title="프로필" />
+    <div className="min-h-screen bg-gray-50">
+      <Header title="Profile" showBack={true} />
       
-      <div className="px-4 pt-4 pb-24 space-y-6">
-        {/* Profile Header */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-opic-purple rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
+      <div className="p-4 pb-24 space-y-4">
+        {/* Profile Info */}
+        <div className="bg-white rounded-lg p-5 shadow-sm">
+          <div className="flex items-center">
+            <div className="relative">
+              <Avatar className="h-16 w-16 bg-opic-light-purple text-opic-purple">
+                <AvatarFallback>
+                  {user?.email?.charAt(0).toUpperCase() || '게'}
+                </AvatarFallback>
+              </Avatar>
+              <button className="absolute bottom-0 right-0 bg-opic-purple text-white rounded-full p-1">
+                <Edit2 size={12} />
+              </button>
             </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold">
-                {user?.user_metadata?.full_name || user?.email || 'User'}
-              </h2>
-              <p className="text-gray-600">{user?.email}</p>
+            <div className="ml-4">
+              <div className="flex items-center">
+                <h2 className="font-medium text-lg">게스트 사용자</h2>
+                <button className="ml-2 text-gray-400">
+                  <Edit2 size={16} />
+                </button>
+              </div>
+              <p className="text-gray-500 text-sm">{user?.email || 'guest@example.com'}</p>
+              <p className="text-gray-500 text-sm">{formatJoinDate()}</p>
             </div>
           </div>
         </div>
-
+        
         {/* Subscription Info */}
         <Link to="/plans" className="block">
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Crown className="w-5 h-5 text-opic-purple" />
-                <div>
-                  <h3 className="font-medium">구독 정보</h3>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">스타터 플랜</span>
-                    <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                      현재 구독 중
-                    </span>
-                  </div>
-                </div>
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="flex items-center">
+              <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
+                <span className="text-opic-purple">􀑭</span>
               </div>
-              <div className="text-gray-400">→</div>
+              <div className="flex-1">
+                <h3 className="font-medium">구독 정보</h3>
+              </div>
+              <div className="flex items-center">
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mr-2">스타터</span>
+                <ChevronRight size={18} className="text-gray-400" />
+              </div>
             </div>
           </div>
         </Link>
-
-        {/* Menu Items */}
-        <div className="space-y-4">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-medium text-gray-900">내 계정</h3>
-            </div>
-            
-            <div className="divide-y divide-gray-100">
-              <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Settings className="w-5 h-5 text-gray-500" />
-                  <span>개인정보 설정</span>
-                </div>
-                <div className="text-gray-400">→</div>
-              </button>
-              
-              <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <CreditCard className="w-5 h-5 text-gray-500" />
-                  <span>결제 관리</span>
-                </div>
-                <div className="text-gray-400">→</div>
-              </button>
+        
+        {/* Friend Referral */}
+        <Link to="/referral" className="block">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="flex items-center">
+              <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
+                <span className="text-opic-purple">􀉀</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium">친구 초대</h3>
+              </div>
+              <ChevronRight size={18} className="text-gray-400" />
             </div>
           </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-medium text-gray-900">일반</h3>
+        </Link>
+        
+        {/* Notifications */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
+                <span className="text-opic-purple">􀋙</span>
+              </div>
+              <h3 className="font-medium">알림</h3>
             </div>
-            
-            <div className="divide-y divide-gray-100">
-              <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Bell className="w-5 h-5 text-gray-500" />
-                  <span>알림 설정</span>
-                </div>
-                <div className="text-gray-400">→</div>
-              </button>
-              
-              <Link to="/referral" className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Users className="w-5 h-5 text-gray-500" />
-                  <span>친구 초대하기</span>
-                </div>
-                <div className="text-gray-400">→</div>
-              </Link>
-              
-              <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <Info className="w-5 h-5 text-gray-500" />
-                  <span>앱 정보</span>
-                </div>
-                <div className="text-gray-400">→</div>
-              </button>
-            </div>
+            <Switch
+              checked={notificationsEnabled}
+              onCheckedChange={setNotificationsEnabled}
+            />
           </div>
         </div>
-
-        {/* Sign Out Button */}
-        <Button 
+        
+        {/* FAQ */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
+              <span className="text-opic-purple">􀁝</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium">F.A.Q.</h3>
+            </div>
+            <ChevronRight size={18} className="text-gray-400" />
+          </div>
+        </div>
+        
+        {/* About */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
+              <span className="text-opic-purple">􀅴</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium">앱 정보</h3>
+            </div>
+            <ChevronRight size={18} className="text-gray-400" />
+          </div>
+        </div>
+        
+        {/* Log Out */}
+        <button 
           onClick={handleSignOut}
-          variant="destructive" 
-          className="w-full flex items-center justify-center space-x-2"
+          className="flex items-center justify-center text-red-600 font-medium p-3 w-full"
         >
-          <LogOut className="w-4 h-4" />
-          <span>로그아웃</span>
-        </Button>
-
-        <div className="text-center text-sm text-gray-500">
-          Version 1.0.0
-        </div>
+          로그아웃
+        </button>
       </div>
     </div>
   );

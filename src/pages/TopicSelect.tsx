@@ -1,10 +1,76 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import { Coffee, Building, Heart, Utensils, Plane, Film, BookOpen, Users } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface TopicData {
+  topic: string;
+  count: number;
+}
 
 const TopicSelect = () => {
+  const [topics, setTopics] = useState<TopicData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const level = queryParams.get('level') || 'intermediate';
+
+  useEffect(() => {
+    const fetchTopics = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('questions')
+          .select('topic, count(*)')
+          .eq('level', level)
+          .group('topic');
+        
+        if (error) throw error;
+        
+        setTopics(data || []);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching topics:', error);
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTopics();
+  }, [level]);
+
+  // Map topic names to icons
+  const getTopicIcon = (topic: string) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      '일상생활': <Coffee size={16} />,
+      '직장/학교': <Building size={16} />,
+      '건강/웰빙': <Heart size={16} />,
+      '음식/요리': <Utensils size={16} />,
+      '여행/관광': <Plane size={16} />,
+      '취미/여가': <Film size={16} />,
+      '교육': <BookOpen size={16} />,
+      '사회생활': <Users size={16} />
+    };
+    
+    return iconMap[topic] || <Coffee size={16} />;
+  };
+  
+  // Map topic names to background colors
+  const getTopicColor = (topic: string) => {
+    const colorMap: { [key: string]: string } = {
+      '일상생활': 'bg-blue-100 text-blue-500',
+      '직장/학교': 'bg-green-100 text-green-500',
+      '건강/웰빙': 'bg-red-100 text-red-500',
+      '음식/요리': 'bg-yellow-100 text-yellow-500',
+      '여행/관광': 'bg-purple-100 text-purple-500',
+      '취미/여가': 'bg-opic-light-purple text-opic-purple',
+      '교육': 'bg-pink-100 text-pink-500',
+      '사회생활': 'bg-orange-100 text-orange-500'
+    };
+    
+    return colorMap[topic] || 'bg-blue-100 text-blue-500';
+  };
+
   return (
     <div className="pb-20">
       <Header title="Topic" showBack />
@@ -17,95 +83,30 @@ const TopicSelect = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 gap-3">
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-500">
-                <Coffee size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">일상생활</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-500">
-                <Building size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">직장/학교</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-500">
-                <Heart size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">건강/웰빙</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-500">
-                <Utensils size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">음식/요리</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-500">
-                <Plane size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">여행/관광</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-opic-light-purple flex items-center justify-center text-opic-purple">
-                <Film size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">취미/여가</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center text-pink-500">
-                <BookOpen size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">교육</h3>
-              </div>
-            </div>
-          </Link>
-          
-          <Link to="/questions" className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-500">
-                <Users size={16} />
-              </div>
-              <div className="ml-2">
-                <h3 className="font-medium text-sm">사회생활</h3>
-              </div>
-            </div>
-          </Link>
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <p>Loading topics...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {topics.map((topicData, index) => (
+              <Link 
+                key={index} 
+                to={`/questions?level=${level}&topic=${encodeURIComponent(topicData.topic)}`}
+                className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5"
+              >
+                <div className="flex items-center">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getTopicColor(topicData.topic)}`}>
+                    {getTopicIcon(topicData.topic)}
+                  </div>
+                  <div className="ml-2">
+                    <h3 className="font-medium text-sm">{topicData.topic}</h3>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
