@@ -20,15 +20,36 @@ const TopicSelect = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const { data, error } = await supabase
+        // First, get all unique topics for the level
+        const { data: topicsData, error: topicsError } = await supabase
           .from('questions')
-          .select('topic, count(*)')
-          .eq('level', level)
-          .group('topic');
+          .select('topic')
+          .eq('level', level);
         
-        if (error) throw error;
+        if (topicsError) throw topicsError;
         
-        setTopics(data || []);
+        // Get unique topics
+        const uniqueTopics = [...new Set(topicsData?.map(item => item.topic) || [])];
+        
+        // Get count for each topic
+        const topicsWithCount = await Promise.all(
+          uniqueTopics.map(async (topic) => {
+            const { count, error } = await supabase
+              .from('questions')
+              .select('*', { count: 'exact', head: true })
+              .eq('level', level)
+              .eq('topic', topic);
+            
+            if (error) throw error;
+            
+            return {
+              topic,
+              count: count || 0
+            };
+          })
+        );
+        
+        setTopics(topicsWithCount);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching topics:', error);
@@ -101,6 +122,7 @@ const TopicSelect = () => {
                   </div>
                   <div className="ml-2">
                     <h3 className="font-medium text-sm">{topicData.topic}</h3>
+                    <p className="text-xs text-gray-500">{topicData.count} questions</p>
                   </div>
                 </div>
               </Link>
