@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -14,6 +15,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import useEmblaCarousel from 'embla-carousel-react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Define SpeechRecognition type for TypeScript
 interface SpeechRecognitionInstance extends EventTarget {
@@ -27,6 +29,15 @@ interface SpeechRecognitionInstance extends EventTarget {
   stop: () => void;
 }
 
+interface Question {
+  id: string;
+  level: string;
+  topic: string;
+  question_type: string;
+  style: string;
+  question: string;
+}
+
 const RecordAnswer = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,6 +48,8 @@ const RecordAnswer = () => {
   const [transcription, setTranscription] = useState("");
   const [isPremiumUser] = useState(false); // This would come from auth context in a real app
   const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // For embla carousel
   const [emblaRef, emblaApi] = useEmblaCarousel();
@@ -53,6 +66,49 @@ const RecordAnswer = () => {
   
   // For handling speech recognition (Web Speech API)
   const [recognition, setRecognition] = useState<SpeechRecognitionInstance | null>(null);
+  
+  // Get the question ID from the URL
+  const questionId = new URLSearchParams(location.search).get('id');
+
+  // Fetch question from Supabase
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      if (!questionId) {
+        console.error('No question ID provided');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('Fetching question with ID:', questionId);
+        
+        const { data, error } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('id', questionId)
+          .single();
+        
+        if (error) {
+          throw error;
+        }
+        
+        console.log('Question data:', data);
+        
+        if (data) {
+          setQuestion(data);
+        } else {
+          console.error('Question not found');
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching question:', error);
+        setIsLoading(false);
+      }
+    };
+    
+    fetchQuestion();
+  }, [questionId]);
   
   const templates = [
     {
@@ -242,6 +298,17 @@ const RecordAnswer = () => {
     navigate('/feedback');
   };
 
+  if (isLoading) {
+    return (
+      <div className="pb-20">
+        <Header title="Question" showBack />
+        <div className="p-4 flex justify-center items-center h-64">
+          <p>Loading question...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-20">
       <Header title="Question" showBack>
@@ -256,7 +323,7 @@ const RecordAnswer = () => {
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-          <p>Tell me about your daily life.</p>
+          <p>{question?.question || "No question available"}</p>
         </div>
         
         <Carousel className="mb-6" ref={emblaRef}>

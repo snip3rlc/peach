@@ -10,9 +10,10 @@ interface Question {
   id: string;
   level: string;
   topic: string;
-  question: string;
   question_type: string;
   style: string;
+  question: string;
+  order: number | null;
 }
 
 const QuestionSelect = () => {
@@ -28,20 +29,27 @@ const QuestionSelect = () => {
       try {
         console.log('Fetching questions for level:', level, 'topic:', topic);
         
+        if (!topic) {
+          console.error('No topic provided');
+          setIsLoading(false);
+          return;
+        }
+        
         let query = supabase
           .from('questions')
           .select('*')
           .eq('level', level);
-          
-        if (topic) {
+        
+        // Only add topic filter if there's a valid topic
+        if (topic && topic !== 'undefined') {
           query = query.eq('topic', topic);
         }
         
-        const { data, error } = await query
-          .order('question_type')
-          .order('order');
+        const { data, error } = await query;
         
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         
         console.log('Raw questions data:', data);
         

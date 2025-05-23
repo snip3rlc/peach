@@ -22,43 +22,54 @@ const TopicSelect = () => {
       try {
         console.log('Fetching topics for level:', level);
         
-        // First, get all unique topics for the level
-        const { data: topicsData, error: topicsError } = await supabase
+        // Get all questions for the level
+        const { data: questionsData, error: questionsError } = await supabase
           .from('questions')
           .select('topic')
           .eq('level', level);
         
-        if (topicsError) throw topicsError;
+        if (questionsError) throw questionsError;
         
-        console.log('Raw topics data:', topicsData);
+        console.log('Raw topics data:', questionsData);
         
         // Get unique topics and filter out invalid ones
-        const rawTopics = topicsData?.map(item => item.topic) || [];
-        const uniqueTopics = [...new Set(rawTopics)]
-          .filter(topic => {
-            // Filter out invalid topic names that might be headers or empty values
-            if (!topic || typeof topic !== 'string') return false;
-            
-            const invalidPatterns = [
-              /^question\s*\d+$/i,
-              /^no$/i,
-              /^yes$/i,
-              /^survey/i,
-              /^random/i,
-              /^template/i,
-              /^source/i,
-              /^type/i,
-              /^level/i,
-              /^\s*$/,
-              /^[a-z]\d*$/i, // Single letter optionally followed by numbers
-            ];
-            
-            return !invalidPatterns.some(pattern => pattern.test(topic.trim()));
-          });
+        const uniqueTopicsMap = new Map();
         
-        console.log('Filtered unique topics:', uniqueTopics);
+        questionsData?.forEach(item => {
+          const topic = item.topic?.trim();
+          // Skip invalid topic names
+          if (!topic || typeof topic !== 'string') return;
+          
+          const invalidPatterns = [
+            /^question\s*\d+$/i,
+            /^no$/i,
+            /^yes$/i,
+            /^survey$/i,
+            /^random$/i,
+            /^template$/i,
+            /^source$/i,
+            /^type$/i,
+            /^level$/i,
+            /^\s*$/,
+            /^\d+$/,
+            /^[a-z]\d*$/i // Single letter optionally followed by numbers
+          ];
+          
+          if (!invalidPatterns.some(pattern => pattern.test(topic))) {
+            if (uniqueTopicsMap.has(topic)) {
+              uniqueTopicsMap.set(topic, uniqueTopicsMap.get(topic) + 1);
+            } else {
+              uniqueTopicsMap.set(topic, 1);
+            }
+          }
+        });
         
-        if (uniqueTopics.length === 0) {
+        // Convert map to array of TopicData objects
+        const topicsWithCount: TopicData[] = Array.from(uniqueTopicsMap, ([topic, count]) => ({ topic, count }));
+        
+        console.log('Filtered unique topics:', topicsWithCount);
+        
+        if (topicsWithCount.length === 0) {
           console.warn('No valid topics found, using fallback topics');
           // Fallback to common Korean topics if no valid topics found
           const fallbackTopics = [
@@ -66,38 +77,11 @@ const TopicSelect = () => {
             '여행/관광', '취미/여가', '교육', '사회생활'
           ];
           setTopics(fallbackTopics.map(topic => ({ topic, count: 0 })));
-          setIsLoading(false);
-          return;
+        } else {
+          // Sort topics alphabetically
+          setTopics(topicsWithCount.sort((a, b) => a.topic.localeCompare(b.topic)));
         }
         
-        // Get count for each valid topic
-        const topicsWithCount = await Promise.all(
-          uniqueTopics.map(async (topic) => {
-            const { count, error } = await supabase
-              .from('questions')
-              .select('*', { count: 'exact', head: true })
-              .eq('level', level)
-              .eq('topic', topic);
-            
-            if (error) {
-              console.error(`Error counting questions for topic ${topic}:`, error);
-              return { topic, count: 0 };
-            }
-            
-            return {
-              topic,
-              count: count || 0
-            };
-          })
-        );
-        
-        // Sort topics and filter out those with 0 questions
-        const validTopicsWithCount = topicsWithCount
-          .filter(item => item.count > 0)
-          .sort((a, b) => a.topic.localeCompare(b.topic));
-        
-        console.log('Final topics with count:', validTopicsWithCount);
-        setTopics(validTopicsWithCount);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching topics:', error);
