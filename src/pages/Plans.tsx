@@ -9,11 +9,11 @@ const Plans = () => {
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
   
   return (
-    <div className="pb-20">
+    <div className="min-h-screen bg-gray-50 safe-area-inset">
       <Header title="구독 플랜" />
       
-      <div className="p-4">
-        <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
+      <div className="px-4 pt-4 pb-24 space-y-6">
+        <div className="bg-opic-light-purple rounded-lg p-5">
           <h2 className="text-lg font-medium mb-2">구독 플랜 선택</h2>
           <p className="text-sm text-gray-600">
             자신에게 맞는 플랜을 선택하여 OPIc 시험을 준비하세요.
@@ -21,9 +21,10 @@ const Plans = () => {
           </p>
         </div>
         
-        <div className="mb-6">
+        <div className="space-y-4">
+          {/* Starter Plan */}
           <div 
-            className={`bg-white rounded-lg border shadow-sm mb-4 ${
+            className={`bg-white rounded-lg border shadow-sm ${
               expandedPlan === "starter" ? "border-green-500" : "border-gray-100"
             }`}
           >
@@ -73,8 +74,9 @@ const Plans = () => {
             )}
           </div>
           
+          {/* Silver Plan */}
           <div 
-            className={`bg-white rounded-lg border shadow-sm mb-4 ${
+            className={`bg-white rounded-lg border shadow-sm ${
               expandedPlan === "silver" ? "border-opic-purple" : "border-gray-100"
             }`}
           >
@@ -131,6 +133,7 @@ const Plans = () => {
             )}
           </div>
           
+          {/* Gold Plan */}
           <div 
             className={`bg-white rounded-lg border shadow-sm ${
               expandedPlan === "gold" ? "border-opic-purple" : "border-gray-100"
