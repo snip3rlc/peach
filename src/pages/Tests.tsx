@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ChevronRight, Upload } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TestData {
@@ -89,7 +88,7 @@ const Tests = () => {
           
           return {
             id: testNumber,
-            name: `OPIc Practice Test ${testNumber}`,
+            name: `Practice Test ${testNumber}`,
             completed: status.completed,
             date: status.date,
             questionCount: questions.length
@@ -109,9 +108,9 @@ const Tests = () => {
   const loadMockTests = () => {
     // Fallback mock data
     const mockTests = [
-      { id: 1, name: "OPIc Practice Test 1", completed: true, date: "2025-05-19T15:30:00.000Z", questionCount: 15 },
-      { id: 2, name: "OPIc Practice Test 2", completed: false, date: null, questionCount: 15 },
-      { id: 3, name: "OPIc Practice Test 3", completed: false, date: null, questionCount: 15 }
+      { id: 1, name: "Practice Test 1", completed: true, date: "2025-05-19T15:30:00.000Z", questionCount: 15 },
+      { id: 2, name: "Practice Test 2", completed: false, date: null, questionCount: 15 },
+      { id: 3, name: "Practice Test 3", completed: false, date: null, questionCount: 15 }
     ];
 
     const storedTests = localStorage.getItem('opicTests');
@@ -120,6 +119,7 @@ const Tests = () => {
         const parsedTests = JSON.parse(storedTests);
         setTestsList(parsedTests.map((test: any) => ({
           ...test,
+          name: `Practice Test ${test.id}`,
           questionCount: 15
         })));
       } catch (error) {
@@ -195,9 +195,6 @@ const Tests = () => {
                           <CheckCircle className="text-green-500 flex-shrink-0" size={16} />
                         )}
                         {test.name}
-                        <Badge variant="secondary" className="text-xs">
-                          {test.questionCount} questions
-                        </Badge>
                       </h3>
                       {test.completed && test.date && (
                         <>

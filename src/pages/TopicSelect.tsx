@@ -20,6 +20,8 @@ const TopicSelect = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
+        console.log('Fetching topics for level:', level);
+        
         // First, get all unique topics for the level
         const { data: topicsData, error: topicsError } = await supabase
           .from('questions')
@@ -28,10 +30,47 @@ const TopicSelect = () => {
         
         if (topicsError) throw topicsError;
         
-        // Get unique topics
-        const uniqueTopics = [...new Set(topicsData?.map(item => item.topic) || [])];
+        console.log('Raw topics data:', topicsData);
         
-        // Get count for each topic
+        // Get unique topics and filter out invalid ones
+        const rawTopics = topicsData?.map(item => item.topic) || [];
+        const uniqueTopics = [...new Set(rawTopics)]
+          .filter(topic => {
+            // Filter out invalid topic names that might be headers or empty values
+            if (!topic || typeof topic !== 'string') return false;
+            
+            const invalidPatterns = [
+              /^question\s*\d+$/i,
+              /^no$/i,
+              /^yes$/i,
+              /^survey/i,
+              /^random/i,
+              /^template/i,
+              /^source/i,
+              /^type/i,
+              /^level/i,
+              /^\s*$/,
+              /^[a-z]\d*$/i, // Single letter optionally followed by numbers
+            ];
+            
+            return !invalidPatterns.some(pattern => pattern.test(topic.trim()));
+          });
+        
+        console.log('Filtered unique topics:', uniqueTopics);
+        
+        if (uniqueTopics.length === 0) {
+          console.warn('No valid topics found, using fallback topics');
+          // Fallback to common Korean topics if no valid topics found
+          const fallbackTopics = [
+            '일상생활', '직장/학교', '건강/웰빙', '음식/요리', 
+            '여행/관광', '취미/여가', '교육', '사회생활'
+          ];
+          setTopics(fallbackTopics.map(topic => ({ topic, count: 0 })));
+          setIsLoading(false);
+          return;
+        }
+        
+        // Get count for each valid topic
         const topicsWithCount = await Promise.all(
           uniqueTopics.map(async (topic) => {
             const { count, error } = await supabase
@@ -40,7 +79,10 @@ const TopicSelect = () => {
               .eq('level', level)
               .eq('topic', topic);
             
-            if (error) throw error;
+            if (error) {
+              console.error(`Error counting questions for topic ${topic}:`, error);
+              return { topic, count: 0 };
+            }
             
             return {
               topic,
@@ -49,7 +91,13 @@ const TopicSelect = () => {
           })
         );
         
-        setTopics(topicsWithCount);
+        // Sort topics and filter out those with 0 questions
+        const validTopicsWithCount = topicsWithCount
+          .filter(item => item.count > 0)
+          .sort((a, b) => a.topic.localeCompare(b.topic));
+        
+        console.log('Final topics with count:', validTopicsWithCount);
+        setTopics(validTopicsWithCount);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching topics:', error);
@@ -107,6 +155,11 @@ const TopicSelect = () => {
         {isLoading ? (
           <div className="flex justify-center py-10">
             <p>Loading topics...</p>
+          </div>
+        ) : topics.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500 mb-4">No topics found for this level.</p>
+            <p className="text-sm text-gray-400">Please upload question data or check the database.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
