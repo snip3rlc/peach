@@ -85,7 +85,7 @@ const RecordAnswer = () => {
           .from('questions')
           .select('*')
           .eq('id', questionId)
-          .single();
+          .maybeSingle();
         
         if (error) {
           throw error;
@@ -322,7 +322,7 @@ const RecordAnswer = () => {
       
       <div className="p-4">
         <div className="bg-opic-light-purple rounded-lg p-4 mb-6">
-          <p>{question?.question || "No question available"}</p>
+          <p>{question?.question || "Loading question..."}</p>
         </div>
         
         <Carousel className="mb-6" ref={emblaRef}>

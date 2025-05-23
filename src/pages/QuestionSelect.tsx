@@ -48,22 +48,29 @@ const QuestionSelect = () => {
         
         console.log('Raw questions data:', data);
         
-        // Filter out invalid questions
+        // Filter out invalid questions - be more strict
         const validQuestions = (data || []).filter(q => {
           // Filter out questions that might be headers or invalid data
           if (!q.question || typeof q.question !== 'string') return false;
           
+          const question = q.question.trim();
+          
           const invalidPatterns = [
-            /^question\s*\d+$/i,
+            /^question\s*\d*$/i,
             /^no$/i,
             /^yes$/i,
             /^topic$/i,
             /^level$/i,
             /^type$/i,
+            /^style$/i,
+            /^order$/i,
             /^\s*$/,
+            /^\d+$/,
+            /^[a-z]\d*$/i
           ];
           
-          return !invalidPatterns.some(pattern => pattern.test(q.question.trim()));
+          // Only include questions that are meaningful (longer than 5 characters and not matching invalid patterns)
+          return question.length > 5 && !invalidPatterns.some(pattern => pattern.test(question));
         });
         
         console.log('Filtered questions:', validQuestions);

@@ -40,7 +40,7 @@ const TopicSelect = () => {
           return;
         }
         
-        // Filter and deduplicate topics
+        // Filter and deduplicate topics - be more strict about filtering
         const validTopics = new Set<string>();
         
         distinctTopics.forEach(item => {
@@ -50,21 +50,25 @@ const TopicSelect = () => {
           if (!topic || typeof topic !== 'string') return;
           
           const invalidPatterns = [
-            /^question\s*\d+$/i,
+            /^question\s*\d*$/i,
             /^no$/i,
             /^yes$/i,
-            /^survey$/i,
-            /^random$/i,
+            /^survey\s*\/?\s*random$/i,
             /^template$/i,
             /^source$/i,
             /^type$/i,
             /^level$/i,
+            /^topic$/i,
             /^\s*$/,
             /^\d+$/,
-            /^[a-z]\d*$/i // Single letter optionally followed by numbers
+            /^[a-z]\d*$/i,
+            /^question$/i,
+            /^random$/i,
+            /^survey$/i
           ];
           
-          if (!invalidPatterns.some(pattern => pattern.test(topic))) {
+          // Only add topics that are meaningful (longer than 2 characters and not in invalid patterns)
+          if (topic.length > 2 && !invalidPatterns.some(pattern => pattern.test(topic))) {
             validTopics.add(topic);
           }
         });
@@ -85,7 +89,9 @@ const TopicSelect = () => {
           }
           
           const count = countData?.length || 0;
-          topicsWithCount.push({ topic, count });
+          if (count > 0) { // Only include topics that have questions
+            topicsWithCount.push({ topic, count });
+          }
         }
         
         console.log('Filtered unique topics with counts:', topicsWithCount);
@@ -94,8 +100,8 @@ const TopicSelect = () => {
           console.warn('No valid topics found, using fallback topics');
           // Fallback to common topics if no valid topics found
           const fallbackTopics = [
-            '일상생활', '직장/학교', '건강/웰빙', '음식/요리', 
-            '여행/관광', '취미/여가', '교육', '사회생활'
+            'Appointments', 'Technology', 'Internet', 'Phone', 'Travel', 
+            'Food', 'Health', 'Education', 'Work', 'Shopping'
           ];
           setTopics(fallbackTopics.map(topic => ({ topic, count: 0 })));
         } else {
@@ -116,14 +122,16 @@ const TopicSelect = () => {
   // Map topic names to icons
   const getTopicIcon = (topic: string) => {
     const iconMap: { [key: string]: React.ReactNode } = {
-      '일상생활': <Coffee size={16} />,
-      '직장/학교': <Building size={16} />,
-      '건강/웰빙': <Heart size={16} />,
-      '음식/요리': <Utensils size={16} />,
-      '여행/관광': <Plane size={16} />,
-      '취미/여가': <Film size={16} />,
-      '교육': <BookOpen size={16} />,
-      '사회생활': <Users size={16} />
+      'Appointments': <Coffee size={16} />,
+      'Technology': <Building size={16} />,
+      'Internet': <Building size={16} />,
+      'Phone': <Heart size={16} />,
+      'Travel': <Plane size={16} />,
+      'Food': <Utensils size={16} />,
+      'Health': <Heart size={16} />,
+      'Education': <BookOpen size={16} />,
+      'Work': <Building size={16} />,
+      'Shopping': <Users size={16} />
     };
     
     return iconMap[topic] || <Coffee size={16} />;
@@ -132,14 +140,16 @@ const TopicSelect = () => {
   // Map topic names to background colors
   const getTopicColor = (topic: string) => {
     const colorMap: { [key: string]: string } = {
-      '일상생활': 'bg-blue-100 text-blue-500',
-      '직장/학교': 'bg-green-100 text-green-500',
-      '건강/웰빙': 'bg-red-100 text-red-500',
-      '음식/요리': 'bg-yellow-100 text-yellow-500',
-      '여행/관광': 'bg-purple-100 text-purple-500',
-      '취미/여가': 'bg-opic-light-purple text-opic-purple',
-      '교육': 'bg-pink-100 text-pink-500',
-      '사회생활': 'bg-orange-100 text-orange-500'
+      'Appointments': 'bg-blue-100 text-blue-500',
+      'Technology': 'bg-green-100 text-green-500',
+      'Internet': 'bg-purple-100 text-purple-500',
+      'Phone': 'bg-red-100 text-red-500',
+      'Travel': 'bg-purple-100 text-purple-500',
+      'Food': 'bg-yellow-100 text-yellow-500',
+      'Health': 'bg-red-100 text-red-500',
+      'Education': 'bg-pink-100 text-pink-500',
+      'Work': 'bg-green-100 text-green-500',
+      'Shopping': 'bg-orange-100 text-orange-500'
     };
     
     return colorMap[topic] || 'bg-blue-100 text-blue-500';
