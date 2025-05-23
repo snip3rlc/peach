@@ -18,6 +18,24 @@ const Dashboard = () => {
     ]
   };
 
+  const tipsData = [
+    {
+      type: "grammar" as const,
+      title: "Present Perfect 활용법",
+      content: "I have lived here for 5 years. (지금도 여기 살고 있음을 강조)"
+    },
+    {
+      type: "vocabulary" as const,
+      title: "일상 표현",
+      content: "'I'm running late' - 늦을 것 같다는 의미로 자주 사용되는 표현"
+    },
+    {
+      type: "pronunciation" as const,
+      title: "발음 팁",
+      content: "'th' 소리는 혀끝을 이 사이에 살짝 넣고 발음하세요"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 safe-area-inset">
       <Header title="홈" />
@@ -28,11 +46,15 @@ const Dashboard = () => {
           options={triviaData.options}
         />
         
-        <ProgressBar />
+        <ProgressBar progress={65} />
         
-        <TipsCarousel />
+        <TipsCarousel tips={tipsData} />
         
-        <DidYouKnow />
+        <DidYouKnow 
+          question="영어에서 'break a leg'는 무슨 뜻일까요?"
+          answer="'행운을 빈다'는 뜻입니다! 특히 공연이나 시험 전에 사용하는 격려 표현으로, 직역하면 '다리를 부러뜨려라'이지만 실제로는 '잘해라, 성공해라'라는 의미입니다."
+          type="culture"
+        />
         
         <UpgradeCard />
       </div>
