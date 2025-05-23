@@ -63,23 +63,11 @@ const SignIn = () => {
       setLoading(true);
       setAuthProvider(provider);
       
-      // For demo purposes, set isAuthenticated to true
+      // Simulate successful sign in
+      toast.success(`${provider} 로그인 성공!`);
+      
+      // Set authentication state
       localStorage.setItem('isAuthenticated', 'true');
-      
-      // We'll still call Supabase for a real app, but we'll use the mock data for now
-      try {
-        await supabase.auth.signInWithOAuth({
-          provider: provider,
-          options: {
-            redirectTo: window.location.origin + (redirect ? `?redirect=${redirect}&plan=${plan || ''}` : '')
-          }
-        });
-      } catch (error) {
-        // In demo mode, we'll ignore this error and proceed with the mock data
-        console.log('Demo mode: Ignoring Supabase auth error');
-      }
-      
-      toast.success('로그인되었습니다!');
       
       // Check if there's a redirect with subscription plan
       if (redirect === 'subscribe' && plan) {
@@ -89,7 +77,7 @@ const SignIn = () => {
       }
       
     } catch (error) {
-      toast.error(`로그인 중 오류가 발생했습니다.`);
+      toast.error(`${provider} 로그인 중 오류가 발생했습니다.`);
       console.error('Error signing in:', error);
     } finally {
       setLoading(false);
