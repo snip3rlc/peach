@@ -1,7 +1,7 @@
 
 import React, { ReactNode, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, User } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { AuthContext } from '../App';
 
 interface HeaderProps {
@@ -25,17 +25,11 @@ const Header: React.FC<HeaderProps> = ({ title, showBack = true, children }) => 
         </button>
       )}
       <h1 className="text-lg font-medium text-center flex-1">{title}</h1>
-      {children ? (
+      {children && (
         <div className="ml-auto">
           {children}
         </div>
-      ) : !user ? (
-        <div className="ml-auto">
-          <button onClick={() => navigate('/signin')} className="p-2 text-opic-purple">
-            <User size={20} />
-          </button>
-        </div>
-      ) : null}
+      )}
     </div>
   );
 };
