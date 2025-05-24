@@ -35,6 +35,7 @@ export type Database = {
       }
       questions: {
         Row: {
+          combo_key: string | null
           created_at: string
           id: string
           is_random: boolean
@@ -46,6 +47,7 @@ export type Database = {
           topic: string
         }
         Insert: {
+          combo_key?: string | null
           created_at?: string
           id?: string
           is_random?: boolean
@@ -57,6 +59,7 @@ export type Database = {
           topic: string
         }
         Update: {
+          combo_key?: string | null
           created_at?: string
           id?: string
           is_random?: boolean

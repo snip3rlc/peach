@@ -19,8 +19,9 @@ type QuestionData = {
   question_type: string;
   style: string;
   question: string;
-  order: number | null;
+  order: number;
   is_random: boolean;
+  combo_key: string | null;
 };
 
 const ExcelQuestionUploader = () => {
@@ -30,22 +31,23 @@ const ExcelQuestionUploader = () => {
     message: ''
   });
 
-  // Map question_type to style
-  const getStyleFromType = (questionType: string): string => {
-    const styleMap: Record<string, string> = {
-      'describing': 'Descriptive',
-      'routine': 'Routine',
-      'comparison': 'Contrast',
-      'pastexperience': 'Past Experience',
-      'roleplay': 'Role-Play',
-      'advques': 'Advanced'
-    };
-
-    return styleMap[questionType] || questionType;
+  const cleanText = (text: string): string => {
+    return text
+      .replace(/[\r\n]+/g, ' ') // Replace line breaks with spaces
+      .replace(/,+/g, ',') // Replace multiple commas with single comma
+      .trim();
   };
 
-  const isOrderRequired = (questionType: string): boolean => {
-    return ['roleplay', 'advques'].includes(questionType);
+  const generateComboKey = (style: string, topic: string, order: number): string | null => {
+    if (style === 'roleplay' && (order === 11 || order === 12)) {
+      // Group questions 11 and 12 together
+      return `roleplay_${topic.toLowerCase()}_01`;
+    }
+    if (style === 'advques' && (order === 13 || order === 14 || order === 15)) {
+      // Group questions 13, 14, 15 together
+      return `advques_${topic.toLowerCase()}_01`;
+    }
+    return null;
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,8 +91,9 @@ const ExcelQuestionUploader = () => {
       const sheetNames = workbook.SheetNames;
       console.log('Found sheets:', sheetNames);
 
-      // Skip the "topics" sheet
-      const questionSheets = sheetNames.filter(name => name.toLowerCase() !== 'topics');
+      // Skip the "topics" sheet and only process valid question sheets
+      const validSheets = ['describing', 'routine', 'comparison', 'pastexperience', 'roleplay', 'advques'];
+      const questionSheets = sheetNames.filter(name => validSheets.includes(name.toLowerCase()));
 
       // Prepare data array for batch insert
       const allQuestionData: QuestionData[] = [];
@@ -99,13 +102,7 @@ const ExcelQuestionUploader = () => {
       for (let i = 0; i < questionSheets.length; i++) {
         const sheetName = questionSheets[i];
         const worksheet = workbook.Sheets[sheetName];
-        const question_type = sheetName.toLowerCase();
-        
-        // Skip if not a valid question type
-        if (!['describing', 'routine', 'comparison', 'pastexperience', 'roleplay', 'advques'].includes(question_type)) {
-          console.warn(`Skipping sheet "${sheetName}" - not a recognized question type`);
-          continue;
-        }
+        const style = sheetName.toLowerCase().trim();
         
         // Convert worksheet to JSON with headers
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -115,46 +112,44 @@ const ExcelQuestionUploader = () => {
           continue;
         }
         
-        // First row contains topic names
-        const topics = jsonData[0] as string[];
-        
-        // For each column (topic)
-        for (let topicIndex = 0; topicIndex < topics.length; topicIndex++) {
-          const topic = topics[topicIndex]?.toString().trim();
-          if (!topic) continue;
+        // Process each row (skip header row if exists)
+        for (let rowIndex = 1; rowIndex < jsonData.length; rowIndex++) {
+          const row = jsonData[rowIndex] as any[];
+          if (!row || row.length < 4) continue;
           
-          // For each row under the topic (questions)
-          for (let rowIndex = 1; rowIndex < jsonData.length; rowIndex++) {
-            const row = jsonData[rowIndex] as any[];
-            if (!row || !row[topicIndex]) continue;
-            
-            const questionText = row[topicIndex]?.toString().trim();
-            if (!questionText) continue;
-            
-            // Check if this is a random survey question
-            const is_random = questionText.toLowerCase().includes('random survey');
-            
-            // Determine order for roleplay and advques questions
-            let order: number | null = null;
-            if (isOrderRequired(question_type)) {
-              // For roleplay: Q11-Q13, for advques: Q14-Q15
-              if (question_type === 'roleplay') {
-                order = 11 + (rowIndex - 1);  // Q11, Q12, Q13
-              } else if (question_type === 'advques') {
-                order = 14 + (rowIndex - 1);  // Q14, Q15
-              }
+          // Extract data according to your format:
+          // A = topic, B = question_type, C = question_no, D+ = question text
+          const topic = row[0]?.toString().trim().toLowerCase();
+          const questionType = row[1]?.toString().trim().toLowerCase();
+          const questionNo = parseInt(row[2]?.toString()) || 0;
+          
+          // Concatenate all columns from D onward as question text
+          const questionParts = [];
+          for (let colIndex = 3; colIndex < row.length; colIndex++) {
+            if (row[colIndex] && row[colIndex].toString().trim()) {
+              questionParts.push(row[colIndex].toString().trim());
             }
-            
-            allQuestionData.push({
-              level,
-              topic,
-              question_type,
-              style: getStyleFromType(question_type),
-              question: questionText,
-              order,
-              is_random
-            });
           }
+          
+          if (!topic || !questionType || !questionNo || questionParts.length === 0) {
+            console.warn(`Skipping row ${rowIndex + 1} in sheet "${sheetName}" - missing required data`);
+            continue;
+          }
+          
+          const questionText = cleanText(questionParts.join(' '));
+          const isRandom = questionType === 'random';
+          const comboKey = generateComboKey(style, topic, questionNo);
+          
+          allQuestionData.push({
+            level,
+            topic,
+            question_type: questionType,
+            style,
+            question: questionText,
+            order: questionNo,
+            is_random: isRandom,
+            combo_key: comboKey
+          });
         }
 
         // Update progress
