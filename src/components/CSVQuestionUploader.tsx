@@ -169,7 +169,7 @@ const CSVQuestionUploader = () => {
 
         // Debug combo key generation
         if (comboKey) {
-          console.log(`Generated combo_key for row ${i + 1}:`, {
+          console.log(`🔑 Generated combo_key for row ${i + 1}:`, {
             style,
             topic,
             order,
@@ -193,19 +193,21 @@ const CSVQuestionUploader = () => {
         allQuestionData.push(questionData);
       }
 
-      console.log(`Processing summary:
+      console.log(`📊 Processing summary:
         - Total rows processed: ${allQuestionData.length}
         - Rows with combo_key: ${comboKeyCount}
         - Skipped rows: ${skippedRows}
       `);
 
-      // Debug: Show some combo_key examples
-      const comboKeyExamples = allQuestionData.filter(q => q.combo_key).slice(0, 5);
-      console.log('Combo key examples:', comboKeyExamples.map(q => ({
+      // Debug: Show combo_key examples
+      const comboKeyExamples = allQuestionData.filter(q => q.combo_key);
+      console.log('🔍 All combo_key questions:', comboKeyExamples.map((q, idx) => ({
+        index: idx + 1,
         combo_key: q.combo_key,
         style: q.style,
         topic: q.topic,
-        order: q.order
+        order: q.order,
+        question_preview: q.question.substring(0, 50) + '...'
       })));
 
       if (allQuestionData.length === 0) {
@@ -222,51 +224,60 @@ const CSVQuestionUploader = () => {
         progress: 50
       });
 
-      // Insert data in batches, preserving order
-      const batchSize = 50;
+      // Insert data one by one to preserve order and ensure combo_key questions are inserted
       let totalInserted = 0;
       let comboKeyInserted = 0;
+      let insertErrors = 0;
 
-      for (let i = 0; i < allQuestionData.length; i += batchSize) {
-        const batch = allQuestionData.slice(i, i + batchSize);
+      for (let i = 0; i < allQuestionData.length; i++) {
+        const questionData = allQuestionData[i];
         
-        // Debug the batch before insertion
-        const batchComboKeys = batch.filter(q => q.combo_key);
-        console.log(`Batch ${Math.floor(i / batchSize) + 1} - inserting ${batch.length} questions, ${batchComboKeys.length} with combo_key`);
-        
-        // Show the actual data being inserted for combo_key questions
-        batchComboKeys.forEach(q => {
-          console.log('Inserting combo_key question:', {
-            combo_key: q.combo_key,
-            style: q.style,
-            topic: q.topic,
-            order: q.order,
-            level: q.level,
-            question_type: q.question_type
+        // Log each combo_key question before insertion
+        if (questionData.combo_key) {
+          console.log(`🚀 Inserting combo_key question ${comboKeyInserted + 1}:`, {
+            combo_key: questionData.combo_key,
+            style: questionData.style,
+            topic: questionData.topic,
+            order: questionData.order,
+            level: questionData.level,
+            question_type: questionData.question_type,
+            is_random: questionData.is_random
           });
-        });
-
-        const { error: insertError, data } = await supabase
-          .from('questions')
-          .insert(batch)
-          .select('combo_key');
-
-        if (insertError) {
-          console.error('Database insert error:', insertError);
-          throw new Error(`Database insert error: ${insertError.message}`);
         }
 
-        // Count how many combo_key questions were actually inserted
-        if (data) {
-          const insertedComboKeys = data.filter(d => d.combo_key);
-          comboKeyInserted += insertedComboKeys.length;
-          console.log(`Batch inserted successfully. Combo_key questions in this batch: ${insertedComboKeys.length}`);
+        try {
+          const { data, error: insertError } = await supabase
+            .from('questions')
+            .insert([questionData])
+            .select('id, combo_key, style, topic, order');
+
+          if (insertError) {
+            console.error(`❌ Database insert error for row ${i + 1}:`, insertError);
+            insertErrors++;
+            continue;
+          }
+
+          if (data && data.length > 0) {
+            const insertedQuestion = data[0];
+            if (insertedQuestion.combo_key) {
+              console.log(`✅ Successfully inserted combo_key question:`, {
+                id: insertedQuestion.id,
+                combo_key: insertedQuestion.combo_key,
+                style: insertedQuestion.style,
+                topic: insertedQuestion.topic,
+                order: insertedQuestion.order
+              });
+              comboKeyInserted++;
+            }
+            totalInserted++;
+          }
+        } catch (error) {
+          console.error(`❌ Unexpected error inserting row ${i + 1}:`, error);
+          insertErrors++;
         }
 
-        totalInserted += batch.length;
-        
         // Update progress
-        const progress = 50 + Math.round((totalInserted / allQuestionData.length) * 50);
+        const progress = 50 + Math.round((i / allQuestionData.length) * 50);
         setUploadStatus({
           status: 'processing',
           message: `Uploaded ${totalInserted} of ${allQuestionData.length} questions...`,
@@ -274,25 +285,46 @@ const CSVQuestionUploader = () => {
         });
       }
 
-      console.log(`Upload complete summary:
+      console.log(`🎯 Upload complete summary:
         - Total questions inserted: ${totalInserted}
         - Questions with combo_key inserted: ${comboKeyInserted}
         - Expected combo_key questions: ${comboKeyCount}
+        - Insert errors: ${insertErrors}
       `);
 
-      setUploadStatus({
-        status: 'success',
-        message: `Successfully uploaded ${totalInserted} questions! (${comboKeyInserted} with combo_key)`,
-        progress: 100
-      });
+      // Verify combo_key questions were actually inserted
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('questions')
+        .select('id, combo_key, style, topic, order')
+        .not('combo_key', 'is', null)
+        .order('topic, order');
 
-      toast({
-        title: 'Upload Complete',
-        description: `${totalInserted} questions added (${comboKeyInserted} with combo_key)`,
-      });
+      if (verifyError) {
+        console.error('❌ Error verifying combo_key questions:', verifyError);
+      } else {
+        console.log('🔍 Verification - combo_key questions in database:', verifyData);
+      }
+
+      if (insertErrors > 0) {
+        setUploadStatus({
+          status: 'error',
+          message: `Upload completed with ${insertErrors} errors. ${totalInserted} questions uploaded (${comboKeyInserted} with combo_key)`
+        });
+      } else {
+        setUploadStatus({
+          status: 'success',
+          message: `Successfully uploaded ${totalInserted} questions! (${comboKeyInserted} with combo_key)`,
+          progress: 100
+        });
+
+        toast({
+          title: 'Upload Complete',
+          description: `${totalInserted} questions added (${comboKeyInserted} with combo_key)`,
+        });
+      }
 
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('❌ Upload error:', error);
       setUploadStatus({
         status: 'error',
         message: `Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`
