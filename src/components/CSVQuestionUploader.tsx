@@ -132,11 +132,14 @@ const CSVQuestionUploader = () => {
 
       // Process data rows
       const allQuestionData: QuestionData[] = [];
+      let comboKeyCount = 0;
+      let skippedRows = 0;
       
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         if (row.length < Math.max(levelIndex, topicIndex, questionTypeIndex, styleIndex, questionIndex, orderIndex) + 1) {
           console.warn(`Skipping row ${i + 1} - insufficient columns`);
+          skippedRows++;
           continue;
         }
 
@@ -148,19 +151,35 @@ const CSVQuestionUploader = () => {
         const order = parseInt(row[orderIndex]?.trim()) || 0;
 
         if (!level || !topic || !questionType || !style || !question || !order) {
-          console.warn(`Skipping row ${i + 1} - missing required data`);
+          console.warn(`Skipping row ${i + 1} - missing required data:`, {
+            level, topic, questionType, style, question: question ? 'present' : 'missing', order
+          });
+          skippedRows++;
           continue;
         }
 
         if (level !== 'intermediate' && level !== 'advanced') {
           console.warn(`Skipping row ${i + 1} - invalid level: ${level}`);
+          skippedRows++;
           continue;
         }
 
         const isRandom = questionType === 'random';
         const comboKey = generateComboKey(style, topic, order);
 
-        allQuestionData.push({
+        // Debug combo key generation
+        if (comboKey) {
+          console.log(`Generated combo_key for row ${i + 1}:`, {
+            style,
+            topic,
+            order,
+            comboKey,
+            question: question.substring(0, 50) + '...'
+          });
+          comboKeyCount++;
+        }
+
+        const questionData: QuestionData = {
           level: level as 'intermediate' | 'advanced',
           topic,
           question_type: questionType,
@@ -169,10 +188,25 @@ const CSVQuestionUploader = () => {
           order,
           is_random: isRandom,
           combo_key: comboKey
-        });
+        };
+
+        allQuestionData.push(questionData);
       }
 
-      console.log(`Processed ${allQuestionData.length} questions`);
+      console.log(`Processing summary:
+        - Total rows processed: ${allQuestionData.length}
+        - Rows with combo_key: ${comboKeyCount}
+        - Skipped rows: ${skippedRows}
+      `);
+
+      // Debug: Show some combo_key examples
+      const comboKeyExamples = allQuestionData.filter(q => q.combo_key).slice(0, 5);
+      console.log('Combo key examples:', comboKeyExamples.map(q => ({
+        combo_key: q.combo_key,
+        style: q.style,
+        topic: q.topic,
+        order: q.order
+      })));
 
       if (allQuestionData.length === 0) {
         setUploadStatus({
@@ -188,19 +222,45 @@ const CSVQuestionUploader = () => {
         progress: 50
       });
 
-      // Insert data in batches
+      // Insert data in batches, preserving order
       const batchSize = 50;
       let totalInserted = 0;
+      let comboKeyInserted = 0;
 
       for (let i = 0; i < allQuestionData.length; i += batchSize) {
         const batch = allQuestionData.slice(i, i + batchSize);
         
-        const { error: insertError } = await supabase
+        // Debug the batch before insertion
+        const batchComboKeys = batch.filter(q => q.combo_key);
+        console.log(`Batch ${Math.floor(i / batchSize) + 1} - inserting ${batch.length} questions, ${batchComboKeys.length} with combo_key`);
+        
+        // Show the actual data being inserted for combo_key questions
+        batchComboKeys.forEach(q => {
+          console.log('Inserting combo_key question:', {
+            combo_key: q.combo_key,
+            style: q.style,
+            topic: q.topic,
+            order: q.order,
+            level: q.level,
+            question_type: q.question_type
+          });
+        });
+
+        const { error: insertError, data } = await supabase
           .from('questions')
-          .insert(batch);
+          .insert(batch)
+          .select('combo_key');
 
         if (insertError) {
+          console.error('Database insert error:', insertError);
           throw new Error(`Database insert error: ${insertError.message}`);
+        }
+
+        // Count how many combo_key questions were actually inserted
+        if (data) {
+          const insertedComboKeys = data.filter(d => d.combo_key);
+          comboKeyInserted += insertedComboKeys.length;
+          console.log(`Batch inserted successfully. Combo_key questions in this batch: ${insertedComboKeys.length}`);
         }
 
         totalInserted += batch.length;
@@ -214,15 +274,21 @@ const CSVQuestionUploader = () => {
         });
       }
 
+      console.log(`Upload complete summary:
+        - Total questions inserted: ${totalInserted}
+        - Questions with combo_key inserted: ${comboKeyInserted}
+        - Expected combo_key questions: ${comboKeyCount}
+      `);
+
       setUploadStatus({
         status: 'success',
-        message: `Successfully uploaded ${totalInserted} questions!`,
+        message: `Successfully uploaded ${totalInserted} questions! (${comboKeyInserted} with combo_key)`,
         progress: 100
       });
 
       toast({
         title: 'Upload Complete',
-        description: `${totalInserted} questions have been added to the database`,
+        description: `${totalInserted} questions added (${comboKeyInserted} with combo_key)`,
       });
 
     } catch (error) {
