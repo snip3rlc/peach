@@ -62,16 +62,6 @@ const CSVQuestionUploader = () => {
     return result;
   };
 
-  const generateComboKey = (style: string, topic: string, order: number): string | null => {
-    if (style === 'roleplay' && (order === 11 || order === 12)) {
-      return `roleplay_${topic.toLowerCase()}_01`;
-    }
-    if (style === 'advques' && (order === 13 || order === 14 || order === 15)) {
-      return `advques_${topic.toLowerCase()}_01`;
-    }
-    return null;
-  };
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -105,7 +95,7 @@ const CSVQuestionUploader = () => {
 
       // Get header row to determine column indices
       const headers = rows[0].map(h => h.toLowerCase().trim());
-      console.log('CSV Headers:', headers);
+      console.log('📋 CSV Headers:', headers);
 
       // Find column indices
       const levelIndex = headers.findIndex(h => h === 'level');
@@ -114,6 +104,17 @@ const CSVQuestionUploader = () => {
       const styleIndex = headers.findIndex(h => h === 'style');
       const questionIndex = headers.findIndex(h => h === 'question');
       const orderIndex = headers.findIndex(h => h === 'order' || h === 'question_no');
+      const comboKeyIndex = headers.findIndex(h => h === 'combo_key');
+
+      console.log('📍 Column indices:', {
+        level: levelIndex,
+        topic: topicIndex,
+        question_type: questionTypeIndex,
+        style: styleIndex,
+        question: questionIndex,
+        order: orderIndex,
+        combo_key: comboKeyIndex
+      });
 
       if (levelIndex === -1 || topicIndex === -1 || questionTypeIndex === -1 || 
           styleIndex === -1 || questionIndex === -1 || orderIndex === -1) {
@@ -137,44 +138,57 @@ const CSVQuestionUploader = () => {
       
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
-        if (row.length < Math.max(levelIndex, topicIndex, questionTypeIndex, styleIndex, questionIndex, orderIndex) + 1) {
-          console.warn(`Skipping row ${i + 1} - insufficient columns`);
+        const maxIndex = Math.max(levelIndex, topicIndex, questionTypeIndex, styleIndex, questionIndex, orderIndex, comboKeyIndex);
+        
+        if (row.length < maxIndex + 1) {
+          console.warn(`⚠️ Skipping row ${i + 1} - insufficient columns (expected ${maxIndex + 1}, got ${row.length})`);
           skippedRows++;
           continue;
         }
 
         const level = row[levelIndex]?.trim().toLowerCase();
-        const topic = row[topicIndex]?.trim().toLowerCase();
+        const topic = row[topicIndex]?.trim();
         const questionType = row[questionTypeIndex]?.trim().toLowerCase();
         const style = row[styleIndex]?.trim().toLowerCase();
         const question = row[questionIndex]?.trim();
         const order = parseInt(row[orderIndex]?.trim()) || 0;
+        
+        // Get combo_key from CSV if column exists, otherwise null
+        let comboKey: string | null = null;
+        if (comboKeyIndex !== -1) {
+          const csvComboKey = row[comboKeyIndex]?.trim();
+          comboKey = csvComboKey && csvComboKey !== '' && csvComboKey !== 'null' ? csvComboKey : null;
+        }
 
         if (!level || !topic || !questionType || !style || !question || !order) {
-          console.warn(`Skipping row ${i + 1} - missing required data:`, {
-            level, topic, questionType, style, question: question ? 'present' : 'missing', order
+          console.warn(`⚠️ Skipping row ${i + 1} - missing required data:`, {
+            level: level || 'MISSING',
+            topic: topic || 'MISSING',
+            questionType: questionType || 'MISSING',
+            style: style || 'MISSING',
+            question: question ? 'present' : 'MISSING',
+            order: order || 'MISSING'
           });
           skippedRows++;
           continue;
         }
 
         if (level !== 'intermediate' && level !== 'advanced') {
-          console.warn(`Skipping row ${i + 1} - invalid level: ${level}`);
+          console.warn(`⚠️ Skipping row ${i + 1} - invalid level: ${level}`);
           skippedRows++;
           continue;
         }
 
         const isRandom = questionType === 'random';
-        const comboKey = generateComboKey(style, topic, order);
 
-        // Debug combo key generation
+        // Log combo_key details
         if (comboKey) {
-          console.log(`🔑 Generated combo_key for row ${i + 1}:`, {
-            style,
+          console.log(`🔑 Found combo_key in row ${i + 1}:`, {
+            combo_key: comboKey,
             topic,
+            style,
             order,
-            comboKey,
-            question: question.substring(0, 50) + '...'
+            question_preview: question.substring(0, 50) + '...'
           });
           comboKeyCount++;
         }
@@ -197,15 +211,16 @@ const CSVQuestionUploader = () => {
         - Total rows processed: ${allQuestionData.length}
         - Rows with combo_key: ${comboKeyCount}
         - Skipped rows: ${skippedRows}
+        - Total input rows: ${rows.length - 1}
       `);
 
-      // Debug: Show combo_key examples
-      const comboKeyExamples = allQuestionData.filter(q => q.combo_key);
-      console.log('🔍 All combo_key questions:', comboKeyExamples.map((q, idx) => ({
+      // Show examples of combo_key questions
+      const comboKeyExamples = allQuestionData.filter(q => q.combo_key).slice(0, 5);
+      console.log('🔍 Sample combo_key questions:', comboKeyExamples.map((q, idx) => ({
         index: idx + 1,
         combo_key: q.combo_key,
-        style: q.style,
         topic: q.topic,
+        style: q.style,
         order: q.order,
         question_preview: q.question.substring(0, 50) + '...'
       })));
@@ -228,6 +243,7 @@ const CSVQuestionUploader = () => {
       let totalInserted = 0;
       let comboKeyInserted = 0;
       let insertErrors = 0;
+      const insertedComboKeys: Array<{id: string, combo_key: string, topic: string, order: number}> = [];
 
       for (let i = 0; i < allQuestionData.length; i++) {
         const questionData = allQuestionData[i];
@@ -236,8 +252,8 @@ const CSVQuestionUploader = () => {
         if (questionData.combo_key) {
           console.log(`🚀 Inserting combo_key question ${comboKeyInserted + 1}:`, {
             combo_key: questionData.combo_key,
-            style: questionData.style,
             topic: questionData.topic,
+            style: questionData.style,
             order: questionData.order,
             level: questionData.level,
             question_type: questionData.question_type,
@@ -249,10 +265,17 @@ const CSVQuestionUploader = () => {
           const { data, error: insertError } = await supabase
             .from('questions')
             .insert([questionData])
-            .select('id, combo_key, style, topic, order');
+            .select('id, combo_key, topic, order, style');
 
           if (insertError) {
             console.error(`❌ Database insert error for row ${i + 1}:`, insertError);
+            if (questionData.combo_key) {
+              console.error(`❌ Failed to insert combo_key question:`, {
+                combo_key: questionData.combo_key,
+                topic: questionData.topic,
+                error: insertError.message
+              });
+            }
             insertErrors++;
             continue;
           }
@@ -263,7 +286,13 @@ const CSVQuestionUploader = () => {
               console.log(`✅ Successfully inserted combo_key question:`, {
                 id: insertedQuestion.id,
                 combo_key: insertedQuestion.combo_key,
+                topic: insertedQuestion.topic,
                 style: insertedQuestion.style,
+                order: insertedQuestion.order
+              });
+              insertedComboKeys.push({
+                id: insertedQuestion.id,
+                combo_key: insertedQuestion.combo_key,
                 topic: insertedQuestion.topic,
                 order: insertedQuestion.order
               });
@@ -273,11 +302,18 @@ const CSVQuestionUploader = () => {
           }
         } catch (error) {
           console.error(`❌ Unexpected error inserting row ${i + 1}:`, error);
+          if (questionData.combo_key) {
+            console.error(`❌ Unexpected error with combo_key question:`, {
+              combo_key: questionData.combo_key,
+              topic: questionData.topic,
+              error: error instanceof Error ? error.message : 'Unknown error'
+            });
+          }
           insertErrors++;
         }
 
         // Update progress
-        const progress = 50 + Math.round((i / allQuestionData.length) * 50);
+        const progress = 50 + Math.round((i / allQuestionData.length) * 40);
         setUploadStatus({
           status: 'processing',
           message: `Uploaded ${totalInserted} of ${allQuestionData.length} questions...`,
@@ -292,17 +328,28 @@ const CSVQuestionUploader = () => {
         - Insert errors: ${insertErrors}
       `);
 
-      // Verify combo_key questions were actually inserted
+      // Show all inserted combo_key questions
+      if (insertedComboKeys.length > 0) {
+        console.log('🎉 All inserted combo_key questions:', insertedComboKeys);
+      }
+
+      // Final verification step
+      setUploadStatus({
+        status: 'processing',
+        message: 'Verifying combo_key questions in database...',
+        progress: 95
+      });
+
       const { data: verifyData, error: verifyError } = await supabase
         .from('questions')
-        .select('id, combo_key, style, topic, order')
+        .select('id, combo_key, topic, order, style')
         .not('combo_key', 'is', null)
         .order('topic, order');
 
       if (verifyError) {
         console.error('❌ Error verifying combo_key questions:', verifyError);
       } else {
-        console.log('🔍 Verification - combo_key questions in database:', verifyData);
+        console.log(`🔍 Verification - combo_key questions in database (${verifyData.length} found):`, verifyData);
       }
 
       if (insertErrors > 0) {
