@@ -51,9 +51,8 @@ const CSVQuestionUploader = () => {
         
         if (char === '"') {
           if (inQuotes && j + 1 < line.length && line[j + 1] === '"') {
-            // Handle escaped quotes
             currentField += '"';
-            j++; // Skip next quote
+            j++;
           } else {
             inQuotes = !inQuotes;
           }
@@ -67,7 +66,7 @@ const CSVQuestionUploader = () => {
       
       row.push(currentField);
       
-      // Clean up fields - remove quotes and trim
+      // Clean up fields
       const cleanedRow = row.map(field => {
         let cleaned = field.trim();
         if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
@@ -79,7 +78,7 @@ const CSVQuestionUploader = () => {
       result.push(cleanedRow);
       
       if (i < 10) {
-        console.log(`📝 Row ${i + 1} parsed (${cleanedRow.length} columns):`, cleanedRow.slice(0, 8));
+        console.log(`📝 Row ${i + 1} parsed (${cleanedRow.length} columns):`, cleanedRow);
       }
     }
     
@@ -106,7 +105,6 @@ const CSVQuestionUploader = () => {
     });
 
     try {
-      // Read the CSV file
       const text = await file.text();
       const rows = parseCSV(text);
 
@@ -118,17 +116,17 @@ const CSVQuestionUploader = () => {
         return;
       }
 
-      // Get header row to determine column indices
+      // Get header row and find column indices
       const headers = rows[0].map(h => h.toLowerCase().trim());
       console.log('📋 CSV Headers detected:', headers);
       console.log('📊 Total CSV rows (including header):', rows.length);
 
-      // Find column indices with better flexibility
+      // More flexible column detection
       const levelIndex = headers.findIndex(h => h.includes('level'));
       const topicIndex = headers.findIndex(h => h.includes('topic'));
       const questionTypeIndex = headers.findIndex(h => h.includes('question_type') || h.includes('type'));
       const styleIndex = headers.findIndex(h => h.includes('style'));
-      const questionIndex = headers.findIndex(h => h.includes('question') && !h.includes('type'));
+      const questionIndex = headers.findIndex(h => h.includes('question') && !h.includes('type') && !h.includes('no'));
       const orderIndex = headers.findIndex(h => h.includes('order') || h.includes('question_no'));
       const comboKeyIndex = headers.findIndex(h => h.includes('combo_key'));
 
@@ -156,7 +154,7 @@ const CSVQuestionUploader = () => {
         progress: 25
       });
 
-      // Fetch existing questions to check for duplicates
+      // Fetch existing questions
       const { data: existingQuestions, error: fetchError } = await supabase
         .from('questions')
         .select('question, level, topic, style, order');
@@ -170,7 +168,6 @@ const CSVQuestionUploader = () => {
         return;
       }
 
-      // Create a Set for fast duplicate checking
       const existingQuestionsSet = new Set(
         existingQuestions.map(q => `${q.level}|${q.topic}|${q.style}|${q.order}|${q.question}`)
       );
@@ -184,8 +181,10 @@ const CSVQuestionUploader = () => {
         missingData: 0,
         invalidLevel: 0,
         duplicates: 0,
-        invalidOrder: 0
+        invalidOrder: 0,
+        parseErrors: 0
       };
+      
       let comboKeyCount = 0;
       let roleplaysFound = 0;
       let advancedCount = 0;
@@ -193,126 +192,139 @@ const CSVQuestionUploader = () => {
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         
-        // Skip completely empty rows
-        if (!row || row.length === 0 || row.every(cell => !cell || !cell.trim())) {
-          console.log(`⚠️ SKIP REASON: Empty row ${i + 1}`);
-          skippedCounts.emptyRows++;
-          continue;
-        }
+        try {
+          // Skip completely empty rows
+          if (!row || row.length === 0 || row.every(cell => !cell || !cell.trim())) {
+            console.log(`⚠️ SKIP REASON: Empty row ${i + 1}`);
+            skippedCounts.emptyRows++;
+            continue;
+          }
 
-        // Safely extract values
-        const level = row[levelIndex]?.trim().toLowerCase() || '';
-        const topic = row[topicIndex]?.trim() || '';
-        const questionType = row[questionTypeIndex]?.trim().toLowerCase() || '';
-        const style = row[styleIndex]?.trim().toLowerCase() || '';
-        const question = row[questionIndex]?.trim() || '';
-        const orderValue = row[orderIndex]?.trim() || '';
-        const order = parseInt(orderValue) || 0;
-        
-        // Handle combo_key
-        let comboKey: string | null = null;
-        if (comboKeyIndex !== -1 && row[comboKeyIndex]) {
-          const csvComboKey = row[comboKeyIndex].trim();
-          comboKey = csvComboKey && csvComboKey !== '' && csvComboKey !== 'null' ? csvComboKey : null;
-        }
+          // Safely extract values with better error handling
+          const level = (row[levelIndex] || '').trim().toLowerCase();
+          const topic = (row[topicIndex] || '').trim();
+          const questionType = (row[questionTypeIndex] || '').trim().toLowerCase();
+          const style = (row[styleIndex] || '').trim().toLowerCase();
+          const question = (row[questionIndex] || '').trim();
+          const orderValue = (row[orderIndex] || '').toString().trim();
+          
+          // More lenient order parsing - accept 0 as valid for some question types
+          let order = parseInt(orderValue);
+          if (isNaN(order)) {
+            order = 0; // Default to 0 if parsing fails
+          }
+          
+          // Handle combo_key
+          let comboKey: string | null = null;
+          if (comboKeyIndex !== -1 && row[comboKeyIndex]) {
+            const csvComboKey = row[comboKeyIndex].trim();
+            comboKey = csvComboKey && csvComboKey !== '' && csvComboKey !== 'null' ? csvComboKey : null;
+          }
 
-        // Detailed logging for debugging
-        if (style === 'roleplay' || level === 'advanced' || comboKey) {
-          console.log(`🔍 Processing special row ${i + 1}:`, {
-            level,
+          // Detailed logging for special cases
+          if (style === 'roleplay' || level === 'advanced' || comboKey) {
+            console.log(`🔍 Processing special row ${i + 1}:`, {
+              level,
+              topic,
+              questionType,
+              style,
+              order,
+              combo_key: comboKey,
+              question_preview: question.substring(0, 50) + '...',
+              rowLength: row.length,
+              originalOrderValue: orderValue
+            });
+          }
+
+          // Validate required fields - be more lenient
+          if (!level || !topic || !questionType || !style || !question) {
+            console.log(`⚠️ SKIP REASON: Missing required data in row ${i + 1}:`, {
+              level: level || 'MISSING',
+              topic: topic || 'MISSING',
+              questionType: questionType || 'MISSING',
+              style: style || 'MISSING',
+              question: question ? 'present' : 'MISSING',
+              order: order
+            });
+            skippedCounts.missingData++;
+            continue;
+          }
+
+          // More lenient order validation - allow 0 for certain question types
+          if (order < 0) {
+            console.log(`⚠️ SKIP REASON: Invalid order in row ${i + 1}: ${orderValue} (parsed as ${order})`);
+            skippedCounts.invalidOrder++;
+            continue;
+          }
+
+          // Validate level
+          if (level !== 'intermediate' && level !== 'advanced') {
+            console.log(`⚠️ SKIP REASON: Invalid level in row ${i + 1}: ${level}`);
+            skippedCounts.invalidLevel++;
+            continue;
+          }
+
+          // Count types
+          if (level === 'advanced') {
+            advancedCount++;
+          }
+
+          if (style === 'roleplay') {
+            roleplaysFound++;
+            console.log(`🎭 Found roleplay question ${roleplaysFound} in row ${i + 1}:`, {
+              level,
+              topic,
+              style,
+              order,
+              combo_key: comboKey
+            });
+          }
+
+          // Check for duplicates
+          const questionKey = `${level}|${topic}|${style}|${order}|${question}`;
+          if (existingQuestionsSet.has(questionKey)) {
+            console.log(`⚠️ SKIP REASON: Duplicate found in row ${i + 1}:`, {
+              level,
+              topic,
+              style,
+              order,
+              question_preview: question.substring(0, 50) + '...'
+            });
+            skippedCounts.duplicates++;
+            continue;
+          }
+
+          const isRandom = questionType === 'random';
+
+          if (comboKey) {
+            comboKeyCount++;
+            console.log(`🔑 Combo_key question ${comboKeyCount} in row ${i + 1}:`, {
+              combo_key: comboKey,
+              level,
+              topic,
+              style,
+              order
+            });
+          }
+
+          const questionData: QuestionData = {
+            level: level as 'intermediate' | 'advanced',
             topic,
-            questionType,
+            question_type: questionType,
             style,
+            question,
             order,
-            combo_key: comboKey,
-            question_preview: question.substring(0, 50) + '...',
-            rowLength: row.length
-          });
-        }
-
-        // Validate required fields
-        if (!level || !topic || !questionType || !style || !question) {
-          console.log(`⚠️ SKIP REASON: Missing required data in row ${i + 1}:`, {
-            level: level || 'MISSING',
-            topic: topic || 'MISSING',
-            questionType: questionType || 'MISSING',
-            style: style || 'MISSING',
-            question: question ? 'present' : 'MISSING',
-            order: order || 'MISSING'
-          });
-          skippedCounts.missingData++;
-          continue;
-        }
-
-        if (!order || order <= 0) {
-          console.log(`⚠️ SKIP REASON: Invalid order in row ${i + 1}: ${orderValue}`);
-          skippedCounts.invalidOrder++;
-          continue;
-        }
-
-        if (level !== 'intermediate' && level !== 'advanced') {
-          console.log(`⚠️ SKIP REASON: Invalid level in row ${i + 1}: ${level}`);
-          skippedCounts.invalidLevel++;
-          continue;
-        }
-
-        // Count advanced questions
-        if (level === 'advanced') {
-          advancedCount++;
-        }
-
-        // Count roleplay questions
-        if (style === 'roleplay') {
-          roleplaysFound++;
-          console.log(`🎭 Found roleplay question ${roleplaysFound} in row ${i + 1}:`, {
-            level,
-            topic,
-            style,
-            order,
+            is_random: isRandom,
             combo_key: comboKey
-          });
-        }
+          };
 
-        // Check for duplicates
-        const questionKey = `${level}|${topic}|${style}|${order}|${question}`;
-        if (existingQuestionsSet.has(questionKey)) {
-          console.log(`⚠️ SKIP REASON: Duplicate found in row ${i + 1}:`, {
-            level,
-            topic,
-            style,
-            order,
-            question_preview: question.substring(0, 50) + '...'
-          });
-          skippedCounts.duplicates++;
+          allQuestionData.push(questionData);
+
+        } catch (error) {
+          console.error(`❌ Error parsing row ${i + 1}:`, error, 'Row data:', row);
+          skippedCounts.parseErrors++;
           continue;
         }
-
-        const isRandom = questionType === 'random';
-
-        // Count combo_key questions
-        if (comboKey) {
-          comboKeyCount++;
-          console.log(`🔑 Combo_key question ${comboKeyCount} in row ${i + 1}:`, {
-            combo_key: comboKey,
-            level,
-            topic,
-            style,
-            order
-          });
-        }
-
-        const questionData: QuestionData = {
-          level: level as 'intermediate' | 'advanced',
-          topic,
-          question_type: questionType,
-          style,
-          question,
-          order,
-          is_random: isRandom,
-          combo_key: comboKey
-        };
-
-        allQuestionData.push(questionData);
       }
 
       console.log(`📊 Processing summary:
@@ -326,6 +338,7 @@ const CSVQuestionUploader = () => {
           * Missing required data: ${skippedCounts.missingData}
           * Invalid level: ${skippedCounts.invalidLevel}
           * Invalid order: ${skippedCounts.invalidOrder}
+          * Parse errors: ${skippedCounts.parseErrors}
           * Duplicates: ${skippedCounts.duplicates}
           * TOTAL SKIPPED: ${Object.values(skippedCounts).reduce((a, b) => a + b, 0)}
       `);
@@ -346,7 +359,7 @@ const CSVQuestionUploader = () => {
         progress: 50
       });
 
-      // Insert data one by one to track progress
+      // Insert data
       let totalInserted = 0;
       let comboKeyInserted = 0;
       let roleplaysInserted = 0;
@@ -371,7 +384,6 @@ const CSVQuestionUploader = () => {
           if (data && data.length > 0) {
             const insertedQuestion = data[0];
             
-            // Track different types of insertions
             if (insertedQuestion.combo_key) {
               comboKeyInserted++;
               console.log(`✅ Inserted combo_key question:`, {
@@ -415,20 +427,6 @@ const CSVQuestionUploader = () => {
         });
       }
 
-      // Final verification for roleplay questions
-      const { data: verifyRoleplays, error: verifyError } = await supabase
-        .from('questions')
-        .select('id, level, topic, style, order, combo_key')
-        .eq('style', 'roleplay')
-        .order('level, topic, order');
-
-      if (verifyError) {
-        console.error('❌ Error verifying roleplay questions:', verifyError);
-      } else {
-        console.log(`🎭 VERIFICATION - roleplay questions in database (${verifyRoleplays.length} total):`, 
-          verifyRoleplays.map(q => `${q.level}-${q.topic}-${q.order}${q.combo_key ? ` (${q.combo_key})` : ''}`));
-      }
-
       console.log(`🎯 FINAL UPLOAD SUMMARY:
         - Total questions inserted: ${totalInserted}
         - Advanced level inserted: ${advancedInserted}
@@ -464,7 +462,6 @@ const CSVQuestionUploader = () => {
       });
     }
 
-    // Reset file input
     event.target.value = '';
   };
 
