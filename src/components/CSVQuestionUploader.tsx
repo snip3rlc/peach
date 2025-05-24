@@ -96,8 +96,9 @@ const CSVQuestionUploader = () => {
       // Get header row to determine column indices
       const headers = rows[0].map(h => h.toLowerCase().trim());
       console.log('📋 CSV Headers:', headers);
+      console.log('📊 Total CSV rows (including header):', rows.length);
 
-      // Find column indices
+      // Find column indices - be flexible with column names
       const levelIndex = headers.findIndex(h => h === 'level');
       const topicIndex = headers.findIndex(h => h === 'topic');
       const questionTypeIndex = headers.findIndex(h => h === 'question_type' || h === 'type');
@@ -152,36 +153,40 @@ const CSVQuestionUploader = () => {
 
       console.log(`🔍 Found ${existingQuestions.length} existing questions in database`);
 
-      // Process data rows
+      // Process data rows - be more flexible with missing columns
       const allQuestionData: QuestionData[] = [];
       let comboKeyCount = 0;
       let skippedRows = 0;
       let duplicateCount = 0;
+      let roleplaysFound = 0;
       
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
-        const maxIndex = Math.max(levelIndex, topicIndex, questionTypeIndex, styleIndex, questionIndex, orderIndex, comboKeyIndex);
         
-        if (row.length < maxIndex + 1) {
-          console.warn(`⚠️ Skipping row ${i + 1} - insufficient columns (expected ${maxIndex + 1}, got ${row.length})`);
+        // Skip empty rows
+        if (!row || row.length === 0 || row.every(cell => !cell || !cell.trim())) {
+          console.log(`⚠️ Skipping empty row ${i + 1}`);
           skippedRows++;
           continue;
         }
 
-        const level = row[levelIndex]?.trim().toLowerCase();
-        const topic = row[topicIndex]?.trim();
-        const questionType = row[questionTypeIndex]?.trim().toLowerCase();
-        const style = row[styleIndex]?.trim().toLowerCase();
-        const question = row[questionIndex]?.trim();
-        const order = parseInt(row[orderIndex]?.trim()) || 0;
+        // Safely get values with fallbacks for missing columns
+        const level = row[levelIndex]?.trim().toLowerCase() || '';
+        const topic = row[topicIndex]?.trim() || '';
+        const questionType = row[questionTypeIndex]?.trim().toLowerCase() || '';
+        const style = row[styleIndex]?.trim().toLowerCase() || '';
+        const question = row[questionIndex]?.trim() || '';
+        const orderValue = row[orderIndex]?.trim() || '';
+        const order = parseInt(orderValue) || 0;
         
         // Get combo_key from CSV if column exists, otherwise null
         let comboKey: string | null = null;
-        if (comboKeyIndex !== -1) {
-          const csvComboKey = row[comboKeyIndex]?.trim();
+        if (comboKeyIndex !== -1 && row[comboKeyIndex]) {
+          const csvComboKey = row[comboKeyIndex].trim();
           comboKey = csvComboKey && csvComboKey !== '' && csvComboKey !== 'null' ? csvComboKey : null;
         }
 
+        // Validate required fields
         if (!level || !topic || !questionType || !style || !question || !order) {
           console.warn(`⚠️ Skipping row ${i + 1} - missing required data:`, {
             level: level || 'MISSING',
@@ -189,7 +194,9 @@ const CSVQuestionUploader = () => {
             questionType: questionType || 'MISSING',
             style: style || 'MISSING',
             question: question ? 'present' : 'MISSING',
-            order: order || 'MISSING'
+            order: order || 'MISSING',
+            rowLength: row.length,
+            row: row.slice(0, 8) // Show first 8 columns for debugging
           });
           skippedRows++;
           continue;
@@ -217,6 +224,19 @@ const CSVQuestionUploader = () => {
 
         const isRandom = questionType === 'random';
 
+        // Count roleplay questions
+        if (style === 'roleplay') {
+          roleplaysFound++;
+          console.log(`🎭 Found roleplay question ${roleplaysFound} in row ${i + 1}:`, {
+            level,
+            topic,
+            style,
+            order,
+            combo_key: comboKey,
+            question_preview: question.substring(0, 50) + '...'
+          });
+        }
+
         // Log combo_key details
         if (comboKey) {
           console.log(`🔑 Found combo_key in row ${i + 1}:`, {
@@ -227,18 +247,6 @@ const CSVQuestionUploader = () => {
             question_preview: question.substring(0, 50) + '...'
           });
           comboKeyCount++;
-        }
-
-        // Log roleplay questions specifically
-        if (style === 'roleplay') {
-          console.log(`🎭 Roleplay question found in row ${i + 1}:`, {
-            level,
-            topic,
-            style,
-            order,
-            combo_key: comboKey,
-            question_preview: question.substring(0, 50) + '...'
-          });
         }
 
         const questionData: QuestionData = {
@@ -256,24 +264,13 @@ const CSVQuestionUploader = () => {
       }
 
       console.log(`📊 Processing summary:
-        - Total rows processed: ${allQuestionData.length}
+        - Total CSV rows (excluding header): ${rows.length - 1}
+        - Valid questions to insert: ${allQuestionData.length}
         - Rows with combo_key: ${comboKeyCount}
-        - Skipped rows (missing data): ${skippedRows}
+        - Roleplay questions found: ${roleplaysFound}
+        - Skipped rows (missing/invalid data): ${skippedRows}
         - Duplicate rows skipped: ${duplicateCount}
-        - Total input rows: ${rows.length - 1}
       `);
-
-      // Show roleplay question examples
-      const roleplays = allQuestionData.filter(q => q.style === 'roleplay');
-      console.log(`🎭 Found ${roleplays.length} roleplay questions:`, roleplays.slice(0, 3).map((q, idx) => ({
-        index: idx + 1,
-        level: q.level,
-        topic: q.topic,
-        style: q.style,
-        order: q.order,
-        combo_key: q.combo_key,
-        question_preview: q.question.substring(0, 50) + '...'
-      })));
 
       if (allQuestionData.length === 0) {
         setUploadStatus({
