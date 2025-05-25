@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import { Badge } from '@/components/ui/badge';
-import { ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Question {
@@ -88,8 +87,8 @@ const QuestionSelect = () => {
   // Get badge color based on level
   const getBadgeColor = (questionLevel: string) => {
     return questionLevel === 'intermediate' 
-      ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
-      : 'bg-green-100 text-green-800 hover:bg-green-100';
+      ? 'bg-blue-100 text-blue-700' 
+      : 'bg-green-100 text-green-700';
   };
   
   // Format level label for display
@@ -97,28 +96,35 @@ const QuestionSelect = () => {
     return questionLevel.charAt(0).toUpperCase() + questionLevel.slice(1);
   };
 
+  // Truncate question to 2 sentences
+  const truncateQuestion = (text: string) => {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    if (sentences.length <= 2) return text;
+    return sentences.slice(0, 2).join('. ') + '...';
+  };
+
   return (
-    <div className="pb-20">
-      <Header title="Question" showBack />
+    <div className="pb-20 font-sans">
+      <Header title="Questions" showBack />
       
       <div className="p-4">
-        <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
-          <h2 className="text-lg font-medium mb-2">연습할 질문을 선택하세요</h2>
-          <p className="text-sm text-gray-600">
+        <div className="bg-purple-50 rounded-2xl p-5 mb-6">
+          <h2 className="text-lg font-semibold mb-2">연습할 질문을 선택하세요</h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
             현재 레벨과 주제에 맞는 질문이 제공됩니다. 응답을 연습하고 싶은 질문을 선택하세요.
           </p>
           {topic && (
-            <div className="mt-2">
-              <Badge variant="outline" className="text-xs">
+            <div className="mt-3">
+              <span className="inline-block px-3 py-1 bg-white border border-gray-200 text-gray-700 text-xs rounded-full font-medium">
                 {topic} • {formatLevel(level)}
-              </Badge>
+              </span>
             </div>
           )}
         </div>
         
         {isLoading ? (
           <div className="flex justify-center py-10">
-            <p>Loading questions...</p>
+            <p className="text-gray-500">Loading questions...</p>
           </div>
         ) : questions.length === 0 ? (
           <div className="text-center py-10">
@@ -128,29 +134,27 @@ const QuestionSelect = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {questions.map((question) => (
               <Link 
                 key={question.id}
                 to={`/record-answer?id=${question.id}`}
-                className="block bg-white rounded-lg border border-gray-100 shadow-sm p-4"
+                className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge className={`${getBadgeColor(question.level)}`}>
-                        {formatLevel(question.level)}
+                <div className="relative">
+                  <div className="flex gap-2 mb-2">
+                    <Badge className={`${getBadgeColor(question.level)} text-[10px] px-2 py-0.5 rounded-full font-medium`}>
+                      {formatLevel(question.level)}
+                    </Badge>
+                    {question.style && (
+                      <Badge className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                        {question.style}
                       </Badge>
-                      {question.style && (
-                        <Badge variant="secondary" className="text-xs">
-                          {question.style}
-                        </Badge>
-                      )}
-                    </div>
-                    <h3 className="font-medium mb-1 text-sm leading-relaxed">{question.question}</h3>
-                    <p className="text-sm text-gray-500">{question.topic}</p>
+                    )}
                   </div>
-                  <ChevronRight className="text-gray-400 ml-4 flex-shrink-0" size={20} />
+                  <p className="text-[13px] text-gray-900 leading-relaxed line-clamp-2">
+                    {truncateQuestion(question.question)}
+                  </p>
                 </div>
               </Link>
             ))}

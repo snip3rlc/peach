@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
-import { Coffee, Building, Heart, Utensils, Plane, Film, BookOpen, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TopicData {
@@ -119,60 +118,24 @@ const TopicSelect = () => {
     fetchTopics();
   }, [level]);
 
-  // Map topic names to icons
-  const getTopicIcon = (topic: string) => {
-    const iconMap: { [key: string]: React.ReactNode } = {
-      'Appointments': <Coffee size={16} />,
-      'Technology': <Building size={16} />,
-      'Internet': <Building size={16} />,
-      'Phone': <Heart size={16} />,
-      'Travel': <Plane size={16} />,
-      'Food': <Utensils size={16} />,
-      'Health': <Heart size={16} />,
-      'Education': <BookOpen size={16} />,
-      'Work': <Building size={16} />,
-      'Shopping': <Users size={16} />
-    };
-    
-    return iconMap[topic] || <Coffee size={16} />;
-  };
-  
-  // Map topic names to background colors
-  const getTopicColor = (topic: string) => {
-    const colorMap: { [key: string]: string } = {
-      'Appointments': 'bg-blue-100 text-blue-500',
-      'Technology': 'bg-green-100 text-green-500',
-      'Internet': 'bg-purple-100 text-purple-500',
-      'Phone': 'bg-red-100 text-red-500',
-      'Travel': 'bg-purple-100 text-purple-500',
-      'Food': 'bg-yellow-100 text-yellow-500',
-      'Health': 'bg-red-100 text-red-500',
-      'Education': 'bg-pink-100 text-pink-500',
-      'Work': 'bg-green-100 text-green-500',
-      'Shopping': 'bg-orange-100 text-orange-500'
-    };
-    
-    return colorMap[topic] || 'bg-blue-100 text-blue-500';
-  };
-
   return (
-    <div className="pb-20">
-      <Header title="Topic" showBack />
+    <div className="pb-20 font-sans">
+      <Header title="Topics" showBack />
       
       <div className="p-4">
-        <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
-          <h2 className="text-lg font-medium mb-2">연습할 주제를 선택하세요</h2>
-          <p className="text-sm text-gray-600">
+        <div className="bg-purple-50 rounded-2xl p-5 mb-6">
+          <h2 className="text-lg font-semibold mb-2">연습할 주제를 선택하세요</h2>
+          <p className="text-sm text-gray-600 leading-relaxed">
             여러 주제 중에서 연습하고 싶은 주제를 선택하면 관련 문항이 제공됩니다.
           </p>
-          <p className="text-xs text-gray-500 mt-2">
-            Level: {level}
+          <p className="text-xs text-gray-500 mt-2 font-medium">
+            Level: {level.charAt(0).toUpperCase() + level.slice(1)}
           </p>
         </div>
         
         {isLoading ? (
           <div className="flex justify-center py-10">
-            <p>Loading topics...</p>
+            <p className="text-gray-500">Loading topics...</p>
           </div>
         ) : topics.length === 0 ? (
           <div className="text-center py-10">
@@ -180,21 +143,20 @@ const TopicSelect = () => {
             <p className="text-sm text-gray-400">Please upload question data or check the database.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {topics.map((topicData, index) => (
               <Link 
                 key={index} 
                 to={`/questions?level=${level}&topic=${encodeURIComponent(topicData.topic)}`}
-                className="block bg-white rounded-lg border border-gray-100 shadow-sm p-2.5"
+                className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="flex items-center">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getTopicColor(topicData.topic)}`}>
-                    {getTopicIcon(topicData.topic)}
-                  </div>
-                  <div className="ml-2">
-                    <h3 className="font-medium text-sm">{topicData.topic}</h3>
-                    <p className="text-xs text-gray-500">{topicData.count} questions</p>
-                  </div>
+                <div className="text-center">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1 leading-tight">
+                    {topicData.topic}
+                  </h3>
+                  <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                    {topicData.count}
+                  </span>
                 </div>
               </Link>
             ))}
