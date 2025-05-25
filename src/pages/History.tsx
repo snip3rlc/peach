@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useContext } from 'react';
 import Header from '../components/Header';
 import { Card, CardContent } from '@/components/ui/card';
@@ -206,7 +205,7 @@ const History = () => {
   if (!isPremium) {
     return (
       <div className="pb-20">
-        <Header title="History" />
+        <Header title="연습 기록" />
         
         <div className="p-4 flex flex-col items-center justify-center min-h-[70vh]">
           <div className="bg-yellow-100 rounded-full p-6 mb-4">
@@ -231,7 +230,7 @@ const History = () => {
 
   return (
     <div className="pb-20">
-      <Header title="History" />
+      <Header title="연습 기록" />
       
       <div className="p-4">
         {historyItems.length === 0 ? (

@@ -40,6 +40,8 @@ interface Question {
 const RecordAnswer = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Define state variables
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordingComplete, setRecordingComplete] = useState(false);
@@ -300,7 +302,7 @@ const RecordAnswer = () => {
   if (isLoading) {
     return (
       <div className="pb-20">
-        <Header title="Question" showBack />
+        <Header title="답변하기" showBack />
         <div className="p-4 flex justify-center items-center h-64">
           <p>Loading question...</p>
         </div>
@@ -310,7 +312,7 @@ const RecordAnswer = () => {
 
   return (
     <div className="pb-20">
-      <Header title="Question" showBack>
+      <Header title="답변하기" showBack>
         <Button
           onClick={handleContinue}
           size="sm"

@@ -146,7 +146,7 @@ const Tests = () => {
   if (loading) {
     return (
       <div className="pb-20">
-        <Header title="Tests" showBack />
+        <Header title="모의고사" showBack />
         <div className="p-4 flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
         </div>
@@ -156,7 +156,7 @@ const Tests = () => {
 
   return (
     <div className="pb-20">
-      <Header title="Tests" showBack>
+      <Header title="모의고사" showBack>
         <Button
           onClick={() => setShowUploader(!showUploader)}
           size="sm"

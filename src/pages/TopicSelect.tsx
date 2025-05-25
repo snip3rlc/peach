@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TopicData {
@@ -118,19 +119,23 @@ const TopicSelect = () => {
     fetchTopics();
   }, [level]);
 
+  // Format level label for display
+  const formatLevel = (level: string) => {
+    return level.charAt(0).toUpperCase() + level.slice(1);
+  };
+
   return (
     <div className="pb-20 font-sans">
-      <Header title="Topics" showBack />
+      <Header title="연습 주제" showBack />
       
       <div className="p-4">
         <div className="bg-purple-50 rounded-2xl p-5 mb-6">
           <h2 className="text-lg font-semibold mb-2">연습할 주제를 선택하세요</h2>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            여러 주제 중에서 연습하고 싶은 주제를 선택하면 관련 문항이 제공됩니다.
-          </p>
-          <p className="text-xs text-gray-500 mt-2 font-medium">
-            Level: {level.charAt(0).toUpperCase() + level.slice(1)}
-          </p>
+          <div className="mt-3">
+            <Badge className="bg-white border border-gray-200 text-gray-700 text-xs rounded-full font-medium">
+              {formatLevel(level)}
+            </Badge>
+          </div>
         </div>
         
         {isLoading ? (
@@ -148,13 +153,15 @@ const TopicSelect = () => {
               <Link 
                 key={index} 
                 to={`/questions?level=${level}&topic=${encodeURIComponent(topicData.topic)}`}
-                className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] h-20 flex flex-col justify-between"
               >
-                <div className="text-center">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1 leading-tight">
+                <div className="text-center flex-1 flex items-center justify-center">
+                  <h3 className="text-sm text-gray-900 leading-tight text-center">
                     {topicData.topic}
                   </h3>
-                  <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                </div>
+                <div className="text-center">
+                  <span className="text-xs text-gray-500 font-medium">
                     {topicData.count}
                   </span>
                 </div>

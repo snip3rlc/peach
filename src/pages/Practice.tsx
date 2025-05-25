@@ -51,9 +51,6 @@ const Practice = () => {
 
         <div className="bg-opic-light-purple rounded-lg p-5">
           <h2 className="text-lg font-medium mb-2">연습할 레벨을 선택하세요</h2>
-          <p className="text-sm text-gray-600">
-            현재 영어 실력에 맞는 레벨을 선택하면 적합한 연습 문제와 템플릿을 제공해 드립니다.
-          </p>
         </div>
         
         <div className="space-y-4">

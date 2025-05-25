@@ -96,6 +96,13 @@ const QuestionSelect = () => {
     return questionLevel.charAt(0).toUpperCase() + questionLevel.slice(1);
   };
 
+  // Format style for display
+  const formatStyle = (style: string) => {
+    if (style === 'roleplay') return 'Role Play';
+    if (style === 'pastexperience') return 'Past Experience';
+    return style;
+  };
+
   // Truncate question to 2 sentences
   const truncateQuestion = (text: string) => {
     const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
@@ -107,21 +114,7 @@ const QuestionSelect = () => {
     <div className="pb-20 font-sans">
       <Header title="Questions" showBack />
       
-      <div className="p-4">
-        <div className="bg-purple-50 rounded-2xl p-5 mb-6">
-          <h2 className="text-lg font-semibold mb-2">연습할 질문을 선택하세요</h2>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            현재 레벨과 주제에 맞는 질문이 제공됩니다. 응답을 연습하고 싶은 질문을 선택하세요.
-          </p>
-          {topic && (
-            <div className="mt-3">
-              <span className="inline-block px-3 py-1 bg-white border border-gray-200 text-gray-700 text-xs rounded-full font-medium">
-                {topic} • {formatLevel(level)}
-              </span>
-            </div>
-          )}
-        </div>
-        
+      <div className="p-4">        
         {isLoading ? (
           <div className="flex justify-center py-10">
             <p className="text-gray-500">Loading questions...</p>
@@ -146,9 +139,12 @@ const QuestionSelect = () => {
                     <Badge className={`${getBadgeColor(question.level)} text-[10px] px-2 py-0.5 rounded-full font-medium`}>
                       {formatLevel(question.level)}
                     </Badge>
+                    <Badge className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                      {topic}
+                    </Badge>
                     {question.style && (
                       <Badge className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded-full font-medium">
-                        {question.style}
+                        {formatStyle(question.style)}
                       </Badge>
                     )}
                   </div>

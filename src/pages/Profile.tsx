@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { ChevronRight, Edit2 } from 'lucide-react';
+import { ChevronRight, Edit2, Crown, Users, Bell, HelpCircle, Info } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { AuthContext } from '../App';
@@ -28,7 +28,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title="Profile" showBack={true} />
+      <Header title="프로필" showBack={true} />
       
       <div className="p-4 pb-24 space-y-4">
         {/* Profile Info */}
@@ -62,7 +62,7 @@ const Profile = () => {
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
-                <span className="text-opic-purple">􀑭</span>
+                <Crown className="text-opic-purple" size={20} />
               </div>
               <div className="flex-1">
                 <h3 className="font-medium">구독 정보</h3>
@@ -80,7 +80,7 @@ const Profile = () => {
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
-                <span className="text-opic-purple">􀉀</span>
+                <Users className="text-opic-purple" size={20} />
               </div>
               <div className="flex-1">
                 <h3 className="font-medium">친구 초대</h3>
@@ -95,7 +95,7 @@ const Profile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
-                <span className="text-opic-purple">􀋙</span>
+                <Bell className="text-opic-purple" size={20} />
               </div>
               <h3 className="font-medium">알림</h3>
             </div>
@@ -110,10 +110,11 @@ const Profile = () => {
         <div className="bg-white rounded-lg p-4 shadow-sm">
           <div className="flex items-center">
             <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
-              <span className="text-opic-purple">􀁝</span>
+              <HelpCircle className="text-opic-purple" size={20} />
             </div>
             <div className="flex-1">
               <h3 className="font-medium">F.A.Q.</h3>
+              <p className="text-xs text-gray-500 mt-1">앱 사용법 • 결제 • 구독 변경 • 보안</p>
             </div>
             <ChevronRight size={18} className="text-gray-400" />
           </div>
@@ -123,10 +124,11 @@ const Profile = () => {
         <div className="bg-white rounded-lg p-4 shadow-sm">
           <div className="flex items-center">
             <div className="h-10 w-10 bg-opic-light-purple rounded-lg flex items-center justify-center mr-3">
-              <span className="text-opic-purple">􀅴</span>
+              <Info className="text-opic-purple" size={20} />
             </div>
             <div className="flex-1">
               <h3 className="font-medium">앱 정보</h3>
+              <p className="text-xs text-gray-500 mt-1">V1.0</p>
             </div>
             <ChevronRight size={18} className="text-gray-400" />
           </div>
@@ -135,7 +137,7 @@ const Profile = () => {
         {/* Log Out */}
         <button 
           onClick={handleSignOut}
-          className="flex items-center justify-center text-red-600 font-medium p-3 w-full"
+          className="flex items-start justify-start text-gray-500 font-medium p-3 w-full text-left"
         >
           로그아웃
         </button>
