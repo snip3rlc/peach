@@ -26,7 +26,7 @@ const SignIn = () => {
       if (redirect === 'subscribe' && plan) {
         handleCheckout(plan);
       } else {
-        navigate('/');
+        navigate('/dashboard');
       }
     }
   }, [navigate, redirect, plan]);
@@ -73,7 +73,7 @@ const SignIn = () => {
       if (redirect === 'subscribe' && plan) {
         await handleCheckout(plan);
       } else {
-        navigate('/');
+        navigate('/dashboard');
       }
       
     } catch (error) {
