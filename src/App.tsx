@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -58,36 +57,38 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
   
-  // For demo purposes - setting mock user
+  // For demo purposes - setting mock user only if authenticated
   useEffect(() => {
-    // This is a mock user for demonstration
-    // In a real app, this would come from Supabase auth
-    const mockUser = {
-      id: 'mock-user-id',
-      email: 'demo@example.com',
-      user_metadata: {
-        full_name: 'Demo User'
-      },
-      created_at: new Date().toISOString()
-    };
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     
-    const mockSession = {
-      user: mockUser,
-      access_token: 'mock-token'
-    };
-    
-    setSession(mockSession);
-    setUser(mockUser);
-    
-    // Mock subscription data
-    setSubscription({
-      active: true,
-      plan: 'silver',
-      current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    });
+    if (isAuthenticated) {
+      // This is a mock user for demonstration
+      const mockUser = {
+        id: 'mock-user-id',
+        email: 'demo@example.com',
+        user_metadata: {
+          full_name: 'Demo User'
+        },
+        created_at: new Date().toISOString()
+      };
+      
+      const mockSession = {
+        user: mockUser,
+        access_token: 'mock-token'
+      };
+      
+      setSession(mockSession);
+      setUser(mockUser);
+      
+      // Mock subscription data
+      setSubscription({
+        active: true,
+        plan: 'silver',
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      });
+    }
     
     setLoading(false);
-    
   }, []);
 
   const signOut = async () => {
@@ -119,14 +120,34 @@ const App = () => {
       return <div className="flex items-center justify-center h-screen">Loading...</div>;
     }
     
-    // For demo purposes, we'll check localStorage
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true' || session !== null;
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     
     if (!isAuthenticated) {
+      if (!hasSeenOnboarding) {
+        return <Navigate to="/onboarding" />;
+      }
       return <Navigate to="/signin" />;
     }
     
     return <>{children}</>;
+  };
+
+  // Redirect root based on auth status
+  const RootRedirect = () => {
+    if (loading) {
+      return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    }
+    
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    
+    if (!isAuthenticated) {
+      if (!hasSeenOnboarding) {
+        return <Navigate to="/onboarding" replace />;
+      }
+      return <Navigate to="/signin" replace />;
+    }
+    
+    return <Navigate to="/dashboard" replace />;
   };
 
   return (
@@ -138,12 +159,15 @@ const App = () => {
             <Sonner />
             <div className="min-h-screen">
               <Routes>
+                {/* Root redirect */}
+                <Route path="/" element={<RootRedirect />} />
+                
                 {/* Authentication and onboarding routes */}
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/signin" element={<SignIn />} />
                 
                 {/* Main app routes */}
-                <Route path="/" element={
+                <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Dashboard />
                     <BottomNav />

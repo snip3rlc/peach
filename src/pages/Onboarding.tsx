@@ -86,14 +86,14 @@ const Onboarding = () => {
             <Button 
               onClick={handleBack}
               variant="outline"
-              className="flex-1"
+              className="flex-1 max-w-[25%]"
             >
               뒤로
             </Button>
           )}
           <Button 
             onClick={handleNext}
-            className={`bg-opic-purple hover:bg-opic-purple/90 ${currentSlide > 0 ? 'flex-[2]' : 'w-full'}`}
+            className={`bg-opic-purple hover:bg-opic-purple/90 ${currentSlide > 0 ? 'flex-[3]' : 'w-full'}`}
           >
             {currentSlide === slides.length - 1 ? '시작하기' : '다음'}
           </Button>

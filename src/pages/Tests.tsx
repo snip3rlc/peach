@@ -1,12 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import ExcelUploader from '../components/ExcelUploader';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, ChevronRight, Upload } from 'lucide-react';
+import { CheckCircle, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface TestData {
@@ -146,7 +144,7 @@ const Tests = () => {
   if (loading) {
     return (
       <div className="pb-20">
-        <Header title="모의고사" showBack />
+        <Header title="모의고사" showBack={false} />
         <div className="p-4 flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
         </div>
@@ -156,25 +154,9 @@ const Tests = () => {
 
   return (
     <div className="pb-20">
-      <Header title="모의고사" showBack>
-        <Button
-          onClick={() => setShowUploader(!showUploader)}
-          size="sm"
-          variant="outline"
-          className="flex items-center gap-1"
-        >
-          <Upload size={16} />
-          Upload
-        </Button>
-      </Header>
+      <Header title="모의고사" showBack={false} />
       
       <div className="p-4">
-        {showUploader && (
-          <div className="mb-6">
-            <ExcelUploader />
-          </div>
-        )}
-
         <div className="bg-opic-light-purple rounded-lg p-5 mb-6">
           <h2 className="text-base font-medium mb-1">OPIc Practice</h2>
           <p className="text-xs text-gray-600">

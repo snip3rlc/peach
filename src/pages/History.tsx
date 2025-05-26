@@ -205,7 +205,7 @@ const History = () => {
   if (!isPremium) {
     return (
       <div className="pb-20">
-        <Header title="연습 기록" />
+        <Header title="연습 기록" showBack={false} />
         
         <div className="p-4 flex flex-col items-center justify-center min-h-[70vh]">
           <div className="bg-yellow-100 rounded-full p-6 mb-4">
@@ -230,7 +230,7 @@ const History = () => {
 
   return (
     <div className="pb-20">
-      <Header title="연습 기록" />
+      <Header title="연습 기록" showBack={false} />
       
       <div className="p-4">
         {historyItems.length === 0 ? (
