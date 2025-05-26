@@ -165,14 +165,14 @@ const TopicSelect = () => {
               <Link 
                 key={index} 
                 to={`/questions?level=${level}&topic=${encodeURIComponent(topicData.topic)}`}
-                className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] h-20 flex flex-col justify-between"
+                className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] h-20 flex flex-col justify-between"
               >
-                <div className="text-center flex-1 flex items-center justify-center">
-                  <h3 className="text-sm text-gray-900 leading-tight text-center font-normal">
+                <div className="flex-1 flex items-center justify-center">
+                  <h3 className="text-xs text-gray-900 leading-tight text-center font-normal">
                     {formatTopicName(topicData.topic)}
                   </h3>
                 </div>
-                <div className="text-center">
+                <div className="flex justify-center items-end">
                   <span className="text-xs text-gray-500 font-medium">
                     {topicData.count}
                   </span>

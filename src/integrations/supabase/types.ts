@@ -9,6 +9,53 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      feedback: {
+        Row: {
+          ai_sample_answer: string | null
+          corrections: Json | null
+          created_at: string
+          fluency_score: number | null
+          grammar_score: number | null
+          id: string
+          practice_id: string
+          pronunciation_score: number | null
+          tips: string | null
+          vocabulary_score: number | null
+        }
+        Insert: {
+          ai_sample_answer?: string | null
+          corrections?: Json | null
+          created_at?: string
+          fluency_score?: number | null
+          grammar_score?: number | null
+          id?: string
+          practice_id: string
+          pronunciation_score?: number | null
+          tips?: string | null
+          vocabulary_score?: number | null
+        }
+        Update: {
+          ai_sample_answer?: string | null
+          corrections?: Json | null
+          created_at?: string
+          fluency_score?: number | null
+          grammar_score?: number | null
+          id?: string
+          practice_id?: string
+          pronunciation_score?: number | null
+          tips?: string | null
+          vocabulary_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_practice_id_fkey"
+            columns: ["practice_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opic_tests: {
         Row: {
           created_at: string
@@ -32,6 +79,54 @@ export type Database = {
           test_number?: number
         }
         Relationships: []
+      }
+      practice_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          level_predicted: string | null
+          question_id: string
+          recording_url: string | null
+          response_text: string | null
+          score_overall: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          level_predicted?: string | null
+          question_id: string
+          recording_url?: string | null
+          response_text?: string | null
+          score_overall?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level_predicted?: string | null
+          question_id?: string
+          recording_url?: string | null
+          response_text?: string | null
+          score_overall?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_sessions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       questions: {
         Row: {
@@ -69,6 +164,36 @@ export type Database = {
           question_type?: string
           style?: string
           topic?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          language: string | null
+          membership: string
+          name: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          language?: string | null
+          membership?: string
+          name?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          language?: string | null
+          membership?: string
+          name?: string | null
         }
         Relationships: []
       }
