@@ -124,6 +124,18 @@ const TopicSelect = () => {
     return level.charAt(0).toUpperCase() + level.slice(1);
   };
 
+  // Format topic display name
+  const formatTopicName = (topic: string) => {
+    const topicMappings: { [key: string]: string } = {
+      'Talk & Talk on the Phone': 'Talking on the Phone',
+      'Basketball & Soccer & Baseball': 'Ball Sports',
+      'Health & Healthy Person': 'Health',
+      'Domestic Trip & Traveling': 'Domestic Trip'
+    };
+    
+    return topicMappings[topic] || topic;
+  };
+
   return (
     <div className="pb-20 font-sans">
       <Header title="연습 주제" showBack />
@@ -156,8 +168,8 @@ const TopicSelect = () => {
                 className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] h-20 flex flex-col justify-between"
               >
                 <div className="text-center flex-1 flex items-center justify-center">
-                  <h3 className="text-sm text-gray-900 leading-tight text-center">
-                    {topicData.topic}
+                  <h3 className="text-sm text-gray-900 leading-tight text-center font-normal">
+                    {formatTopicName(topicData.topic)}
                   </h3>
                 </div>
                 <div className="text-center">

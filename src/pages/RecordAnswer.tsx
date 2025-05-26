@@ -183,12 +183,12 @@ const RecordAnswer = () => {
       
       setRecognition(recognitionInstance);
     }
-  }, []);
+  }, [activeTemplate]);
   
   // Update completedAnswer based on active template and form data
   useEffect(() => {
     updateCompletedAnswer();
-  }, [activeTemplate, formData]);
+  }, [activeTemplate, formData, transcription]);
   
   // Sync carousel with active template
   useEffect(() => {
@@ -202,9 +202,8 @@ const RecordAnswer = () => {
     if (!emblaApi) return;
     
     const onSelect = () => {
-      setActiveTemplate(emblaApi.selectedScrollSnap());
-      // Update the completed answer when template changes
-      updateCompletedAnswer();
+      const selectedIndex = emblaApi.selectedScrollSnap();
+      setActiveTemplate(selectedIndex);
     };
     
     emblaApi.on('select', onSelect);
@@ -235,14 +234,10 @@ const RecordAnswer = () => {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [name]: value
-      };
-      
-      return newData;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
   
   const toggleRecording = () => {
@@ -410,8 +405,7 @@ const RecordAnswer = () => {
                         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4">
                           <h3 className="font-medium mb-3">완성된 답변</h3>
                           <p className="text-sm text-gray-700">
-                            {activeTemplate === template.id && completedAnswer}
-                            {activeTemplate !== template.id && template.template.replace(/\[(.*?)\]/g, '[$1]')}
+                            {completedAnswer}
                           </p>
                         </div>
                       </>
