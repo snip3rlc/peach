@@ -1,59 +1,19 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { Button } from '@/components/ui/button';
-import { Upload, FileSpreadsheet, FileText } from 'lucide-react';
-import ExcelQuestionUploader from '@/components/ExcelQuestionUploader';
-import CSVQuestionUploader from '@/components/CSVQuestionUploader';
 
 const Practice = () => {
-  const [showUploader, setShowUploader] = useState(false);
-  const [uploaderType, setUploaderType] = useState<'excel' | 'csv'>('csv');
-
   return (
     <div className="min-h-screen bg-gray-50 safe-area-inset">
-      <Header title="연습하기">
-        <div className="flex gap-2">
-          <Button
-            onClick={() => {
-              setUploaderType('csv');
-              setShowUploader(!showUploader);
-            }}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-1"
-          >
-            <FileText size={16} />
-            CSV
-          </Button>
-          <Button
-            onClick={() => {
-              setUploaderType('excel');
-              setShowUploader(!showUploader);
-            }}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-1"
-          >
-            <FileSpreadsheet size={16} />
-            Excel
-          </Button>
-        </div>
-      </Header>
+      <Header title="연습하기" showBack={false} />
       
       <div className="px-4 pt-4 pb-24 space-y-6">
-        {showUploader && (
-          <div className="mb-6">
-            {uploaderType === 'csv' ? <CSVQuestionUploader /> : <ExcelQuestionUploader />}
-          </div>
-        )}
-
         <div className="bg-opic-light-purple rounded-lg p-5">
           <h2 className="text-lg font-medium mb-2">연습할 레벨을 선택하세요</h2>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Link to="/topics?level=intermediate">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">

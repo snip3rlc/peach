@@ -207,6 +207,8 @@ const RecordAnswer = () => {
     };
     
     emblaApi.on('select', onSelect);
+    onSelect(); // Call once to set initial state
+    
     return () => {
       emblaApi.off('select', onSelect);
     };
@@ -346,9 +348,9 @@ const RecordAnswer = () => {
               )}
               <button 
                 onClick={toggleRecording}
-                className={`w-8 h-8 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
+                className={`w-12 h-12 ${isRecording ? 'bg-red-500' : 'bg-opic-purple'} rounded-full flex items-center justify-center text-white`}
               >
-                {isRecording ? <Square size={16} /> : <Mic size={16} />}
+                {isRecording ? <Square size={20} /> : <Mic size={20} />}
               </button>
             </div>
           </div>
@@ -451,7 +453,6 @@ const RecordAnswer = () => {
               key={index}
               className={`w-2 h-2 rounded-full ${activeTemplate === index ? 'bg-opic-purple' : 'bg-gray-300'}`}
               onClick={() => {
-                setActiveTemplate(index);
                 if (emblaApi && emblaApi.scrollTo) {
                   emblaApi.scrollTo(index);
                 }

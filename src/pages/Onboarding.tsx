@@ -36,6 +36,12 @@ const Onboarding = () => {
     }
   };
   
+  const handleBack = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
+  
   const handleSkip = () => {
     localStorage.setItem('hasSeenOnboarding', 'true');
     navigate('/signin');
@@ -43,6 +49,18 @@ const Onboarding = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Skip button in top right corner */}
+      <div className="absolute top-6 right-6 z-10">
+        {currentSlide < slides.length - 1 && (
+          <button 
+            onClick={handleSkip}
+            className="text-gray-500 text-sm"
+          >
+            건너뛰기
+          </button>
+        )}
+      </div>
+      
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md text-center">
           <div className="flex justify-center mb-6">
@@ -63,21 +81,23 @@ const Onboarding = () => {
       </div>
       
       <div className="p-6 pb-10">
-        <Button 
-          onClick={handleNext}
-          className="w-full bg-opic-purple hover:bg-opic-purple/90 mb-4"
-        >
-          {currentSlide === slides.length - 1 ? '시작하기' : '다음'}
-        </Button>
-        
-        {currentSlide < slides.length - 1 && (
-          <button 
-            onClick={handleSkip}
-            className="text-gray-500 text-sm w-full text-center"
+        <div className="flex gap-2">
+          {currentSlide > 0 && (
+            <Button 
+              onClick={handleBack}
+              variant="outline"
+              className="flex-1"
+            >
+              뒤로
+            </Button>
+          )}
+          <Button 
+            onClick={handleNext}
+            className={`bg-opic-purple hover:bg-opic-purple/90 ${currentSlide > 0 ? 'flex-[2]' : 'w-full'}`}
           >
-            건너뛰기
-          </button>
-        )}
+            {currentSlide === slides.length - 1 ? '시작하기' : '다음'}
+          </Button>
+        </div>
       </div>
     </div>
   );

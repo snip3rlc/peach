@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { ChevronRight, Edit2, Crown, Users, Bell, HelpCircle, Info } from 'lucide-react';
+import { ChevronRight, Edit2, Crown, Users, Bell, HelpCircle, Info, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -31,7 +31,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title="프로필" showBack={true} />
+      <Header title="프로필" showBack={false} />
       
       <div className="p-4 pb-24 space-y-4">
         {/* Profile Info */}
@@ -165,13 +165,18 @@ const Profile = () => {
           </div>
         </Collapsible>
         
-        {/* Log Out */}
-        <button 
-          onClick={handleSignOut}
-          className="flex items-start justify-start text-gray-500 font-medium p-3 w-full text-left"
-        >
-          로그아웃
-        </button>
+        {/* Log Out Card */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <button 
+            onClick={handleSignOut}
+            className="flex items-center w-full"
+          >
+            <div className="h-10 w-10 bg-red-50 rounded-lg flex items-center justify-center mr-3">
+              <LogOut className="text-red-500" size={20} />
+            </div>
+            <h3 className="font-medium text-gray-500">로그아웃</h3>
+          </button>
+        </div>
       </div>
     </div>
   );
