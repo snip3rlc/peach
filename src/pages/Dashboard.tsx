@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Volume2 } from 'lucide-react';
@@ -156,7 +155,7 @@ const Dashboard = () => {
           </p>
           <Button 
             className="w-full bg-opic-purple hover:bg-opic-purple/90"
-            onClick={() => navigate('/practice')}
+            onClick={() => navigate('/plans')}
           >
             프리미엄으로 업그레이드
           </Button>
